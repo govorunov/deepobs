@@ -263,14 +263,14 @@ def print_summary(results):
     """Print summary of benchmark results.
 
     Args:
-        results: List of (problem, optimizer, success) tuples
+        results: List of (problem, optimizer, success, output_dir) tuples
     """
     print("\n" + "="*80)
     print("BENCHMARK SUMMARY")
     print("="*80)
 
     total = len(results)
-    successful = sum(1 for _, _, success in results if success)
+    successful = sum(1 for _, _, success, _ in results if success)
     failed = total - successful
 
     print(f"\nTotal benchmarks: {total}")
@@ -279,7 +279,7 @@ def print_summary(results):
 
     if failed > 0:
         print("\nFailed benchmarks:")
-        for problem, optimizer, success in results:
+        for problem, optimizer, success, _ in results:
             if not success:
                 print(f"  - {optimizer} on {problem}")
 
@@ -387,7 +387,7 @@ def main():
     print(f"\nTotal time: {duration}")
 
     # Return exit code based on failures
-    failures = sum(1 for _, _, success in results if not success)
+    failures = sum(1 for _, _, success, _ in results if not success)
     return 1 if failures > 0 else 0
 
 

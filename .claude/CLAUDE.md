@@ -1,5 +1,34 @@
 # Claude Instructions for DeepOBS
 
+## IMPORTANT: Read Documentation First
+
+**Before performing any task or answering any question about this project, you MUST:**
+
+1. **Read `README.md`** - Understand the project's purpose, features, and usage
+2. **Review relevant documentation in `docs/`**:
+   - `docs/QUICK_START_BENCHMARK.md` - For benchmark-related tasks
+   - `docs/BENCHMARK_SUITE_README.md` - For comprehensive benchmark documentation
+   - `docs/README_PYTORCH.md` - For PyTorch API and usage details
+   - `docs/API_REFERENCE.md` - For API documentation
+   - `docs/KNOWN_ISSUES.md` - For current limitations and issues
+3. **Check example scripts in `examples/`** - For usage patterns and workflows
+4. **Review configuration files** (`.yaml` files) - For benchmark configurations
+
+**Never make assumptions about:**
+- How to run benchmarks
+- What test problems are available
+- How to configure optimizers
+- How to analyze results
+- Project structure and organization
+
+**Always consult the documentation to understand:**
+- The correct commands to use
+- Available configuration options
+- Expected workflows
+- Output formats and locations
+
+This ensures accurate, context-aware assistance that aligns with the project's actual capabilities and conventions.
+
 ## Project Setup
 
 This project uses **UV** as the Python package manager. All Python commands should be run using UV.
