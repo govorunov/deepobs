@@ -1,0 +1,43 @@
+# DeepOBS Quick Benchmark Configuration
+# A minimal configuration for quick testing (runs in a few minutes)
+
+global:
+  output_dir: "./results"
+  random_seed: 42
+  num_epochs: 5
+  batch_size: 128
+  train_log_interval: 50
+  print_train_iter: false
+  data_dir: null
+
+# Just 2 fast test problems
+test_problems:
+  - name: mnist_logreg
+    num_epochs: 3
+    batch_size: 128
+
+  - name: mnist_mlp
+    num_epochs: 5
+    batch_size: 128
+
+# Just 2 optimizers for quick comparison
+optimizers:
+  - name: SGD
+    learning_rate: 0.01
+    hyperparams:
+      momentum: 0.9
+      nesterov: false
+
+  - name: Adam
+    learning_rate: 0.001
+    hyperparams:
+      betas: [0.9, 0.999]
+      eps: 1.0e-08
+
+# No overrides needed for this simple config
+overrides: {}
+
+advanced:
+  parallel: false
+  continue_existing: false
+  verbose: true

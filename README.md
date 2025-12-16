@@ -33,6 +33,20 @@ DeepOBS automates several steps when benchmarking deep learning optimizers:
 
 ![DeepOBS Output](docs/deepobs.jpg "DeepOBS_output")
 
+## Table of Contents
+
+- [Quick Start](#quick-start)
+- [Available Test Problems](#available-test-problems)
+- [Features](#features)
+- [Installation](#installation)
+- [Usage Examples](#usage-examples)
+- [Configuration](#configuration)
+- [FAQ](#faq)
+- [Documentation](#documentation)
+- [Paper](#paper)
+- [Requirements](#requirements)
+- [Contributing](#contributing)
+
 ## Quick Start
 
 ```python
@@ -71,6 +85,13 @@ All 26 test problems are available:
 | **Text** | `tolstoi_char_rnn` |
 | **Synthetic** | `quadratic_deep`, `two_d_rosenbrock`, `two_d_beale`, `two_d_branin` |
 
+### Problem Categories
+
+**Classification Problems**: mnist_*, fmnist_*, cifar10_*, cifar100_*, svhn_*, imagenet_*
+**Generative Models**: mnist_vae, fmnist_vae
+**Sequential Models**: tolstoi_char_rnn
+**Optimization Benchmarks**: quadratic_deep, two_d_*
+
 ---
 
 ## Features
@@ -82,6 +103,7 @@ All 26 test problems are available:
 - **Automated Benchmarking**: Run experiments with minimal code
 - **Baseline Comparisons**: Compare against established optimizers
 - **Publication-Ready Plots**: Automatic visualization and analysis
+- **Per-Example Losses**: Access individual sample losses for advanced optimizer development
 
 ## Installation
 
@@ -168,7 +190,9 @@ pip install -e .
 pip install -e ".[pytorch]"
 ```
 
-## Usage Example
+## Usage Examples
+
+### Basic Training
 
 ```python
 import torch
@@ -191,14 +215,328 @@ for epoch in range(100):
         optimizer.step()
 ```
 
+### GPU Training
+
+```python
+import torch
+from deepobs.pytorch import testproblems
+
+# Specify GPU device
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
+# Create test problem with GPU
+tproblem = testproblems.cifar10_3c3d(batch_size=128, device=device)
+tproblem.set_up()
+
+# Optimizer and training loop
+optimizer = torch.optim.Adam(tproblem.model.parameters(), lr=1e-3)
+
+for epoch in range(100):
+    tproblem.model.train()
+    for batch in tproblem.train_loader:
+        # Data is automatically moved to device by test problem
+        optimizer.zero_grad()
+        loss, accuracy = tproblem.get_batch_loss_and_accuracy(batch)
+        loss.mean().backward()
+        optimizer.step()
+```
+
+### Using StandardRunner
+
+The `StandardRunner` automates the entire training workflow:
+
+```python
+import torch.optim as optim
+from deepobs.pytorch.runners import StandardRunner
+
+# Define optimizer and hyperparameters
+optimizer_class = optim.SGD
+hyperparams = [
+    {"name": "momentum", "type": float, "default": 0.0},
+    {"name": "nesterov", "type": bool, "default": False}
+]
+
+# Create runner
+runner = StandardRunner(optimizer_class, hyperparams)
+
+# Run benchmark
+runner.run(
+    testproblem='mnist_mlp',
+    batch_size=128,
+    num_epochs=10,
+    learning_rate=0.01,
+    momentum=0.9,
+    random_seed=42,
+    output_dir='./results'
+)
+```
+
+### Learning Rate Scheduling
+
+```python
+from torch.optim.lr_scheduler import MultiStepLR
+
+# Create test problem
+tproblem = testproblems.cifar100_wrn404(batch_size=128)
+tproblem.set_up()
+
+# Create optimizer
+optimizer = torch.optim.SGD(
+    tproblem.model.parameters(),
+    lr=0.1,
+    momentum=0.9,
+    weight_decay=5e-4
+)
+
+# Create scheduler: reduce LR by 0.1 at epochs 60, 120, 160
+scheduler = MultiStepLR(optimizer, milestones=[60, 120, 160], gamma=0.1)
+
+# Training loop
+for epoch in range(200):
+    # Train
+    tproblem.model.train()
+    for batch in tproblem.train_loader:
+        optimizer.zero_grad()
+        loss, accuracy = tproblem.get_batch_loss_and_accuracy(batch)
+        loss.mean().backward()
+        optimizer.step()
+
+    # Step scheduler at epoch end
+    scheduler.step()
+
+    print(f'Epoch {epoch}, LR: {scheduler.get_last_lr()[0]:.6f}')
+```
+
+### Accessing Per-Example Losses
+
+DeepOBS returns per-example losses for advanced optimizer development:
+
+```python
+tproblem = testproblems.mnist_mlp(batch_size=128)
+tproblem.set_up()
+
+optimizer = torch.optim.SGD(tproblem.model.parameters(), lr=0.01)
+
+for batch in tproblem.train_loader:
+    optimizer.zero_grad()
+
+    # Get per-example losses (shape: [batch_size])
+    losses, accuracy = tproblem.get_batch_loss_and_accuracy(batch)
+
+    # Can use individual losses for custom weighting, sampling, etc.
+    print(f'Per-example losses shape: {losses.shape}')
+    print(f'Loss statistics: min={losses.min():.4f}, '
+          f'max={losses.max():.4f}, mean={losses.mean():.4f}')
+
+    # Compute mean for standard training
+    loss = losses.mean()
+    loss.backward()
+    optimizer.step()
+```
+
+## Configuration
+
+DeepOBS uses a global configuration system for data and baseline directories.
+
+### Setting Data Directory
+
+```python
+from deepobs.pytorch import config
+
+# Set custom data directory
+config.set_data_dir('/path/to/data')
+
+# Get current data directory
+data_dir = config.get_data_dir()
+print(f'Data directory: {data_dir}')
+```
+
+### Data Directory Structure
+
+DeepOBS automatically downloads and organizes datasets:
+
+```
+<data_dir>/
+├── mnist/
+│   ├── MNIST/
+│   │   └── raw/
+├── fashion-mnist/
+│   └── FashionMNIST/
+├── cifar-10/
+│   └── cifar-10-batches-py/
+├── cifar-100/
+│   └── cifar-100-python/
+├── svhn/
+│   ├── train_32x32.mat
+│   └── test_32x32.mat
+├── imagenet/
+│   ├── train/  (user must provide)
+│   └── val/    (user must provide)
+└── tolstoi/
+    └── war_and_peace.txt
+```
+
+**Note**: ImageNet requires manual download due to licensing. Place training images in `<data_dir>/imagenet/train/` and validation images in `<data_dir>/imagenet/val/`.
+
+### Setting Data Type
+
+```python
+from deepobs.pytorch import config
+import torch
+
+# Use float32 (default)
+config.set_dtype(torch.float32)
+
+# Use float64 for higher precision
+config.set_dtype(torch.float64)
+
+# Get current dtype
+dtype = config.get_dtype()
+print(f'Data type: {dtype}')
+```
+
+## FAQ
+
+### How do I use a specific GPU?
+
+```python
+import torch
+
+# Use specific GPU
+device = torch.device('cuda:0')  # GPU 0
+tproblem = testproblems.mnist_mlp(batch_size=128, device=device)
+tproblem.set_up()
+```
+
+### How do I ensure reproducibility?
+
+```python
+import torch
+import numpy as np
+import random
+
+def set_seed(seed=42):
+    random.seed(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    if torch.cuda.is_available():
+        torch.cuda.manual_seed(seed)
+        torch.cuda.manual_seed_all(seed)
+    # For deterministic behavior (may impact performance)
+    torch.backends.cudnn.deterministic = True
+    torch.backends.cudnn.benchmark = False
+
+set_seed(42)
+```
+
+### Can I use mixed precision training?
+
+```python
+from torch.cuda.amp import GradScaler, autocast
+
+scaler = GradScaler()
+
+for batch in tproblem.train_loader:
+    optimizer.zero_grad()
+
+    with autocast():
+        loss, accuracy = tproblem.get_batch_loss_and_accuracy(batch)
+        loss = loss.mean()
+
+    scaler.scale(loss).backward()
+    scaler.step(optimizer)
+    scaler.update()
+```
+
+### How do I save and load checkpoints?
+
+```python
+# Save checkpoint
+checkpoint = {
+    'epoch': epoch,
+    'model_state_dict': tproblem.model.state_dict(),
+    'optimizer_state_dict': optimizer.state_dict(),
+    'loss': loss,
+}
+torch.save(checkpoint, 'checkpoint.pth')
+
+# Load checkpoint
+checkpoint = torch.load('checkpoint.pth')
+tproblem.model.load_state_dict(checkpoint['model_state_dict'])
+optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
+epoch = checkpoint['epoch']
+loss = checkpoint['loss']
+```
+
+### How do I handle out-of-memory errors?
+
+- Reduce batch size
+- Use gradient accumulation
+- Enable mixed precision training
+- Use gradient checkpointing for very deep models
+
+```python
+# Gradient accumulation example
+accumulation_steps = 4
+optimizer.zero_grad()
+
+for i, batch in enumerate(tproblem.train_loader):
+    loss, accuracy = tproblem.get_batch_loss_and_accuracy(batch)
+    loss = loss.mean() / accumulation_steps
+    loss.backward()
+
+    if (i + 1) % accumulation_steps == 0:
+        optimizer.step()
+        optimizer.zero_grad()
+```
+
+### Can I access the dataset directly without test problems?
+
+Yes! Datasets can be used independently:
+
+```python
+from deepobs.pytorch.datasets import MNIST
+from torch.utils.data import DataLoader
+
+# Create dataset
+dataset = MNIST(batch_size=128)
+
+# Access train/test loaders
+for batch in dataset.train_loader:
+    images, labels = batch
+    # Your training code here
+```
+
 ## Documentation
 
-- **[README_PYTORCH.md](README_PYTORCH.md)** - Complete usage guide
+### Additional Resources
+
+- **[README_PYTORCH.md](docs/README_PYTORCH.md)** - Detailed PyTorch usage guide with advanced topics
 - **[docs/API_REFERENCE.md](docs/API_REFERENCE.md)** - API documentation
 - **[examples/](examples/)** - Usage examples and tutorials
 - **[docs/KNOWN_ISSUES.md](docs/KNOWN_ISSUES.md)** - Known issues and limitations
+- **[docs/MIGRATION_GUIDE.md](docs/MIGRATION_GUIDE.md)** - Migrating from TensorFlow
 
 **Online Documentation**: https://deepobs.readthedocs.io/
+
+### Example Scripts
+
+The `examples/` directory contains complete, runnable examples:
+
+- `basic_usage.py` - Simple end-to-end example
+- `custom_optimizer_benchmark.py` - How to benchmark a custom optimizer
+- `multiple_test_problems.py` - Running multiple test problems
+- `learning_rate_schedule.py` - Using learning rate schedules
+- `result_analysis.py` - Analyzing and plotting results
+
+### Migrating from TensorFlow
+
+If you're migrating from the TensorFlow version of DeepOBS, see [README_PYTORCH.md](docs/README_PYTORCH.md#migration-from-tensorflow) for detailed migration instructions including:
+
+- API changes
+- Training loop differences
+- Batch normalization handling
+- Common gotchas
 
 ## Paper
 
@@ -223,7 +561,7 @@ If you use DeepOBS in your research, please cite:
 ## Requirements
 
 - Python >= 3.8
-- PyTorch >= 1.9.0
+- PyTorch >= 1.9.0 (PyTorch >= 2.0 recommended)
 - torchvision >= 0.10.0
 - NumPy >= 1.19.0
 - Pandas >= 1.1.0
@@ -266,3 +604,9 @@ See [CONTRIBUTORS.md](CONTRIBUTORS.md) for full acknowledgments.
 
 - **[AlgoPerf](https://github.com/mlcommons/algorithmic-efficiency)** - MLCommons algorithmic efficiency benchmark
 - **[TorchVision](https://github.com/pytorch/vision)** - PyTorch vision models and datasets
+
+---
+
+**Last Updated**: 2025-12-16
+**Version**: 1.2.0-pytorch
+**Framework**: PyTorch >= 1.9.0

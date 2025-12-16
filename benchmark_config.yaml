@@ -1,0 +1,120 @@
+# DeepOBS Benchmark Configuration
+# This file defines which test problems and optimizers to benchmark
+
+# Global settings
+global:
+  # Output directory for all results
+  output_dir: "./results"
+
+  # Random seed for reproducibility
+  random_seed: 42
+
+  # Default number of epochs (can be overridden per problem)
+  num_epochs: 10
+
+  # Default batch size (can be overridden per problem)
+  batch_size: 128
+
+  # Training log interval (log every N batches)
+  train_log_interval: 100
+
+  # Print training iteration info
+  print_train_iter: false
+
+  # Data directory (where datasets are stored)
+  data_dir: null  # null = use default
+
+# Test problems to benchmark
+test_problems:
+  # MNIST problems (fast, good for testing)
+  - name: mnist_logreg
+    num_epochs: 5
+    batch_size: 128
+
+  - name: mnist_mlp
+    num_epochs: 10
+    batch_size: 128
+
+  - name: mnist_2c2d
+    num_epochs: 10
+    batch_size: 128
+
+  # Fashion-MNIST problems
+  - name: fmnist_mlp
+    num_epochs: 10
+    batch_size: 128
+
+  - name: fmnist_2c2d
+    num_epochs: 10
+    batch_size: 128
+
+  # CIFAR-10 problems (slower, more challenging)
+  # Uncomment to include:
+  # - name: cifar10_3c3d
+  #   num_epochs: 20
+  #   batch_size: 128
+
+  # - name: cifar10_vgg16
+  #   num_epochs: 50
+  #   batch_size: 128
+
+# Optimizers to benchmark
+optimizers:
+  # SGD with momentum
+  - name: SGD
+    learning_rate: 0.01
+    hyperparams:
+      momentum: 0.9
+      nesterov: false
+    # Optional: learning rate schedule
+    # lr_schedule:
+    #   epochs: [30, 60, 90]
+    #   factors: [0.1, 0.1, 0.1]  # multiply by 0.1 at each epoch
+
+  # SGD with Nesterov momentum
+  - name: SGD_Nesterov
+    optimizer_class: SGD  # Use SGD class
+    learning_rate: 0.01
+    hyperparams:
+      momentum: 0.9
+      nesterov: true
+
+  # Adam optimizer
+  - name: Adam
+    learning_rate: 0.001
+    hyperparams:
+      betas: [0.9, 0.999]
+      eps: 1.0e-08
+
+  # AdamW optimizer
+  - name: AdamW
+    learning_rate: 0.001
+    hyperparams:
+      betas: [0.9, 0.999]
+      eps: 1.0e-08
+      weight_decay: 0.01
+
+# Problem-specific optimizer overrides
+# Use this to set different learning rates for specific problems
+overrides:
+  # Example: Use higher learning rate for logreg problems
+  mnist_logreg:
+    SGD:
+      learning_rate: 0.1
+    Adam:
+      learning_rate: 0.01
+
+  fmnist_logreg:
+    SGD:
+      learning_rate: 0.1
+
+# Advanced options
+advanced:
+  # Run optimizers in parallel (requires sufficient resources)
+  parallel: false
+
+  # Continue from previous run (skip completed experiments)
+  continue_existing: false
+
+  # Verbose output
+  verbose: true

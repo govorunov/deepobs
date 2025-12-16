@@ -1,13 +1,5 @@
 # Claude Instructions for DeepOBS
 
-## Project Overview
-
-**DeepOBS is now a PyTorch-only project.** All TensorFlow-related code can and should be safely removed. When fixing issues or updating code:
-- Always target PyTorch implementations
-- Remove any TensorFlow dependencies or legacy code
-- Update imports and naming to follow PyTorch conventions
-- No backward compatibility with TensorFlow is needed
-
 ## Project Setup
 
 This project uses **UV** as the Python package manager. All Python commands should be run using UV.
@@ -74,8 +66,20 @@ uv run pytest tests/ --cov=deepobs.pytorch
 3. Format with `uv run black .`
 4. Lint with `uv run flake8`
 
-## Important Notes
+## Documentation Organization
 
-- **Always use `uv run` prefix** for Python commands
-- UV is faster than pip and provides better dependency resolution
-- The virtual environment is automatically managed by UV
+### Planning and Temporary Documentation
+
+All planning documentation, temporary notes, and development documentation should be kept in the `planning/` folder:
+
+- Implementation plans
+- Design documents
+- Temporary notes and scratchpads
+- Development logs
+- Migration notes
+- Work-in-progress documentation
+
+**Important**: The `planning/` folder is for transient documentation. Once work is complete, relevant information should be moved to:
+- `docs/` for permanent documentation
+- `README.md` or `docs/README_PYTORCH.md` for user-facing guides
+- Code comments for implementation details
