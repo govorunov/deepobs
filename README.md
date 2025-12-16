@@ -217,16 +217,23 @@ for epoch in range(100):
 
 ### GPU Training
 
+DeepOBS supports CUDA and MPS (Apple Silicon) backends for GPU acceleration.
+
 ```python
 import torch
 from deepobs.pytorch import testproblems
 
-# Specify GPU device
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-
-# Create test problem with GPU
-tproblem = testproblems.cifar10_3c3d(batch_size=128, device=device)
+# Auto-select best available device (MPS on Apple Silicon, CUDA on NVIDIA GPUs, CPU otherwise)
+# DeepOBS automatically selects the best device when no device is specified
+tproblem = testproblems.cifar10_3c3d(batch_size=128)
 tproblem.set_up()
+print(f"Using device: {tproblem.device}")  # Will show 'mps', 'cuda', or 'cpu'
+
+# Or manually specify device
+# device = torch.device('cuda')  # NVIDIA GPU
+# device = torch.device('mps')   # Apple Silicon GPU
+# device = torch.device('cpu')   # CPU only
+# tproblem = testproblems.cifar10_3c3d(batch_size=128, device=device)
 
 # Optimizer and training loop
 optimizer = torch.optim.Adam(tproblem.model.parameters(), lr=1e-3)
@@ -402,8 +409,21 @@ print(f'Data type: {dtype}')
 ```python
 import torch
 
-# Use specific GPU
-device = torch.device('cuda:0')  # GPU 0
+# DeepOBS auto-selects the best available device by default
+# Priority: MPS (Apple Silicon) > CUDA > CPU
+
+# For NVIDIA GPUs (CUDA)
+device = torch.device('cuda:0')  # Use GPU 0
+tproblem = testproblems.mnist_mlp(batch_size=128, device=device)
+tproblem.set_up()
+
+# For Apple Silicon (MPS)
+device = torch.device('mps')
+tproblem = testproblems.mnist_mlp(batch_size=128, device=device)
+tproblem.set_up()
+
+# For CPU only
+device = torch.device('cpu')
 tproblem = testproblems.mnist_mlp(batch_size=128, device=device)
 tproblem.set_up()
 ```
@@ -418,13 +438,13 @@ import random
 def set_seed(seed=42):
     random.seed(seed)
     np.random.seed(seed)
-    torch.manual_seed(seed)
+    torch.manual_seed(seed)  # Also seeds MPS
     if torch.cuda.is_available():
         torch.cuda.manual_seed(seed)
         torch.cuda.manual_seed_all(seed)
-    # For deterministic behavior (may impact performance)
-    torch.backends.cudnn.deterministic = True
-    torch.backends.cudnn.benchmark = False
+        # For deterministic behavior (may impact performance)
+        torch.backends.cudnn.deterministic = True
+        torch.backends.cudnn.benchmark = False
 
 set_seed(42)
 ```

@@ -62,13 +62,16 @@ class DataSet(ABC):
             self._train_eval_dataset = self._train_dataset
 
         # Create data loaders
+        # Pin memory for faster data transfer to GPU (CUDA only, MPS doesn't support it yet)
+        use_pin_memory = torch.cuda.is_available()
+
         self.train_loader = DataLoader(
             self._train_dataset,
             batch_size=batch_size,
             shuffle=True,
             num_workers=num_workers,
             drop_last=True,  # Drop incomplete batches
-            pin_memory=torch.cuda.is_available()
+            pin_memory=use_pin_memory
         )
 
         self.train_eval_loader = DataLoader(
@@ -77,7 +80,7 @@ class DataSet(ABC):
             shuffle=False,
             num_workers=num_workers,
             drop_last=True,
-            pin_memory=torch.cuda.is_available()
+            pin_memory=use_pin_memory
         )
 
         self.test_loader = DataLoader(
@@ -86,7 +89,7 @@ class DataSet(ABC):
             shuffle=False,
             num_workers=num_workers,
             drop_last=True,
-            pin_memory=torch.cuda.is_available()
+            pin_memory=use_pin_memory
         )
 
     @property

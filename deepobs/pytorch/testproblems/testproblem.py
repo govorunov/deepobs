@@ -19,8 +19,8 @@ class TestProblem(ABC):
         weight_decay (float, optional): Weight decay (L2-regularization) factor.
             If not specified, test problems use their default values. Note that
             some test problems do not use regularization.
-        device (str or torch.device, optional): Device to use ('cpu', 'cuda', or
-            a torch.device object). Defaults to 'cuda' if available, else 'cpu'.
+        device (str or torch.device, optional): Device to use ('cpu', 'cuda', 'mps', or
+            a torch.device object). Defaults to 'mps' if available on macOS, 'cuda' if available, else 'cpu'.
 
     Attributes:
         dataset: The DeepOBS dataset instance (datasets.DataSet).
@@ -46,7 +46,13 @@ class TestProblem(ABC):
 
         # Set device
         if device is None:
-            self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+            # Prefer MPS on macOS if available, then CUDA, then CPU
+            if torch.backends.mps.is_available():
+                self.device = torch.device('mps')
+            elif torch.cuda.is_available():
+                self.device = torch.device('cuda')
+            else:
+                self.device = torch.device('cpu')
         else:
             self.device = torch.device(device)
 

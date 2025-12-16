@@ -362,6 +362,7 @@ class StandardRunner(object):
             # For reproducibility (may impact performance)
             torch.backends.cudnn.deterministic = True
             torch.backends.cudnn.benchmark = False
+        # Note: MPS uses the same manual_seed as CPU, no additional seeding needed
 
         # Find testproblem by name and instantiate with batch size and weight decay.
         try:
