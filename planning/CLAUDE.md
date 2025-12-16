@@ -4,7 +4,41 @@
 **Source Framework**: TensorFlow 1.x
 **Target Framework**: PyTorch
 **Created**: 2025-12-13
-**Status**: Analysis Complete - Ready for Conversion
+**Status**: ✅ COMPLETE - All phases finished
+**Location**: /Users/yaroslav/Sources/Angol/DeepOBS/planning/
+
+---
+
+## 📁 IMPORTANT: Documentation Organization
+
+**All planning and implementation tracking documents belong in the `planning/` folder:**
+
+### Planning Documents (Keep in planning/)
+- `CLAUDE.md` - This conversion guide and planning document
+- `IMPLEMENTATION_STATUS.md` - Phase-by-phase progress tracking
+- `PHASE*_*.md` - All phase implementation notes and summaries
+- `MIGRATION_COMPLETE*.md` - Migration completion reports
+- `PROJECT_SUMMARY.md` - Internal project statistics
+- `FINAL_PROJECT_REPORT.md` - Final completion report
+- `DOCUMENTATION_INDEX.md` - Internal documentation index
+
+### User-Facing Documents (Keep in project root)
+- `README.md` - Main project README
+- `README_PYTORCH.md` - PyTorch usage guide
+- `MIGRATION_GUIDE.md` - User migration guide (TF → PyTorch)
+- `API_REFERENCE.md` - API documentation
+- `EXAMPLES.md` - Usage examples
+- `CHANGELOG_PYTORCH.md` - Version history
+- `KNOWN_ISSUES.md` - Known issues and limitations
+- `RELEASE_CHECKLIST.md` - Release preparation steps
+- `CONTRIBUTORS.md` - Contributors and acknowledgments
+- `VERSION` - Version file
+
+**Instructions for Future Work:**
+- All new planning documents go in `planning/`
+- All new phase summaries go in `planning/`
+- All implementation notes go in `planning/`
+- Keep project root clean with only user-facing docs
 
 ---
 

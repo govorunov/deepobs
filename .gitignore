@@ -41,3 +41,28 @@ wheels/
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
+
+### PyTorch ###
+*.pt
+*.pth
+*.ckpt
+
+### DeepOBS Data ###
+data/
+!data/.gitkeep
+results/
+!results/.gitkeep
+baselines/
+!baselines/.gitkeep
+
+### Testing ###
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+
+### IDEs ###
+.idea/
+*.swp
+*.swo
+*~
