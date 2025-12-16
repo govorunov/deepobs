@@ -5,7 +5,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib2tikz import save as tikz_save
 from matplotlib2tikz import get_tikz_code
-from .. import tensorflow
+from .. import pytorch
 
 
 class Analyzer:
@@ -110,7 +110,7 @@ class TestProblemAnalyzer:
 
         """
         try:
-            with open(os.path.join(tensorflow.config.get_baseline_dir(),
+            with open(os.path.join(pytorch.config.get_baseline_dir(),
                          "convergence_performance.json"), "r") as f:
                 return json.load(f)[self.name]
         except IOError:

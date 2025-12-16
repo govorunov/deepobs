@@ -1,12 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Try to import TensorFlow backend (may not be installed)
-try:
-    from . import tensorflow
-except ImportError:
-    tensorflow = None
-
-# Try to import PyTorch backend (may not be installed)
+# Import PyTorch backend (may not be installed)
 try:
     from . import pytorch
 except ImportError:

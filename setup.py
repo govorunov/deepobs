@@ -39,9 +39,6 @@ setuptools.setup(
         "seaborn>=0.11.0",
     ],
     extras_require={
-        "tensorflow": [
-            "tensorflow>=1.4.0",
-        ],
         "pytorch": [
             "torch>=1.9.0",
             "torchvision>=0.10.0",
@@ -53,7 +50,6 @@ setuptools.setup(
             "flake8>=3.8.0",
         ],
         "all": [
-            "tensorflow>=1.4.0",
             "torch>=1.9.0",
             "torchvision>=0.10.0",
             "pytest>=6.0.0",
@@ -66,7 +62,6 @@ setuptools.setup(
         "deepobs/scripts/deepobs_prepare_data.sh",
         "deepobs/scripts/deepobs_get_baselines.sh",
         "deepobs/scripts/deepobs_plot_results.py",
-        "deepobs/scripts/deepobs_estimate_runtime.py",
     ],
     zip_safe=False,
     python_requires=">=3.6",

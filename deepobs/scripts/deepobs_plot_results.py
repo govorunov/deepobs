@@ -63,9 +63,9 @@ def main(path, get_best_run, plot_lr_sensitivity, plot_performance, plot_table,
     # Parse whole baseline folder
     if args.baseline_path:
         print("Parsing baseline folder")
-        deepobs.tensorflow.config.set_baseline_dir(args.baseline_path)
+        deepobs.pytorch.config.set_baseline_dir(args.baseline_path)
         baseline_parser = deepobs.analyzer.analyze_utils.Analyzer(
-            deepobs.tensorflow.config.get_baseline_dir())
+            deepobs.pytorch.config.get_baseline_dir())
     else:
         baseline_parser = None
 

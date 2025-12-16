@@ -27,12 +27,9 @@ DeepOBS automates several steps when benchmarking deep learning optimizers:
 .. figure:: deepobs.jpg
     :scale: 40%
 
-The code for the current implementation working with **TensorFlow** can be found
-on `GitHub`_.
+The current implementation uses **PyTorch** and can be found on `GitHub`_.
 
-We are actively working on a **PyTorch** version and will be releasing it in the
-next months. In the meantime, PyTorch users can still use parts of DeepOBS such
-as the data preprocessing scripts or the visualization features.
+DeepOBS has been fully migrated to PyTorch. All TensorFlow code has been removed.
 
 .. toctree::
   :maxdepth: 2
