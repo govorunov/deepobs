@@ -4,7 +4,7 @@ import torch
 import torch.nn.functional as F
 
 from ._inception_v3 import inception_v3
-from ..datasets.imagenet import imagenet
+from ..datasets.imagenet import ImageNet
 from .testproblem import TestProblem
 
 
@@ -48,7 +48,7 @@ class imagenet_inception_v3(TestProblem):
     def set_up(self):
         """Set up the Inception V3 test problem on ImageNet."""
         # Initialize dataset
-        self.dataset = imagenet(self._batch_size)
+        self.dataset = ImageNet(self._batch_size)
 
         # Initialize model with auxiliary classifier
         # ImageNet has 1000 classes, but model outputs 1001 (includes background)

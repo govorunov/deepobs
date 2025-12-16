@@ -4,7 +4,7 @@ import torch
 import torch.nn.functional as F
 
 from ._wrn import wrn_16_4
-from ..datasets.svhn import svhn
+from ..datasets.svhn import SVHN
 from .testproblem import TestProblem
 
 
@@ -38,7 +38,7 @@ class svhn_wrn164(TestProblem):
     def set_up(self):
         """Set up the Wide ResNet 16-4 test problem on SVHN."""
         # Initialize dataset
-        self.dataset = svhn(self._batch_size)
+        self.dataset = SVHN(self._batch_size)
 
         # Initialize model
         # Note: TensorFlow uses bn_momentum=0.9, PyTorch uses 1 - 0.9 = 0.1

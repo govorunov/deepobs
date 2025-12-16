@@ -44,7 +44,7 @@ def parse_args():
     parser.add_argument(
         "--baseline_path",
         type=str,
-        default="baselines_deepobs",
+        default="baselines",
         help="Path to baseline folder.")
     return parser
 

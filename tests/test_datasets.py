@@ -6,10 +6,10 @@ import numpy as np
 from torch.utils.data import DataLoader
 
 from deepobs.pytorch.datasets import (
-    mnist, fmnist, cifar10, cifar100, svhn,
-    imagenet, tolstoi, quadratic, two_d
+    MNIST, FashionMNIST, CIFAR10, CIFAR100, SVHN,
+    ImageNet, Tolstoi, Quadratic, TwoD
 )
-from tests.test_utils import set_seed, assert_shape
+from .test_utils import set_seed, assert_shape
 
 
 class TestMNIST:
@@ -17,13 +17,13 @@ class TestMNIST:
 
     def test_instantiation(self):
         """Test dataset can be instantiated."""
-        dataset = mnist.mnist(batch_size=128)
+        dataset = MNIST(batch_size=128)
         assert dataset is not None
         assert dataset.batch_size == 128
 
     def test_data_loading(self):
         """Test data can be loaded."""
-        dataset = mnist.mnist(batch_size=32)
+        dataset = MNIST(batch_size=32)
         train_loader = dataset.train_loader
         test_loader = dataset.test_loader
 
@@ -37,7 +37,7 @@ class TestMNIST:
 
     def test_batch_types(self):
         """Test batch data types."""
-        dataset = mnist.mnist(batch_size=64)
+        dataset = MNIST(batch_size=64)
         x, y = next(iter(dataset.train_loader))
 
         assert isinstance(x, torch.Tensor)
@@ -48,11 +48,11 @@ class TestMNIST:
     def test_reproducibility(self):
         """Test data loading is reproducible with fixed seed."""
         set_seed(42)
-        dataset1 = mnist.mnist(batch_size=32)
+        dataset1 = MNIST(batch_size=32)
         x1, y1 = next(iter(dataset1.train_loader))
 
         set_seed(42)
-        dataset2 = mnist.mnist(batch_size=32)
+        dataset2 = MNIST(batch_size=32)
         x2, y2 = next(iter(dataset2.train_loader))
 
         assert torch.allclose(x1, x2)
@@ -64,12 +64,12 @@ class TestFashionMNIST:
 
     def test_instantiation(self):
         """Test dataset can be instantiated."""
-        dataset = fmnist.fmnist(batch_size=128)
+        dataset = FashionMNIST(batch_size=128)
         assert dataset is not None
 
     def test_data_loading(self):
         """Test data can be loaded."""
-        dataset = fmnist.fmnist(batch_size=32)
+        dataset = FashionMNIST(batch_size=32)
         x, y = next(iter(dataset.train_loader))
         assert_shape(x, (32, 1, 28, 28), "Fashion-MNIST images")
         assert_shape(y, (32,), "Fashion-MNIST labels")
@@ -80,19 +80,19 @@ class TestCIFAR10:
 
     def test_instantiation(self):
         """Test dataset can be instantiated."""
-        dataset = cifar10.cifar10(batch_size=128)
+        dataset = CIFAR10(batch_size=128)
         assert dataset is not None
 
     def test_data_loading(self):
         """Test data can be loaded."""
-        dataset = cifar10.cifar10(batch_size=32)
+        dataset = CIFAR10(batch_size=32)
         x, y = next(iter(dataset.train_loader))
         assert_shape(x, (32, 3, 32, 32), "CIFAR-10 images")
         assert_shape(y, (32,), "CIFAR-10 labels")
 
     def test_normalization(self):
         """Test images are normalized."""
-        dataset = cifar10.cifar10(batch_size=32)
+        dataset = CIFAR10(batch_size=32)
         x, y = next(iter(dataset.train_loader))
 
         # Check that values are roughly normalized
@@ -109,19 +109,19 @@ class TestCIFAR100:
 
     def test_instantiation(self):
         """Test dataset can be instantiated."""
-        dataset = cifar100.cifar100(batch_size=128)
+        dataset = CIFAR100(batch_size=128)
         assert dataset is not None
 
     def test_data_loading(self):
         """Test data can be loaded."""
-        dataset = cifar100.cifar100(batch_size=32)
+        dataset = CIFAR100(batch_size=32)
         x, y = next(iter(dataset.train_loader))
         assert_shape(x, (32, 3, 32, 32), "CIFAR-100 images")
         assert_shape(y, (32,), "CIFAR-100 labels")
 
     def test_num_classes(self):
         """Test that labels are in correct range for 100 classes."""
-        dataset = cifar100.cifar100(batch_size=128)
+        dataset = CIFAR100(batch_size=128)
         x, y = next(iter(dataset.train_loader))
 
         assert y.min() >= 0
@@ -133,12 +133,12 @@ class TestSVHN:
 
     def test_instantiation(self):
         """Test dataset can be instantiated."""
-        dataset = svhn.svhn(batch_size=128)
+        dataset = SVHN(batch_size=128)
         assert dataset is not None
 
     def test_data_loading(self):
         """Test data can be loaded."""
-        dataset = svhn.svhn(batch_size=32)
+        dataset = SVHN(batch_size=32)
         x, y = next(iter(dataset.train_loader))
         assert_shape(x, (32, 3, 32, 32), "SVHN images")
         assert_shape(y, (32,), "SVHN labels")
@@ -151,7 +151,7 @@ class TestImageNet:
     def test_instantiation(self):
         """Test dataset can be instantiated."""
         try:
-            dataset = imagenet.imagenet(batch_size=32)
+            dataset = ImageNet(batch_size=32)
             assert dataset is not None
         except FileNotFoundError:
             pytest.skip("ImageNet data not available")
@@ -159,7 +159,7 @@ class TestImageNet:
     def test_data_loading(self):
         """Test data can be loaded."""
         try:
-            dataset = imagenet.imagenet(batch_size=32)
+            dataset = ImageNet(batch_size=32)
             x, y = next(iter(dataset.train_loader))
             assert_shape(x, (32, 3, 224, 224), "ImageNet images")
             assert_shape(y, (32,), "ImageNet labels")
@@ -174,7 +174,7 @@ class TestTolstoi:
     def test_instantiation(self):
         """Test dataset can be instantiated."""
         try:
-            dataset = tolstoi.tolstoi(batch_size=32)
+            dataset = Tolstoi(batch_size=32)
             assert dataset is not None
         except FileNotFoundError:
             pytest.skip("Tolstoi data not available")
@@ -182,7 +182,7 @@ class TestTolstoi:
     def test_data_loading(self):
         """Test data can be loaded."""
         try:
-            dataset = tolstoi.tolstoi(batch_size=32)
+            dataset = Tolstoi(batch_size=32)
             x, y = next(iter(dataset.train_loader))
             assert x.dtype == torch.long  # Character indices
             assert y.dtype == torch.long
@@ -195,12 +195,12 @@ class TestQuadratic:
 
     def test_instantiation(self):
         """Test dataset can be instantiated."""
-        dataset = quadratic.quadratic(batch_size=128)
+        dataset = Quadratic(batch_size=128)
         assert dataset is not None
 
     def test_data_loading(self):
         """Test data can be loaded."""
-        dataset = quadratic.quadratic(batch_size=32)
+        dataset = Quadratic(batch_size=32)
         x, y = next(iter(dataset.train_loader))
 
         # Quadratic dataset returns data and targets
@@ -210,7 +210,7 @@ class TestQuadratic:
     def test_batch_size(self):
         """Test that batch size is respected."""
         batch_size = 64
-        dataset = quadratic.quadratic(batch_size=batch_size)
+        dataset = Quadratic(batch_size=batch_size)
         x, y = next(iter(dataset.train_loader))
 
         assert x.shape[0] == batch_size
@@ -221,12 +221,12 @@ class TestTwoD:
 
     def test_instantiation(self):
         """Test dataset can be instantiated."""
-        dataset = two_d.two_d(batch_size=128)
+        dataset = TwoD(batch_size=128)
         assert dataset is not None
 
     def test_data_loading(self):
         """Test data can be loaded."""
-        dataset = two_d.two_d(batch_size=32)
+        dataset = TwoD(batch_size=32)
         x, y = next(iter(dataset.train_loader))
 
         # Two-D dataset returns 2D points
@@ -236,18 +236,18 @@ class TestTwoD:
     def test_different_batch_sizes(self):
         """Test with different batch sizes."""
         for batch_size in [16, 32, 64, 128]:
-            dataset = two_d.two_d(batch_size=batch_size)
+            dataset = TwoD(batch_size=batch_size)
             x, y = next(iter(dataset.train_loader))
             assert x.shape[0] == batch_size
 
 
 # Parametrized tests for all available datasets
 @pytest.mark.parametrize("dataset_fn,expected_shape", [
-    (mnist.mnist, (32, 1, 28, 28)),
-    (fmnist.fmnist, (32, 1, 28, 28)),
-    (cifar10.cifar10, (32, 3, 32, 32)),
-    (cifar100.cifar100, (32, 3, 32, 32)),
-    (svhn.svhn, (32, 3, 32, 32)),
+    (MNIST, (32, 1, 28, 28)),
+    (FashionMNIST, (32, 1, 28, 28)),
+    (CIFAR10, (32, 3, 32, 32)),
+    (CIFAR100, (32, 3, 32, 32)),
+    (SVHN, (32, 3, 32, 32)),
 ])
 def test_dataset_train_test_split(dataset_fn, expected_shape):
     """Test that all datasets have separate train and test loaders."""
@@ -263,11 +263,11 @@ def test_dataset_train_test_split(dataset_fn, expected_shape):
 
 
 @pytest.mark.parametrize("dataset_fn", [
-    mnist.mnist,
-    fmnist.fmnist,
-    cifar10.cifar10,
-    cifar100.cifar100,
-    svhn.svhn,
+    MNIST,
+    FashionMNIST,
+    CIFAR10,
+    CIFAR100,
+    SVHN,
 ])
 def test_dataset_iteration(dataset_fn):
     """Test that datasets can be iterated multiple times."""

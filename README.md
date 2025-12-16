@@ -66,7 +66,10 @@ for epoch in range(10):
 ### PyTorch Installation
 
 ```bash
-# Install DeepOBS with PyTorch support
+# Using UV (recommended)
+uv pip install deepobs[pytorch]
+
+# Using pip
 pip install deepobs[pytorch]
 
 # Or install manually
@@ -111,15 +114,68 @@ All 26 test problems are available:
 
 ## Installation
 
-### Basic Installation
+### Using UV (Recommended)
+
+[UV](https://github.com/astral-sh/uv) is a fast Python package manager. Install it first:
 
 ```bash
-pip install deepobs
+# Install UV
+curl -LsSf https://astral.sh/uv/install.sh | sh
+
+# Or with pip
+pip install uv
 ```
 
-### With Framework Support
+Then install DeepOBS:
 
 ```bash
+# Basic installation
+uv pip install deepobs
+
+# PyTorch support (recommended)
+uv pip install deepobs[pytorch]
+
+# TensorFlow support
+uv pip install deepobs[tensorflow]
+
+# Both frameworks
+uv pip install deepobs[all]
+
+# Development installation
+uv pip install deepobs[dev]
+```
+
+### From Source with UV
+
+```bash
+# Clone repository
+git clone https://github.com/fsschneider/DeepOBS.git
+cd DeepOBS
+
+# Create virtual environment
+uv venv
+
+# Activate virtual environment
+source .venv/bin/activate  # On Unix/macOS
+# or
+.venv\Scripts\activate  # On Windows
+
+# Install in development mode
+uv pip install -e .
+
+# With PyTorch
+uv pip install -e ".[pytorch]"
+
+# Sync all dependencies including dev
+uv pip install -e ".[all,dev]"
+```
+
+### Using pip
+
+```bash
+# Basic installation
+pip install deepobs
+
 # PyTorch support (recommended)
 pip install deepobs[pytorch]
 
@@ -133,7 +189,7 @@ pip install deepobs[all]
 pip install deepobs[dev]
 ```
 
-### From Source
+### From Source with pip
 
 ```bash
 # Clone repository

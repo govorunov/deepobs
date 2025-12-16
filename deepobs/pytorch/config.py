@@ -6,12 +6,13 @@ This module provides global configuration settings for:
 - Default floating point precision
 """
 
+import os
 import torch
 from typing import Union
 
 # Global configuration variables
-_DATA_DIR = "data_deepobs"
-_BASELINE_DIR = "baselines_deepobs"
+_DATA_DIR = os.path.abspath("data")
+_BASELINE_DIR = os.path.abspath("baselines")
 _DTYPE = torch.float32
 
 
@@ -29,9 +30,10 @@ def set_data_dir(data_dir: str) -> None:
 
     Args:
         data_dir (str): Path to the data directory where datasets should be stored.
+            Relative paths will be converted to absolute paths.
     """
     global _DATA_DIR
-    _DATA_DIR = data_dir
+    _DATA_DIR = os.path.abspath(data_dir)
 
 
 def get_baseline_dir() -> str:
@@ -48,9 +50,10 @@ def set_baseline_dir(baseline_dir: str) -> None:
 
     Args:
         baseline_dir (str): Path to the baseline directory where results should be stored.
+            Relative paths will be converted to absolute paths.
     """
     global _BASELINE_DIR
-    _BASELINE_DIR = baseline_dir
+    _BASELINE_DIR = os.path.abspath(baseline_dir)
 
 
 def get_dtype() -> torch.dtype:

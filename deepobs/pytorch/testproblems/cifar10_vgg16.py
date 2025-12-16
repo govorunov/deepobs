@@ -4,7 +4,7 @@ import torch
 import torch.nn.functional as F
 
 from ._vgg import vgg16
-from ..datasets.cifar10 import cifar10
+from ..datasets.cifar10 import CIFAR10
 from .testproblem import TestProblem
 
 
@@ -41,7 +41,7 @@ class cifar10_vgg16(TestProblem):
     def set_up(self):
         """Set up the VGG 16 test problem on Cifar-10."""
         # Initialize dataset
-        self.dataset = cifar10(self._batch_size)
+        self.dataset = CIFAR10(self._batch_size)
 
         # Initialize model
         self.model = vgg16(num_outputs=10, input_size=(224, 224))

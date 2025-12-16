@@ -26,7 +26,7 @@ def parse_args():
         help="Name of the test problem to run both scripts.")
     parser.add_argument(
         "--data_dir",
-        default='data_deepobs',
+        default='data',
         help="Path to the base data dir. If not set, deepobs uses its default."
     )
     parser.add_argument(
@@ -78,7 +78,7 @@ def read_args():
 def main(run_script,
          optimizer_args,
          test_problem="mnist.mnist_mlp",
-         data_dir="data_deepobs",
+         data_dir="data",
          bs=128,
          lr=1e-5,
          num_epochs=3,

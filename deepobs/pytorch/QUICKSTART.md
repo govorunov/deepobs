@@ -336,7 +336,7 @@ pip install torch torchvision
 
 ```python
 # Datasets are automatically downloaded on first use
-# They will be stored in the data directory (default: 'data_deepobs')
+# They will be stored in the data directory (default: 'data')
 # Make sure you have internet connection and write permissions
 ```
 

@@ -132,7 +132,7 @@ class StandardRunner(object):
             random_seed (int): Random seed to use. If unspecified, it defaults to
                 ``42``.
             data_dir (str): Path to the DeepOBS data directory. If unspecified,
-                DeepOBS uses its default `/data_deepobs`.
+                DeepOBS uses its default `/data`.
             output_dir (str): Path to the output directory. Within this directory,
                 subfolders for the testproblem and the optimizer are automatically
                 created. If unspecified, defaults to 'results'.

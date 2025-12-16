@@ -4,7 +4,7 @@ import torch
 import torch.nn.functional as F
 
 from ._wrn import wrn_40_4
-from ..datasets.cifar100 import cifar100
+from ..datasets.cifar100 import CIFAR100
 from .testproblem import TestProblem
 
 
@@ -43,7 +43,7 @@ class cifar100_wrn404(TestProblem):
     def set_up(self):
         """Set up the Wide ResNet 40-4 test problem on Cifar-100."""
         # Initialize dataset
-        self.dataset = cifar100(self._batch_size)
+        self.dataset = CIFAR100(self._batch_size)
 
         # Initialize model
         # Note: TensorFlow uses bn_momentum=0.9, PyTorch uses 1 - 0.9 = 0.1

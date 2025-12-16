@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Default options
-DATA_FOLDER=baselines_deepobs
+DATA_FOLDER=baselines
 
 # Read variables
 for i in "$@"

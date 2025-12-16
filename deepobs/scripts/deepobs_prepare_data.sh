@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Default options
-DATA_FOLDER=data_deepobs
+DATA_FOLDER=data
 prepare_cifar10=true
 prepare_cifar100=true
 prepare_imagenet=true

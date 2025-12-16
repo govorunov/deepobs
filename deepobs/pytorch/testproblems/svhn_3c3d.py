@@ -3,8 +3,8 @@
 import torch
 import torch.nn.functional as F
 
-from ._3c3d import CNN3c3d
-from ..datasets.svhn import svhn
+from ._3c3d import ThreeC3D
+from ..datasets.svhn import SVHN
 from .testproblem import TestProblem
 
 
@@ -43,10 +43,10 @@ class svhn_3c3d(TestProblem):
     def set_up(self):
         """Set up the vanilla CNN test problem on SVHN."""
         # Initialize dataset
-        self.dataset = svhn(self._batch_size)
+        self.dataset = SVHN(self._batch_size)
 
         # Initialize model
-        self.model = CNN3c3d(num_outputs=10)
+        self.model = ThreeC3D(num_outputs=10)
         self.model.to(self.device)
 
     def _compute_loss(self, outputs, targets, reduction='mean'):

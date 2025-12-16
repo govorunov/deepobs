@@ -66,7 +66,9 @@ def test_problem_instantiation():
 
     for problem_name, description in problems:
         try:
-            problem = testproblems.testproblem(problem_name, batch_size=32)
+            # Get the test problem class by name from the testproblems module
+            problem_class = getattr(testproblems, problem_name)
+            problem = problem_class(batch_size=32)
             print(f"✓ {problem_name:20s} ({description})")
         except FileNotFoundError as e:
             print(f"⊘ {problem_name:20s} SKIPPED: Data not available")
@@ -105,13 +107,15 @@ def test_training_iteration():
             torch.manual_seed(42)
 
             # Create problem
-            problem = testproblems.testproblem(problem_name, batch_size=32)
+            problem_class = getattr(testproblems, problem_name)
+            problem = problem_class(batch_size=32)
+            problem.set_up()
 
             # Create optimizer
             optimizer = optim.SGD(problem.model.parameters(), lr=0.1)
 
             # Get a batch
-            batch = next(iter(problem.train_loader))
+            batch = next(iter(problem.dataset.train_loader))
 
             # Training step
             problem.model.train()

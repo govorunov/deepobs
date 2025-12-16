@@ -4,7 +4,7 @@ import torch
 import torch.nn.functional as F
 
 from ._vae import vae
-from ..datasets.mnist import mnist
+from ..datasets.mnist import MNIST
 from .testproblem import TestProblem
 
 
@@ -50,7 +50,7 @@ class mnist_vae(TestProblem):
     def set_up(self):
         """Sets up the VAE test problem on MNIST."""
         # Initialize dataset
-        self.dataset = mnist(self._batch_size)
+        self.dataset = MNIST(self._batch_size)
 
         # Initialize model
         self.model = vae(n_latent=8)

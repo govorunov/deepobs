@@ -4,7 +4,7 @@ import torch
 import torch.nn.functional as F
 
 from ._vgg import vgg16
-from ..datasets.imagenet import imagenet
+from ..datasets.imagenet import ImageNet
 from .testproblem import TestProblem
 
 
@@ -38,7 +38,7 @@ class imagenet_vgg16(TestProblem):
     def set_up(self):
         """Set up the VGG 16 test problem on ImageNet."""
         # Initialize dataset
-        self.dataset = imagenet(self._batch_size)
+        self.dataset = ImageNet(self._batch_size)
 
         # Initialize model (ImageNet has 1000 classes)
         self.model = vgg16(num_outputs=1000, input_size=(224, 224))
