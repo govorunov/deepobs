@@ -438,9 +438,10 @@ class StandardRunner(object):
                         batch, reduction='mean'
                     )
 
-                    # Add regularization loss
-                    reg_loss = tproblem.get_regularization_loss()
-                    total_loss += (loss + reg_loss).item()
+                    # Note: Evaluation metrics should only include prediction loss,
+                    # not regularization. Regularization is part of the training
+                    # objective, not a measure of model performance.
+                    total_loss += loss.item()
 
                     if accuracy is not None:
                         total_acc += accuracy.item()
