@@ -82,14 +82,14 @@ All 26 test problems are available:
 | **CIFAR-100** | `cifar100_3c3d`, `cifar100_allcnnc`, `cifar100_vgg16`, `cifar100_vgg19`, `cifar100_wrn404` |
 | **SVHN** | `svhn_3c3d`, `svhn_wrn164` |
 | **ImageNet** | `imagenet_vgg16`, `imagenet_vgg19`, `imagenet_inception_v3` |
-| **Text** | `tolstoi_char_rnn` |
+| **Text** | `textgen` (Penn Treebank), `tolstoi_char_rnn` (deprecated) |
 | **Synthetic** | `quadratic_deep`, `two_d_rosenbrock`, `two_d_beale`, `two_d_branin` |
 
 ### Problem Categories
 
 **Classification Problems**: mnist_*, fmnist_*, cifar10_*, cifar100_*, svhn_*, imagenet_*
 **Generative Models**: mnist_vae, fmnist_vae
-**Sequential Models**: tolstoi_char_rnn
+**Sequential Models**: textgen (recommended), tolstoi_char_rnn (deprecated)
 **Optimization Benchmarks**: quadratic_deep, two_d_*
 
 ---
@@ -379,7 +379,9 @@ DeepOBS automatically downloads and organizes datasets:
 ├── imagenet/
 │   ├── train/  (user must provide)
 │   └── val/    (user must provide)
-└── tolstoi/
+├── penn_treebank/  (automatically downloaded)
+│   └── ptb_processed.pt
+└── tolstoi/  (deprecated, requires manual download)
     └── war_and_peace.txt
 ```
 

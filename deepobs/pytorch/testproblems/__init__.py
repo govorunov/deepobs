@@ -39,8 +39,9 @@ from .imagenet_inception_v3 import imagenet_inception_v3
 from .mnist_vae import mnist_vae
 from .fmnist_vae import fmnist_vae
 
-# Tolstoi test problems
+# Text generation test problems
 from .tolstoi_char_rnn import tolstoi_char_rnn
+from .textgen import textgen
 
 # Quadratic test problems
 from .quadratic_deep import quadratic_deep
@@ -79,8 +80,9 @@ __all__ = [
     'imagenet_vgg16',
     'imagenet_vgg19',
     'imagenet_inception_v3',
-    # Tolstoi
+    # Text generation
     'tolstoi_char_rnn',
+    'textgen',
     # Quadratic
     'quadratic_deep',
     # 2D optimization

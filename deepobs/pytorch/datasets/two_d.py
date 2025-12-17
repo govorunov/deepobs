@@ -76,12 +76,15 @@ class TwoD(DataSet):
         data_x = data_x.astype(np.float32)
         data_y = data_y.astype(np.float32)
 
-        # Convert to tensors
-        x_tensor = torch.from_numpy(data_x)
-        y_tensor = torch.from_numpy(data_y)
+        # Stack into 2D array: each row is [x, y]
+        data = np.stack([data_x, data_y], axis=1)  # Shape: (train_size, 2)
 
-        # Create a TensorDataset
-        dataset = TensorDataset(x_tensor, y_tensor)
+        # Convert to tensor
+        data_tensor = torch.from_numpy(data)
+
+        # For 2D problems, inputs and targets are the same (the noise samples)
+        # The loss is computed as: f(u, v) + u*x + v*y, where (x, y) is the data
+        dataset = TensorDataset(data_tensor, data_tensor)
 
         return dataset
 
@@ -95,14 +98,12 @@ class TwoD(DataSet):
             torch.utils.data.Dataset: A PyTorch dataset yielding test data.
         """
         # Use zeros for the deterministic 2D function
-        data_x = np.zeros(self._train_size, dtype=np.float32)
-        data_y = np.zeros(self._train_size, dtype=np.float32)
+        data = np.zeros((self._train_size, 2), dtype=np.float32)
 
-        # Convert to tensors
-        x_tensor = torch.from_numpy(data_x)
-        y_tensor = torch.from_numpy(data_y)
+        # Convert to tensor
+        data_tensor = torch.from_numpy(data)
 
-        # Create a TensorDataset
-        dataset = TensorDataset(x_tensor, y_tensor)
+        # For 2D problems, inputs and targets are the same
+        dataset = TensorDataset(data_tensor, data_tensor)
 
         return dataset

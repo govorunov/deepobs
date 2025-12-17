@@ -36,9 +36,10 @@ class VAEEncoder(nn.Module):
         self.dropout3 = nn.Dropout2d(0.2)
 
         # Dense layers for mean and log std
-        # After convolutions: 28x28 -> 14x14 -> 7x7 -> 7x7
-        self.fc_mean = nn.Linear(64 * 7 * 7, n_latent)
-        self.fc_log_std = nn.Linear(64 * 7 * 7, n_latent)
+        # After convolutions: 28x28 -> 14x14 -> 7x7 -> 6x6
+        # conv3 with kernel=4, stride=1, padding=1: (7 + 2*1 - 4)/1 + 1 = 6
+        self.fc_mean = nn.Linear(64 * 6 * 6, n_latent)
+        self.fc_log_std = nn.Linear(64 * 6 * 6, n_latent)
 
     def forward(self, x):
         """Forward pass through encoder.
@@ -111,7 +112,11 @@ class VAEDecoder(nn.Module):
         self.deconv3 = nn.ConvTranspose2d(64, 64, kernel_size=4, stride=1, padding=1)
 
         # Final dense layer to image
-        self.fc_out = nn.Linear(64 * 14 * 14, 28 * 28)
+        # After deconvs: 7x7 -> 14x14 -> 15x15 -> 16x16
+        # deconv1: (7-1)*2 - 2*1 + 4 = 14
+        # deconv2: (14-1)*1 - 2*1 + 4 = 15
+        # deconv3: (15-1)*1 - 2*1 + 4 = 16
+        self.fc_out = nn.Linear(64 * 16 * 16, 28 * 28)
 
     def forward(self, z):
         """Forward pass through decoder.

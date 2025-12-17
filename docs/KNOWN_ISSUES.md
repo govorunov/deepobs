@@ -53,18 +53,24 @@ The ImageNet dataset cannot be automatically downloaded due to licensing restric
 
 These tests are marked with `@pytest.mark.skip` by default.
 
-### Tolstoi Dataset
+### Text Generation Dataset
 
-**Status**: Automatic download may fail
+**Status**: Penn Treebank now used (automatic download)
 
-The Tolstoi (War and Peace) text dataset download URL may occasionally be unavailable.
+The original `tolstoi_char_rnn` problem required manual download of War and Peace text, which was unreliable.
 
-**Workaround**:
-1. Manually download from alternative sources
-2. Place `tolstoi.txt` in `data/tolstoi/`
+**New Recommendation**: Use `textgen` problem instead
+- Automatically downloads Penn Treebank via torchtext
+- No manual download required
+- More reliable and standardized dataset
+
+**Legacy**: `tolstoi_char_rnn` is still available but deprecated
+- Requires manual download of War and Peace text
+- Place `train.npy` and `test.npy` in `data/tolstoi/`
 
 **Tests Affected**:
-- `test_tolstoi_char_rnn`
+- `test_tolstoi_char_rnn` (deprecated)
+- `test_textgen` (recommended)
 
 ---
 
@@ -378,7 +384,8 @@ If you encounter any issues not listed here:
 - **1.2.0-pytorch** (2025-12-15): Initial PyTorch implementation
   - All known issues documented
   - ImageNet manual download required
-  - Tolstoi dataset may need manual download
+  - Text generation now uses Penn Treebank (automatic download)
+  - Tolstoi dataset deprecated in favor of Penn Treebank
 
 ---
 

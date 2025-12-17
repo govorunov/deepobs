@@ -76,8 +76,9 @@ class Quadratic(DataSet):
         # Convert to tensor
         X_tensor = torch.from_numpy(X)
 
-        # Create a TensorDataset (wraps tensors as a dataset)
-        dataset = TensorDataset(X_tensor)
+        # For quadratic problems, inputs and targets are the same (the data point x)
+        # The loss is: 0.5 * (theta - x)^T * Q * (theta - x)
+        dataset = TensorDataset(X_tensor, X_tensor)
 
         return dataset
 
@@ -95,7 +96,7 @@ class Quadratic(DataSet):
         # Convert to tensor
         X_tensor = torch.from_numpy(X)
 
-        # Create a TensorDataset
-        dataset = TensorDataset(X_tensor)
+        # For quadratic problems, inputs and targets are the same
+        dataset = TensorDataset(X_tensor, X_tensor)
 
         return dataset
