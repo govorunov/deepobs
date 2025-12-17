@@ -1,0 +1,186 @@
+# DeepOBS Benchmark Configuration - AdamW on Small to Medium Problems
+# All test problems with under 10M parameters
+
+# Global settings
+global:
+  # Output directory for all results
+  output_dir: "./results"
+
+  # Random seed for reproducibility
+  random_seed: 42
+
+  # Default number of epochs
+  num_epochs: 20
+
+  # Default batch size
+  batch_size: 128
+
+  # Training log interval (log every N batches)
+  train_log_interval: 100
+
+  # Print training iteration info
+  print_train_iter: false
+
+  # Data directory (where datasets are stored)
+  data_dir: null  # null = use default
+
+# Test problems to benchmark (19 problems under 10M parameters)
+test_problems:
+  # ========================================
+  # MNIST problems (4 problems, 7.8K-3M params)
+  # ========================================
+  - name: mnist_logreg
+    num_epochs: 5
+    batch_size: 128
+
+  - name: mnist_mlp
+    num_epochs: 10
+    batch_size: 128
+
+  - name: mnist_2c2d
+    num_epochs: 20
+    batch_size: 128
+
+  # Note: VAE dimension bug fixed, but may have DataLoader issues on macOS
+  - name: mnist_vae
+    num_epochs: 30
+    batch_size: 128
+
+  # ========================================
+  # Fashion-MNIST problems (4 problems, 7.8K-3M params)
+  # ========================================
+  - name: fmnist_logreg
+    num_epochs: 5
+    batch_size: 128
+
+  - name: fmnist_mlp
+    num_epochs: 10
+    batch_size: 128
+
+  - name: fmnist_2c2d
+    num_epochs: 20
+    batch_size: 128
+
+  # Note: VAE dimension bug fixed, but may have DataLoader issues on macOS
+  - name: fmnist_vae
+    num_epochs: 30
+    batch_size: 128
+
+  # ========================================
+  # CIFAR-10 problems (1 problem, 1.4M params)
+  # Note: VGG16/19 excluded (>10M params)
+  # ========================================
+  - name: cifar10_3c3d
+    num_epochs: 50
+    batch_size: 128
+
+  # ========================================
+  # CIFAR-100 problems (3 problems, 1.4M-9M params)
+  # Note: VGG16/19 excluded (>10M params)
+  # ========================================
+  - name: cifar100_3c3d
+    num_epochs: 50
+    batch_size: 128
+
+  - name: cifar100_allcnnc
+    num_epochs: 50
+    batch_size: 256
+
+  - name: cifar100_wrn404
+    num_epochs: 50
+    batch_size: 128
+
+  # ========================================
+  # SVHN problems (2 problems, 1.4M-2.7M params)
+  # ========================================
+  - name: svhn_3c3d
+    num_epochs: 40
+    batch_size: 128
+
+  - name: svhn_wrn164
+    num_epochs: 40
+    batch_size: 128
+
+  # ========================================
+  # Text generation problems (1 problem, ~500K params)
+  # ========================================
+  - name: textgen
+    num_epochs: 30
+    batch_size: 64
+
+  # ========================================
+  # Synthetic optimization problems (4 problems, 2-100 params)
+  # ========================================
+  - name: quadratic_deep
+    num_epochs: 100
+    batch_size: 128
+
+  - name: two_d_rosenbrock
+    num_epochs: 100
+    batch_size: 128
+
+  - name: two_d_beale
+    num_epochs: 100
+    batch_size: 128
+
+  - name: two_d_branin
+    num_epochs: 100
+    batch_size: 128
+
+# Optimizers to benchmark
+optimizers:
+  # AdamW optimizer with standard hyperparameters
+  - name: AdamW
+    learning_rate: 0.001
+    betas: [0.9, 0.999]
+    eps: 1.0e-08
+    weight_decay: 0.01
+
+# Problem-specific optimizer overrides
+overrides:
+  # Logistic regression problems need higher learning rate
+  mnist_logreg:
+    AdamW:
+      learning_rate: 0.01
+
+  fmnist_logreg:
+    AdamW:
+      learning_rate: 0.01
+
+  # ResNet problems may benefit from learning rate schedule
+  cifar100_wrn404:
+    AdamW:
+      learning_rate: 0.001
+      lr_schedule:
+        epochs: [30, 40]
+        factors: [0.1, 0.1]
+
+  svhn_wrn164:
+    AdamW:
+      learning_rate: 0.001
+      lr_schedule:
+        epochs: [25, 35]
+        factors: [0.1, 0.1]
+
+  # Character RNN may need different learning rate
+  textgen:
+    AdamW:
+      learning_rate: 0.001
+      weight_decay: 0.001  # Lower weight decay for RNN
+
+  # Synthetic problems might benefit from higher learning rate
+  quadratic_deep:
+    AdamW:
+      learning_rate: 0.01
+
+  two_d_rosenbrock:
+    AdamW:
+      learning_rate: 0.01
+
+  two_d_beale:
+    AdamW:
+      learning_rate: 0.01
+
+  two_d_branin:
+    AdamW:
+      learning_rate: 0.01

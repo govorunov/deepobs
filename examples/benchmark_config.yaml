@@ -63,9 +63,8 @@ optimizers:
   # SGD with momentum
   - name: SGD
     learning_rate: 0.01
-    hyperparams:
-      momentum: 0.9
-      nesterov: false
+    momentum: 0.9
+    nesterov: false
     # Optional: learning rate schedule
     # lr_schedule:
     #   epochs: [30, 60, 90]
@@ -75,24 +74,21 @@ optimizers:
   - name: SGD_Nesterov
     optimizer_class: SGD  # Use SGD class
     learning_rate: 0.01
-    hyperparams:
-      momentum: 0.9
-      nesterov: true
+    momentum: 0.9
+    nesterov: true
 
   # Adam optimizer
   - name: Adam
     learning_rate: 0.001
-    hyperparams:
-      betas: [0.9, 0.999]
-      eps: 1.0e-08
+    betas: [0.9, 0.999]
+    eps: 1.0e-08
 
   # AdamW optimizer
   - name: AdamW
     learning_rate: 0.001
-    hyperparams:
-      betas: [0.9, 0.999]
-      eps: 1.0e-08
-      weight_decay: 0.01
+    betas: [0.9, 0.999]
+    eps: 1.0e-08
+    weight_decay: 0.01
 
 # Problem-specific optimizer overrides
 # Use this to set different learning rates for specific problems

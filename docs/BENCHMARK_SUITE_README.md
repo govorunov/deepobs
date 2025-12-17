@@ -73,15 +73,13 @@ test_problems:
 optimizers:
   - name: SGD
     learning_rate: 0.01
-    hyperparams:
-      momentum: 0.9
-      nesterov: false
+    momentum: 0.9
+    nesterov: false
 
   - name: Adam
     learning_rate: 0.001
-    hyperparams:
-      betas: [0.9, 0.999]
-      eps: 1.0e-08
+    betas: [0.9, 0.999]
+    eps: 1.0e-08
 
 # Problem-specific overrides
 overrides:
@@ -138,9 +136,8 @@ optimizers:
   - name: SGD                # Required: display name
     optimizer_class: SGD     # Optional: full import path for custom optimizers
     learning_rate: 0.01      # Required: base learning rate
-    hyperparams:             # Optimizer-specific parameters (passed to __init__ as-is)
-      momentum: 0.9
-      nesterov: false
+    momentum: 0.9            # Optimizer-specific parameters (passed to __init__ as **kwargs)
+    nesterov: false
     lr_schedule:             # Optional: LR decay schedule
       epochs: [30, 60, 90]
       factors: [0.1, 0.1, 0.1]
@@ -166,9 +163,8 @@ The benchmark suite supports any optimizer that follows PyTorch's optimizer inte
 optimizers:
   - name: Adam
     learning_rate: 0.001
-    hyperparams:
-      betas: [0.9, 0.999]
-      eps: 1.0e-8
+    betas: [0.9, 0.999]
+    eps: 1.0e-8
 ```
 
 **Option 2: Use Custom or Third-Party Optimizer** (specify full import path)
@@ -178,20 +174,18 @@ optimizers:
   - name: Lion  # Display name for results
     optimizer_class: lion_pytorch.Lion  # Full import path
     learning_rate: 0.0001
-    hyperparams:
-      betas: [0.9, 0.99]
-      weight_decay: 0.0
+    betas: [0.9, 0.99]
+    weight_decay: 0.0
 
   - name: MyCustomOptimizer
     optimizer_class: my_package.optimizers.MyCustomOptimizer
     learning_rate: 0.01
-    hyperparams:
-      custom_param1: 0.9
-      custom_param2: 1000
+    custom_param1: 0.9
+    custom_param2: 1000
 ```
 
 **Important Notes:**
-- All parameters in `hyperparams` are passed directly to the optimizer's `__init__` method without filtering
+- All optimizer parameters (except `name`, `optimizer_class`, `learning_rate`, and `lr_schedule`) are passed directly to the optimizer's `__init__` method as **kwargs
 - The optimizer class must be importable (ensure the package is installed or in your Python path)
 - Parameters can be overridden per-problem using the `overrides` section
 - If `optimizer_class` is not specified, the script tries to import from `torch.optim` using the `name` field
@@ -204,8 +198,7 @@ Define step-based learning rate decay:
 optimizers:
   - name: SGD
     learning_rate: 0.1
-    hyperparams:
-      momentum: 0.9
+    momentum: 0.9
     lr_schedule:
       epochs: [50, 100]      # Decay at epochs 50 and 100
       factors: [0.1, 0.01]   # Multiply by 0.1, then 0.01
@@ -225,8 +218,7 @@ overrides:
   mnist_logreg:              # Problem name
     SGD:                     # Optimizer name
       learning_rate: 0.1     # Override learning rate
-      hyperparams:           # Override hyperparameters
-        momentum: 0.0
+      momentum: 0.0          # Override optimizer parameters
 
   cifar10_3c3d:
     Adam:
@@ -296,14 +288,12 @@ test_problems:
 optimizers:
   - name: SGD
     learning_rate: 0.01
-    hyperparams:
-      momentum: 0.9
+    momentum: 0.9
 
   - name: Adam
     learning_rate: 0.001
-    hyperparams:
-      betas: [0.9, 0.999]
-      eps: 1.0e-08
+    betas: [0.9, 0.999]
+    eps: 1.0e-08
 ```
 
 ### Comprehensive (Full Benchmark)
@@ -337,34 +327,29 @@ test_problems:
 optimizers:
   - name: SGD
     learning_rate: 0.01
-    hyperparams:
-      momentum: 0.9
+    momentum: 0.9
 
   - name: SGD_Nesterov
     optimizer_class: SGD
     learning_rate: 0.01
-    hyperparams:
-      momentum: 0.9
-      nesterov: true
+    momentum: 0.9
+    nesterov: true
 
   - name: Adam
     learning_rate: 0.001
-    hyperparams:
-      betas: [0.9, 0.999]
-      eps: 1.0e-08
+    betas: [0.9, 0.999]
+    eps: 1.0e-08
 
   - name: AdamW
     learning_rate: 0.001
-    hyperparams:
-      betas: [0.9, 0.999]
-      eps: 1.0e-08
-      weight_decay: 0.01
+    betas: [0.9, 0.999]
+    eps: 1.0e-08
+    weight_decay: 0.01
 
   - name: RMSprop
     learning_rate: 0.001
-    hyperparams:
-      alpha: 0.99
-      eps: 1.0e-08
+    alpha: 0.99
+    eps: 1.0e-08
 ```
 
 ### With Learning Rate Schedule
@@ -374,8 +359,7 @@ optimizers:
   - name: SGD_Scheduled
     optimizer_class: SGD
     learning_rate: 0.1
-    hyperparams:
-      momentum: 0.9
+    momentum: 0.9
     lr_schedule:
       epochs: [30, 60, 90]
       factors: [0.1, 0.1, 0.1]
@@ -533,16 +517,15 @@ optimizers:
   - name: MyCustomOptimizer
     optimizer_class: my_package.optimizers.MyCustomOptimizer  # Full import path
     learning_rate: 0.01
-    hyperparams:
-      custom_param: 0.9
-      another_param: 100
+    custom_param: 0.9
+    another_param: 100
 ```
 
 ### How It Works
 
 1. **Built-in PyTorch optimizers**: If `optimizer_class` is not specified, the script automatically imports from `torch.optim` using the `name` field
 2. **Custom optimizers**: If `optimizer_class` is specified, the script dynamically imports from that path
-3. **No filtering**: All parameters in `hyperparams` are passed directly to the optimizer's `__init__` method
+3. **Simple parameter passing**: All optimizer parameters (except `name`, `optimizer_class`, `learning_rate`, and `lr_schedule`) are passed directly to the optimizer's `__init__` method as **kwargs
 
 ### Requirements
 
@@ -564,9 +547,8 @@ optimizers:
   - name: Lion
     optimizer_class: lion_pytorch.Lion
     learning_rate: 0.0001
-    hyperparams:
-      betas: [0.9, 0.99]
-      weight_decay: 0.0
+    betas: [0.9, 0.99]
+    weight_decay: 0.0
 ```
 
 **Your own optimizer:**
@@ -590,8 +572,7 @@ optimizers:
   - name: MyCustom
     optimizer_class: my_optimizers.MyCustomOptimizer
     learning_rate: 0.01
-    hyperparams:
-      custom_param: 0.9
+    custom_param: 0.9
 ```
 
 ## See Also

@@ -79,19 +79,19 @@ def get_optimizer_class(optimizer_name, optimizer_class_path=None):
             ) from e
 
 
-def create_hyperparams_spec(optimizer_class, hyperparams_dict):
+def create_hyperparams_spec(optimizer_class, optimizer_params):
     """Create hyperparameters specification for StandardRunner.
 
     Args:
         optimizer_class: PyTorch optimizer class
-        hyperparams_dict: Dictionary of hyperparameter values from config
+        optimizer_params: Dictionary of optimizer parameters (excluding lr, lr_schedule, name, optimizer_class)
 
     Returns:
         List of hyperparameter specifications for StandardRunner
     """
     hyperparams_spec = []
 
-    for param_name, param_value in hyperparams_dict.items():
+    for param_name, param_value in optimizer_params.items():
         # Determine type from value
         if isinstance(param_value, bool):
             param_type = bool
@@ -146,37 +146,56 @@ def get_optimizer_settings(optimizer_config, problem_name, overrides):
         overrides: Problem-specific overrides from config
 
     Returns:
-        Dictionary of optimizer settings
+        Dictionary with 'learning_rate', 'lr_sched_epochs', 'lr_sched_factors', and 'params'
     """
-    # Start with base optimizer config
-    settings = {
-        'learning_rate': optimizer_config['learning_rate'],
-        'hyperparams': optimizer_config.get('hyperparams', {}),
-        'lr_sched_epochs': None,
-        'lr_sched_factors': None,
-    }
+    # Known special parameters that should not be passed to optimizer
+    SPECIAL_PARAMS = {'name', 'optimizer_class', 'learning_rate', 'lr_schedule'}
 
-    # Add learning rate schedule if specified
-    if 'lr_schedule' in optimizer_config:
-        lr_sched = optimizer_config['lr_schedule']
-        settings['lr_sched_epochs'] = lr_sched.get('epochs')
-        settings['lr_sched_factors'] = lr_sched.get('factors')
+    # Start with base optimizer config - copy all params
+    all_params = dict(optimizer_config)
+
+    # Extract learning rate
+    learning_rate = all_params.pop('learning_rate')
+
+    # Extract learning rate schedule if present
+    lr_schedule = all_params.pop('lr_schedule', None)
+    lr_sched_epochs = None
+    lr_sched_factors = None
+    if lr_schedule:
+        lr_sched_epochs = lr_schedule.get('epochs')
+        lr_sched_factors = lr_schedule.get('factors')
+
+    # Remove other special params
+    all_params.pop('name', None)
+    all_params.pop('optimizer_class', None)
 
     # Apply problem-specific overrides
     if problem_name in overrides:
         optimizer_name = optimizer_config['name']
         if optimizer_name in overrides[problem_name]:
             override = overrides[problem_name][optimizer_name]
+
+            # Override learning rate if specified
             if 'learning_rate' in override:
-                settings['learning_rate'] = override['learning_rate']
-            if 'hyperparams' in override:
-                settings['hyperparams'].update(override['hyperparams'])
+                learning_rate = override['learning_rate']
+
+            # Override lr_schedule if specified
             if 'lr_schedule' in override:
                 lr_sched = override['lr_schedule']
-                settings['lr_sched_epochs'] = lr_sched.get('epochs')
-                settings['lr_sched_factors'] = lr_sched.get('factors')
+                lr_sched_epochs = lr_sched.get('epochs')
+                lr_sched_factors = lr_sched.get('factors')
 
-    return settings
+            # Override other parameters (excluding special ones)
+            for key, value in override.items():
+                if key not in SPECIAL_PARAMS:
+                    all_params[key] = value
+
+    return {
+        'learning_rate': learning_rate,
+        'lr_sched_epochs': lr_sched_epochs,
+        'lr_sched_factors': lr_sched_factors,
+        'params': all_params  # All other optimizer parameters
+    }
 
 
 def run_single_benchmark(problem_name, problem_settings, optimizer_config,
@@ -212,7 +231,7 @@ def run_single_benchmark(problem_name, problem_settings, optimizer_config,
         # Create hyperparameters specification
         hyperparams_spec = create_hyperparams_spec(
             optimizer_class,
-            optimizer_settings['hyperparams']
+            optimizer_settings['params']
         )
 
         # Create StandardRunner
@@ -235,8 +254,8 @@ def run_single_benchmark(problem_name, problem_settings, optimizer_config,
             'weight_decay': None,
         }
 
-        # Add optimizer hyperparameters
-        run_params.update(optimizer_settings['hyperparams'])
+        # Add optimizer parameters as **kwargs
+        run_params.update(optimizer_settings['params'])
 
         # Print configuration
         print(f"Test Problem: {problem_name}")
@@ -247,8 +266,8 @@ def run_single_benchmark(problem_name, problem_settings, optimizer_config,
         if optimizer_settings['lr_sched_epochs']:
             print(f"LR Schedule: epochs={optimizer_settings['lr_sched_epochs']}, "
                   f"factors={optimizer_settings['lr_sched_factors']}")
-        if optimizer_settings['hyperparams']:
-            print(f"Hyperparameters: {optimizer_settings['hyperparams']}")
+        if optimizer_settings['params']:
+            print(f"Optimizer Parameters: {optimizer_settings['params']}")
         print()
 
         # Run the benchmark

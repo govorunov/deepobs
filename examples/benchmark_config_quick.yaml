@@ -24,15 +24,13 @@ test_problems:
 optimizers:
   - name: SGD
     learning_rate: 0.01
-    hyperparams:
-      momentum: 0.9
-      nesterov: false
+    momentum: 0.9
+    nesterov: false
 
   - name: Adam
     learning_rate: 0.001
-    hyperparams:
-      betas: [0.9, 0.999]
-      eps: 1.0e-08
+    betas: [0.9, 0.999]
+    eps: 1.0e-08
 
 # No overrides needed for this simple config
 overrides: {}

@@ -60,8 +60,7 @@ test_problems:
 optimizers:
   - name: SGD
     learning_rate: 0.01
-    hyperparams:
-      momentum: 0.9
+    momentum: 0.9
 ```
 
 ### 2. Problem-Specific Overrides
@@ -88,8 +87,7 @@ optimizers:
   - name: MyCustomOptimizer
     optimizer_class: my_package.optimizers.MyCustomOptimizer
     learning_rate: 0.01
-    hyperparams:
-      custom_param: 0.9
+    custom_param: 0.9
 ```
 
 ### 5. Dry Run

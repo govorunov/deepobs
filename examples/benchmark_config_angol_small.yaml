@@ -1,4 +1,4 @@
-# DeepOBS Benchmark Configuration - AdamW on Small to Medium Problems
+# DeepOBS Benchmark Configuration - Angol on Small to Medium Problems
 # All test problems with under 10M parameters
 
 # Global settings
@@ -129,35 +129,35 @@ test_problems:
 
 # Optimizers to benchmark
 optimizers:
-  # AdamW optimizer with standard hyperparameters
-  - name: AdamW
+  # Angol optimizer with standard hyperparameters
+  - name: Angol
+    optimizer_class: angol.Angol
     learning_rate: 0.001
-    hyperparams:
-      betas: [0.9, 0.999]
-      eps: 1.0e-08
-      weight_decay: 0.01
+    lr_min: 0.0001
 
 # Problem-specific optimizer overrides
 overrides:
   # Logistic regression problems need higher learning rate
   mnist_logreg:
-    AdamW:
+    Angol:
       learning_rate: 0.01
+      lr_min: 0.001
 
   fmnist_logreg:
-    AdamW:
+    Angol:
       learning_rate: 0.01
+      lr_min: 0.001
 
   # ResNet problems may benefit from learning rate schedule
   cifar100_wrn404:
-    AdamW:
+    Angol:
       learning_rate: 0.001
       lr_schedule:
         epochs: [30, 40]
         factors: [0.1, 0.1]
 
   svhn_wrn164:
-    AdamW:
+    Angol:
       learning_rate: 0.001
       lr_schedule:
         epochs: [25, 35]
@@ -165,23 +165,27 @@ overrides:
 
   # Character RNN may need different learning rate
   textgen:
-    AdamW:
+    Angol:
       learning_rate: 0.001
       weight_decay: 0.001  # Lower weight decay for RNN
 
   # Synthetic problems might benefit from higher learning rate
   quadratic_deep:
-    AdamW:
+    Angol:
       learning_rate: 0.01
+      lr_min: 0.001
 
   two_d_rosenbrock:
-    AdamW:
+    Angol:
       learning_rate: 0.01
+      lr_min: 0.001
 
   two_d_beale:
-    AdamW:
+    Angol:
       learning_rate: 0.01
+      lr_min: 0.001
 
   two_d_branin:
-    AdamW:
+    Angol:
       learning_rate: 0.01
+      lr_min: 0.001
