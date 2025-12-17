@@ -152,16 +152,10 @@ overrides:
   cifar100_wrn404:
     Angol:
       learning_rate: 0.001
-      lr_schedule:
-        epochs: [30, 40]
-        factors: [0.1, 0.1]
 
   svhn_wrn164:
     Angol:
       learning_rate: 0.001
-      lr_schedule:
-        epochs: [25, 35]
-        factors: [0.1, 0.1]
 
   # Character RNN may need different learning rate
   textgen:
