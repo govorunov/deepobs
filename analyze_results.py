@@ -7,6 +7,7 @@ Adapted to work with the actual file structure from StandardRunner.
 import json
 import os
 import glob
+import argparse
 import numpy as np
 import matplotlib.pyplot as plt
 from collections import defaultdict
@@ -229,12 +230,24 @@ def print_statistics(results):
 
 def main():
     """Main function for result analysis."""
+    # Parse command-line arguments
+    parser = argparse.ArgumentParser(
+        description='Analyze DeepOBS benchmark results and generate plots.'
+    )
+    parser.add_argument(
+        'results_dir',
+        nargs='?',
+        default='./results',
+        help='Path to the directory containing result files (default: ./results)'
+    )
+    args = parser.parse_args()
+
     print("=" * 80)
     print("DeepOBS Benchmark Results Analysis")
     print("=" * 80)
 
     # Load results
-    results_dir = './results'
+    results_dir = args.results_dir
     print(f"\nLoading results from: {results_dir}")
 
     results = load_results(results_dir)

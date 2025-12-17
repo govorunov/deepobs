@@ -4,7 +4,7 @@
 # Global settings
 global:
   # Output directory for all results
-  output_dir: "./results_adamw_small"
+  output_dir: "./results"
 
   # Random seed for reproducibility
   random_seed: 42
