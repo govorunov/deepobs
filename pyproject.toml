@@ -36,6 +36,7 @@ dependencies = [
     "torch>=1.9.0",
     "torchvision>=0.10.0",
     "pytorch-optimizer>=3.4.0",
+    "plotly>=6.5.0",
 ]
 
 [project.optional-dependencies]

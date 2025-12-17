@@ -9,8 +9,9 @@ import os
 import glob
 import argparse
 import numpy as np
-import matplotlib.pyplot as plt
 from collections import defaultdict
+import plotly.graph_objects as go
+from plotly.subplots import make_subplots
 
 
 def load_results(results_dir):
@@ -50,9 +51,13 @@ def load_results(results_dir):
     return results
 
 
-def plot_learning_curves(results, output_dir='./results/plots'):
-    """Plot learning curves for all test problems and optimizers."""
-    os.makedirs(output_dir, exist_ok=True)
+def create_learning_curve_figures(results):
+    """Create Plotly figures for learning curves for all test problems and optimizers.
+
+    Returns:
+        List of plotly figure objects
+    """
+    figures = []
 
     # Group by test problem
     by_testproblem = defaultdict(dict)
@@ -60,110 +65,245 @@ def plot_learning_curves(results, output_dir='./results/plots'):
         by_testproblem[testproblem][optimizer] = data
 
     # Create plots for each test problem
-    for testproblem, optimizer_results in by_testproblem.items():
-        fig, axes = plt.subplots(1, 2, figsize=(14, 5))
+    for testproblem in sorted(by_testproblem.keys()):
+        optimizer_results = by_testproblem[testproblem]
 
-        # Plot test loss
-        ax = axes[0]
+        # Create subplot with 1 row and 2 columns
+        fig = make_subplots(
+            rows=1, cols=2,
+            subplot_titles=(f'{testproblem} - Test Loss', f'{testproblem} - Test Accuracy'),
+            horizontal_spacing=0.12
+        )
+
+        # Plot test loss (left subplot)
         for optimizer, data in optimizer_results.items():
             if 'test_losses' in data:
-                epochs = range(len(data['test_losses']))
-                ax.plot(epochs, data['test_losses'], label=optimizer, linewidth=2, marker='o')
-        ax.set_xlabel('Epoch', fontsize=12)
-        ax.set_ylabel('Test Loss', fontsize=12)
-        ax.set_title(f'{testproblem} - Test Loss', fontsize=14, fontweight='bold')
-        ax.legend(fontsize=10)
-        ax.grid(True, alpha=0.3)
+                epochs = list(range(len(data['test_losses'])))
+                fig.add_trace(
+                    go.Scatter(
+                        x=epochs,
+                        y=data['test_losses'],
+                        mode='lines+markers',
+                        name=optimizer,
+                        legendgroup=optimizer,
+                        showlegend=True
+                    ),
+                    row=1, col=1
+                )
 
-        # Plot test accuracy
-        ax = axes[1]
+        # Plot test accuracy (right subplot)
         for optimizer, data in optimizer_results.items():
             if 'test_accuracies' in data:
-                epochs = range(len(data['test_accuracies']))
+                epochs = list(range(len(data['test_accuracies'])))
                 accuracies = [acc * 100 for acc in data['test_accuracies']]  # Convert to percentage
-                ax.plot(epochs, accuracies, label=optimizer, linewidth=2, marker='o')
-        ax.set_xlabel('Epoch', fontsize=12)
-        ax.set_ylabel('Test Accuracy (%)', fontsize=12)
-        ax.set_title(f'{testproblem} - Test Accuracy', fontsize=14, fontweight='bold')
-        ax.legend(fontsize=10)
-        ax.grid(True, alpha=0.3)
+                fig.add_trace(
+                    go.Scatter(
+                        x=epochs,
+                        y=accuracies,
+                        mode='lines+markers',
+                        name=optimizer,
+                        legendgroup=optimizer,
+                        showlegend=False  # Only show in legend once
+                    ),
+                    row=1, col=2
+                )
 
-        plt.tight_layout()
-        output_file = os.path.join(output_dir, f'{testproblem}_learning_curves.png')
-        plt.savefig(output_file, dpi=150, bbox_inches='tight')
-        print(f"Saved: {output_file}")
-        plt.close()
+        # Update axes labels
+        fig.update_xaxes(title_text="Epoch", row=1, col=1)
+        fig.update_xaxes(title_text="Epoch", row=1, col=2)
+        fig.update_yaxes(title_text="Test Loss", row=1, col=1)
+        fig.update_yaxes(title_text="Test Accuracy (%)", row=1, col=2)
+
+        # Update layout
+        fig.update_layout(
+            height=500,
+            showlegend=True,
+            hovermode='x unified',
+            template='plotly_white'
+        )
+
+        figures.append(fig)
+
+    return figures
 
 
-def plot_comparison_bar(results, output_dir='./results/plots'):
-    """Create bar plot comparing optimizers across test problems."""
-    os.makedirs(output_dir, exist_ok=True)
+def create_comparison_bar_figure(results):
+    """Create Plotly figure with bar plots comparing optimizers across test problems.
 
+    Returns:
+        Plotly figure object
+    """
     # Collect data
     testproblems = sorted(set(tp for tp, _ in results.keys()))
     optimizers = sorted(set(opt for _, opt in results.keys()))
 
     # Create subplots for accuracy and loss
-    fig, axes = plt.subplots(1, 2, figsize=(14, 5))
+    fig = make_subplots(
+        rows=1, cols=2,
+        subplot_titles=('Optimizer Comparison - Best Test Accuracy',
+                        'Optimizer Comparison - Best Test Loss'),
+        horizontal_spacing=0.15
+    )
 
-    # Final Accuracy comparison
-    ax = axes[0]
-    x = np.arange(len(testproblems))
-    width = 0.8 / len(optimizers)
-
-    for j, optimizer in enumerate(optimizers):
+    # Best Accuracy comparison (left subplot)
+    for optimizer in optimizers:
         accuracies = []
         for testproblem in testproblems:
             if (testproblem, optimizer) in results:
                 res = results[(testproblem, optimizer)]
                 if 'test_accuracies' in res:
-                    accuracies.append(res['test_accuracies'][-1] * 100)  # Convert to percentage
+                    accuracies.append(max(res['test_accuracies']) * 100)  # Convert to percentage
                 else:
                     accuracies.append(0)
             else:
                 accuracies.append(0)
 
-        offset = (j - len(optimizers) / 2) * width + width / 2
-        ax.bar(x + offset, accuracies, width, label=optimizer)
+        fig.add_trace(
+            go.Bar(
+                x=testproblems,
+                y=accuracies,
+                name=optimizer,
+                legendgroup=optimizer,
+                showlegend=True
+            ),
+            row=1, col=1
+        )
 
-    ax.set_xlabel('Test Problem', fontsize=12)
-    ax.set_ylabel('Final Test Accuracy (%)', fontsize=12)
-    ax.set_title('Optimizer Comparison - Final Test Accuracy', fontsize=14, fontweight='bold')
-    ax.set_xticks(x)
-    ax.set_xticklabels(testproblems, rotation=45, ha='right')
-    ax.legend()
-    ax.grid(True, alpha=0.3, axis='y')
-
-    # Final Loss comparison
-    ax = axes[1]
-    for j, optimizer in enumerate(optimizers):
+    # Best Loss comparison (right subplot)
+    for optimizer in optimizers:
         losses = []
         for testproblem in testproblems:
             if (testproblem, optimizer) in results:
                 res = results[(testproblem, optimizer)]
                 if 'test_losses' in res:
-                    losses.append(res['test_losses'][-1])
+                    losses.append(min(res['test_losses']))
                 else:
                     losses.append(0)
             else:
                 losses.append(0)
 
-        offset = (j - len(optimizers) / 2) * width + width / 2
-        ax.bar(x + offset, losses, width, label=optimizer)
+        fig.add_trace(
+            go.Bar(
+                x=testproblems,
+                y=losses,
+                name=optimizer,
+                legendgroup=optimizer,
+                showlegend=False  # Only show in legend once
+            ),
+            row=1, col=2
+        )
 
-    ax.set_xlabel('Test Problem', fontsize=12)
-    ax.set_ylabel('Final Test Loss', fontsize=12)
-    ax.set_title('Optimizer Comparison - Final Test Loss', fontsize=14, fontweight='bold')
-    ax.set_xticks(x)
-    ax.set_xticklabels(testproblems, rotation=45, ha='right')
-    ax.legend()
-    ax.grid(True, alpha=0.3, axis='y')
+    # Update axes labels
+    fig.update_xaxes(title_text="Test Problem", row=1, col=1, tickangle=-45)
+    fig.update_xaxes(title_text="Test Problem", row=1, col=2, tickangle=-45)
+    fig.update_yaxes(title_text="Best Test Accuracy (%)", row=1, col=1)
+    fig.update_yaxes(title_text="Best Test Loss", row=1, col=2)
 
-    plt.tight_layout()
-    output_file = os.path.join(output_dir, 'optimizer_comparison.png')
-    plt.savefig(output_file, dpi=150, bbox_inches='tight')
-    print(f"Saved: {output_file}")
-    plt.close()
+    # Update layout
+    fig.update_layout(
+        height=500,
+        showlegend=True,
+        barmode='group',
+        template='plotly_white',
+        hovermode='x unified'
+    )
+
+    return fig
+
+
+def generate_html_report(results, output_file='./results/benchmark_report.html'):
+    """Generate a single self-contained HTML report with all plots.
+
+    Args:
+        results: Dictionary mapping (testproblem, optimizer) to results
+        output_file: Path to output HTML file
+    """
+    # Create all figures
+    print("Generating learning curve figures...")
+    learning_curve_figs = create_learning_curve_figures(results)
+
+    print("Generating comparison bar figure...")
+    comparison_fig = create_comparison_bar_figure(results)
+
+    # Create HTML content
+    html_parts = []
+
+    # HTML header with styling
+    html_parts.append("""
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>DeepOBS Benchmark Results</title>
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js" charset="utf-8"></script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        h1 {
+            color: #333;
+            border-bottom: 3px solid #007bff;
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #555;
+            margin-top: 40px;
+            margin-bottom: 20px;
+        }
+        .plot-container {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .timestamp {
+            color: #777;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>DeepOBS Benchmark Results</h1>
+        <p class="timestamp">Generated: """ + __import__('datetime').datetime.now().strftime('%Y-%m-%d %H:%M:%S') + """</p>
+    </div>
+""")
+
+    # Add comparison figure first
+    html_parts.append('<h2>Optimizer Comparison Across Test Problems</h2>')
+    html_parts.append('<div class="plot-container">')
+    html_parts.append(comparison_fig.to_html(full_html=False, include_plotlyjs=False))
+    html_parts.append('</div>')
+
+    # Add learning curve figures
+    html_parts.append('<h2>Learning Curves by Test Problem</h2>')
+    for fig in learning_curve_figs:
+        html_parts.append('<div class="plot-container">')
+        html_parts.append(fig.to_html(full_html=False, include_plotlyjs=False))
+        html_parts.append('</div>')
+
+    # HTML footer
+    html_parts.append("""
+</body>
+</html>
+""")
+
+    # Write to file
+    os.makedirs(os.path.dirname(output_file) if os.path.dirname(output_file) else '.', exist_ok=True)
+    with open(output_file, 'w', encoding='utf-8') as f:
+        f.write('\n'.join(html_parts))
+
+    print(f"\nHTML report saved to: {output_file}")
+    return output_file
 
 
 def print_detailed_summary(results):
@@ -262,22 +402,21 @@ def main():
     print_detailed_summary(results)
     print_statistics(results)
 
-    # Create plots
+    # Generate HTML report
     print("\n" + "=" * 80)
-    print("Creating plots...")
+    print("Generating interactive HTML report...")
     print("=" * 80 + "\n")
 
     try:
-        plot_learning_curves(results)
-        plot_comparison_bar(results)
+        output_file = generate_html_report(results)
 
         print("\n" + "=" * 80)
-        print("✓ All plots created successfully!")
-        print(f"Check ./results/plots/ directory")
+        print("✓ HTML report created successfully!")
+        print(f"Open the report: {output_file}")
         print("=" * 80)
 
     except Exception as e:
-        print(f"\n✗ Error creating plots: {e}")
+        print(f"\n✗ Error generating HTML report: {e}")
         import traceback
         traceback.print_exc()
 
