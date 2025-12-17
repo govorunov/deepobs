@@ -33,13 +33,14 @@ dependencies = [
     "seaborn>=0.11.0",
     "pyyaml>=6.0.3",
     "scipy>=1.10.1",
+    "torch>=1.9.0",
+    "torchvision>=0.10.0",
+    "pytorch-optimizer>=3.4.0",
 ]
 
 [project.optional-dependencies]
-pytorch = [
-    "torch>=1.9.0",
-    "torchvision>=0.10.0",
-]
+# PyTorch is now a required dependency (kept for backwards compatibility)
+pytorch = []
 dev = [
     "pytest>=6.0.0",
     "pytest-cov>=2.10.0",
@@ -52,12 +53,13 @@ docs = [
     "sphinx-argparse>=0.3.0",
 ]
 all = [
-    "torch>=1.9.0",
-    "torchvision>=0.10.0",
     "pytest>=6.0.0",
     "pytest-cov>=2.10.0",
     "black>=20.8b1",
     "flake8>=3.8.0",
+    "sphinx>=4.0.0",
+    "sphinx-rtd-theme>=1.0.0",
+    "sphinx-argparse>=0.3.0",
 ]
 
 [tool.setuptools]

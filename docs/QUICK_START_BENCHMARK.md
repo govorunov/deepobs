@@ -82,7 +82,17 @@ optimizers:
       factors: [0.1, 0.1, 0.1]
 ```
 
-### 4. Dry Run
+### 4. Custom Optimizers
+```yaml
+optimizers:
+  - name: MyCustomOptimizer
+    optimizer_class: my_package.optimizers.MyCustomOptimizer
+    learning_rate: 0.01
+    hyperparams:
+      custom_param: 0.9
+```
+
+### 5. Dry Run
 ```bash
 uv run python run_benchmark.py my_config.yaml --dry-run
 ```

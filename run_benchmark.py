@@ -15,25 +15,13 @@ If no config file is specified, uses 'benchmark_config.yaml' by default.
 """
 
 import argparse
+import importlib
 import os
 import sys
 import yaml
 import torch.optim as optim
 from datetime import datetime
 from deepobs.pytorch.runners import StandardRunner
-
-
-# Mapping of optimizer names to PyTorch optimizer classes
-OPTIMIZER_CLASSES = {
-    'SGD': optim.SGD,
-    'Adam': optim.Adam,
-    'AdamW': optim.AdamW,
-    'RMSprop': optim.RMSprop,
-    'Adagrad': optim.Adagrad,
-    'Adadelta': optim.Adadelta,
-    'Adamax': optim.Adamax,
-    'ASGD': optim.ASGD,
-}
 
 
 def load_config(config_file):
@@ -54,20 +42,41 @@ def load_config(config_file):
     return config
 
 
-def get_optimizer_class(optimizer_name):
-    """Get PyTorch optimizer class from name.
+def get_optimizer_class(optimizer_name, optimizer_class_path=None):
+    """Get optimizer class by dynamic import.
 
     Args:
-        optimizer_name: Name of the optimizer
+        optimizer_name: Name of the optimizer (used as fallback for torch.optim)
+        optimizer_class_path: Optional full import path (e.g., 'my_pkg.optimizers.MyOptimizer')
 
     Returns:
-        PyTorch optimizer class
+        Optimizer class
+
+    Raises:
+        ImportError: If the optimizer class cannot be imported
+        AttributeError: If the class is not found in the module
     """
-    if optimizer_name in OPTIMIZER_CLASSES:
-        return OPTIMIZER_CLASSES[optimizer_name]
+    if optimizer_class_path:
+        # Use custom import path from config
+        try:
+            module_path, class_name = optimizer_class_path.rsplit('.', 1)
+            module = importlib.import_module(module_path)
+            optimizer_class = getattr(module, class_name)
+            return optimizer_class
+        except (ValueError, ImportError, AttributeError) as e:
+            raise ImportError(
+                f"Failed to import optimizer from '{optimizer_class_path}': {e}"
+            ) from e
     else:
-        raise ValueError(f"Unknown optimizer: {optimizer_name}. "
-                        f"Available: {list(OPTIMIZER_CLASSES.keys())}")
+        # Try to import from torch.optim using optimizer_name
+        try:
+            optimizer_class = getattr(optim, optimizer_name)
+            return optimizer_class
+        except AttributeError as e:
+            raise ImportError(
+                f"Optimizer '{optimizer_name}' not found in torch.optim. "
+                f"Specify 'optimizer_class' in config to use a custom optimizer."
+            ) from e
 
 
 def create_hyperparams_spec(optimizer_class, hyperparams_dict):
@@ -192,8 +201,8 @@ def run_single_benchmark(problem_name, problem_settings, optimizer_config,
 
     try:
         # Get optimizer class
-        optimizer_class_name = optimizer_config.get('optimizer_class', optimizer_name)
-        optimizer_class = get_optimizer_class(optimizer_class_name)
+        optimizer_class_path = optimizer_config.get('optimizer_class')
+        optimizer_class = get_optimizer_class(optimizer_name, optimizer_class_path)
 
         # Get optimizer settings with overrides
         optimizer_settings = get_optimizer_settings(

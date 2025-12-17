@@ -136,9 +136,9 @@ Each optimizer configuration:
 ```yaml
 optimizers:
   - name: SGD                # Required: display name
-    optimizer_class: SGD     # Optional: if different from name
+    optimizer_class: SGD     # Optional: full import path for custom optimizers
     learning_rate: 0.01      # Required: base learning rate
-    hyperparams:             # Optimizer-specific parameters
+    hyperparams:             # Optimizer-specific parameters (passed to __init__ as-is)
       momentum: 0.9
       nesterov: false
     lr_schedule:             # Optional: LR decay schedule
@@ -146,7 +146,7 @@ optimizers:
       factors: [0.1, 0.1, 0.1]
 ```
 
-Supported optimizers:
+Built-in PyTorch optimizers (automatically imported from `torch.optim`):
 - `SGD` - Stochastic Gradient Descent
 - `Adam` - Adam optimizer
 - `AdamW` - Adam with weight decay
@@ -155,6 +155,46 @@ Supported optimizers:
 - `Adadelta` - Adadelta
 - `Adamax` - Adamax
 - `ASGD` - Averaged SGD
+
+#### Using Custom Optimizers
+
+The benchmark suite supports any optimizer that follows PyTorch's optimizer interface. You can use optimizers from third-party packages or your own custom implementations.
+
+**Option 1: Use PyTorch Built-in Optimizer** (automatically imported)
+
+```yaml
+optimizers:
+  - name: Adam
+    learning_rate: 0.001
+    hyperparams:
+      betas: [0.9, 0.999]
+      eps: 1.0e-8
+```
+
+**Option 2: Use Custom or Third-Party Optimizer** (specify full import path)
+
+```yaml
+optimizers:
+  - name: Lion  # Display name for results
+    optimizer_class: lion_pytorch.Lion  # Full import path
+    learning_rate: 0.0001
+    hyperparams:
+      betas: [0.9, 0.99]
+      weight_decay: 0.0
+
+  - name: MyCustomOptimizer
+    optimizer_class: my_package.optimizers.MyCustomOptimizer
+    learning_rate: 0.01
+    hyperparams:
+      custom_param1: 0.9
+      custom_param2: 1000
+```
+
+**Important Notes:**
+- All parameters in `hyperparams` are passed directly to the optimizer's `__init__` method without filtering
+- The optimizer class must be importable (ensure the package is installed or in your Python path)
+- Parameters can be overridden per-problem using the `overrides` section
+- If `optimizer_class` is not specified, the script tries to import from `torch.optim` using the `name` field
 
 ### Learning Rate Schedules
 
@@ -481,33 +521,77 @@ for filepath in glob.glob(pattern, recursive=True):
     print(f"Final accuracy: {data['test_accuracies'][-1]:.4f}")
 ```
 
-## Contributing
+## Using Custom Optimizers
 
-To add support for custom optimizers:
+The benchmark suite now supports custom optimizers through dynamic imports - no code changes needed!
 
-1. Import your optimizer class
-2. Add to `OPTIMIZER_CLASSES` dict in `run_benchmark.py`
-3. Use in configuration file
+### Quick Example
 
-Example:
+```yaml
+# In your config file
+optimizers:
+  - name: MyCustomOptimizer
+    optimizer_class: my_package.optimizers.MyCustomOptimizer  # Full import path
+    learning_rate: 0.01
+    hyperparams:
+      custom_param: 0.9
+      another_param: 100
+```
 
-```python
-# In run_benchmark.py
-from my_optimizers import MyCustomOptimizer
+### How It Works
 
-OPTIMIZER_CLASSES = {
-    # ... existing optimizers ...
-    'MyCustom': MyCustomOptimizer,
-}
+1. **Built-in PyTorch optimizers**: If `optimizer_class` is not specified, the script automatically imports from `torch.optim` using the `name` field
+2. **Custom optimizers**: If `optimizer_class` is specified, the script dynamically imports from that path
+3. **No filtering**: All parameters in `hyperparams` are passed directly to the optimizer's `__init__` method
+
+### Requirements
+
+- The optimizer class must be importable (package must be installed or in your Python path)
+- The optimizer must follow PyTorch's optimizer interface
+- All hyperparameters must be valid for the optimizer's `__init__` method
+
+### Examples
+
+**Third-party optimizer (e.g., Lion):**
+
+```bash
+# Install the package first
+pip install lion-pytorch
 ```
 
 ```yaml
-# In config file
+optimizers:
+  - name: Lion
+    optimizer_class: lion_pytorch.Lion
+    learning_rate: 0.0001
+    hyperparams:
+      betas: [0.9, 0.99]
+      weight_decay: 0.0
+```
+
+**Your own optimizer:**
+
+```python
+# In my_optimizers.py
+import torch
+
+class MyCustomOptimizer(torch.optim.Optimizer):
+    def __init__(self, params, lr=0.01, custom_param=0.9):
+        defaults = dict(lr=lr, custom_param=custom_param)
+        super().__init__(params, defaults)
+
+    def step(self, closure=None):
+        # Your optimization logic here
+        pass
+```
+
+```yaml
 optimizers:
   - name: MyCustom
+    optimizer_class: my_optimizers.MyCustomOptimizer
     learning_rate: 0.01
     hyperparams:
-      my_param: 0.9
+      custom_param: 0.9
 ```
 
 ## See Also
