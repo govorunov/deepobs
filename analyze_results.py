@@ -75,8 +75,14 @@ def create_learning_curve_figures(results):
             horizontal_spacing=0.12
         )
 
-        # Plot test loss (left subplot)
-        for optimizer, data in optimizer_results.items():
+        # Plotly default color sequence
+        colors = ['#636EFA', '#EF553B', '#00CC96', '#AB63FA', '#FFA15A', '#19D3F3', '#FF6692', '#B6E880', '#FF97FF', '#FECB52']
+
+        # Plot both loss and accuracy for each optimizer together to ensure color consistency
+        for idx, (optimizer, data) in enumerate(optimizer_results.items()):
+            color = colors[idx % len(colors)]
+
+            # Plot test loss (left subplot)
             if 'test_losses' in data:
                 epochs = list(range(len(data['test_losses'])))
                 fig.add_trace(
@@ -86,13 +92,14 @@ def create_learning_curve_figures(results):
                         mode='lines+markers',
                         name=optimizer,
                         legendgroup=optimizer,
-                        showlegend=True
+                        showlegend=True,
+                        line=dict(color=color),
+                        marker=dict(color=color)
                     ),
                     row=1, col=1
                 )
 
-        # Plot test accuracy (right subplot)
-        for optimizer, data in optimizer_results.items():
+            # Plot test accuracy (right subplot)
             if 'test_accuracies' in data:
                 epochs = list(range(len(data['test_accuracies'])))
                 accuracies = [acc * 100 for acc in data['test_accuracies']]  # Convert to percentage
@@ -103,7 +110,9 @@ def create_learning_curve_figures(results):
                         mode='lines+markers',
                         name=optimizer,
                         legendgroup=optimizer,
-                        showlegend=False  # Only show in legend once
+                        showlegend=False,  # Only show in legend once
+                        line=dict(color=color),
+                        marker=dict(color=color)
                     ),
                     row=1, col=2
                 )
@@ -145,8 +154,14 @@ def create_comparison_bar_figure(results):
         horizontal_spacing=0.15
     )
 
-    # Best Accuracy comparison (left subplot)
-    for optimizer in optimizers:
+    # Plotly default color sequence
+    colors = ['#636EFA', '#EF553B', '#00CC96', '#AB63FA', '#FFA15A', '#19D3F3', '#FF6692', '#B6E880', '#FF97FF', '#FECB52']
+
+    # Plot both accuracy and loss for each optimizer together to ensure color consistency
+    for idx, optimizer in enumerate(optimizers):
+        color = colors[idx % len(colors)]
+
+        # Collect accuracy data
         accuracies = []
         for testproblem in testproblems:
             if (testproblem, optimizer) in results:
@@ -158,19 +173,7 @@ def create_comparison_bar_figure(results):
             else:
                 accuracies.append(0)
 
-        fig.add_trace(
-            go.Bar(
-                x=testproblems,
-                y=accuracies,
-                name=optimizer,
-                legendgroup=optimizer,
-                showlegend=True
-            ),
-            row=1, col=1
-        )
-
-    # Best Loss comparison (right subplot)
-    for optimizer in optimizers:
+        # Collect loss data
         losses = []
         for testproblem in testproblems:
             if (testproblem, optimizer) in results:
@@ -182,13 +185,28 @@ def create_comparison_bar_figure(results):
             else:
                 losses.append(0)
 
+        # Add accuracy trace (left subplot)
+        fig.add_trace(
+            go.Bar(
+                x=testproblems,
+                y=accuracies,
+                name=optimizer,
+                legendgroup=optimizer,
+                showlegend=True,
+                marker=dict(color=color)
+            ),
+            row=1, col=1
+        )
+
+        # Add loss trace (right subplot)
         fig.add_trace(
             go.Bar(
                 x=testproblems,
                 y=losses,
                 name=optimizer,
                 legendgroup=optimizer,
-                showlegend=False  # Only show in legend once
+                showlegend=False,  # Only show in legend once
+                marker=dict(color=color)
             ),
             row=1, col=2
         )
