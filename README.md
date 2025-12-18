@@ -49,6 +49,36 @@ DeepOBS automates several steps when benchmarking deep learning optimizers:
 
 ## Quick Start
 
+The easiest way to use DeepOBS is through the command-line interface:
+
+### 1. Run a Benchmark
+
+```bash
+# Run benchmark with default configuration
+uv run deepobs benchmark
+
+# Or with a custom configuration
+uv run deepobs benchmark my_config.yaml
+```
+
+### 2. Analyze Results
+
+```bash
+# Generate interactive plots and statistics
+uv run deepobs analyze
+
+# Or analyze results from a custom directory
+uv run deepobs analyze ./my_results
+```
+
+That's it! DeepOBS will run your benchmarks and generate an interactive HTML report with all results.
+
+See [Quick Start Guide](docs/QUICK_START_BENCHMARK.md) for detailed instructions.
+
+### Programmatic Usage
+
+You can also use DeepOBS as a Python library:
+
 ```python
 import torch
 from deepobs.pytorch import testproblems
@@ -61,7 +91,6 @@ tproblem.set_up()
 optimizer = torch.optim.Adam(tproblem.model.parameters(), lr=0.001)
 
 for epoch in range(10):
-    # Training loop
     for batch in tproblem.train_loader:
         optimizer.zero_grad()
         losses, accuracy = tproblem.get_batch_loss_and_accuracy(batch)
@@ -69,6 +98,8 @@ for epoch in range(10):
         loss.backward()
         optimizer.step()
 ```
+
+For more programmatic examples, see [PyTorch Usage Guide](docs/README_PYTORCH.md).
 
 ## Available Test Problems
 
@@ -192,7 +223,23 @@ pip install -e ".[pytorch]"
 
 ## Usage Examples
 
-### Basic Training
+### Command-Line Interface
+
+The recommended way to use DeepOBS:
+
+```bash
+# Run a benchmark suite
+uv run deepobs benchmark my_config.yaml
+
+# Analyze and visualize results
+uv run deepobs analyze ./results
+```
+
+See [Quick Start Guide](docs/QUICK_START_BENCHMARK.md) for configuration examples.
+
+### Programmatic API
+
+DeepOBS can also be used as a Python library for custom training loops:
 
 ```python
 import torch
@@ -210,324 +257,58 @@ for epoch in range(100):
     for batch in tp.train_loader:
         optimizer.zero_grad()
         losses, accuracy = tp.get_batch_loss_and_accuracy(batch)
-        loss = losses.mean() + tp.get_regularization_loss()
+        loss = losses.mean()
         loss.backward()
         optimizer.step()
 ```
 
-### GPU Training
-
-DeepOBS supports CUDA and MPS (Apple Silicon) backends for GPU acceleration.
-
-```python
-import torch
-from deepobs.pytorch import testproblems
-
-# Auto-select best available device (MPS on Apple Silicon, CUDA on NVIDIA GPUs, CPU otherwise)
-# DeepOBS automatically selects the best device when no device is specified
-tproblem = testproblems.cifar10_3c3d(batch_size=128)
-tproblem.set_up()
-print(f"Using device: {tproblem.device}")  # Will show 'mps', 'cuda', or 'cpu'
-
-# Or manually specify device
-# device = torch.device('cuda')  # NVIDIA GPU
-# device = torch.device('mps')   # Apple Silicon GPU
-# device = torch.device('cpu')   # CPU only
-# tproblem = testproblems.cifar10_3c3d(batch_size=128, device=device)
-
-# Optimizer and training loop
-optimizer = torch.optim.Adam(tproblem.model.parameters(), lr=1e-3)
-
-for epoch in range(100):
-    tproblem.model.train()
-    for batch in tproblem.train_loader:
-        # Data is automatically moved to device by test problem
-        optimizer.zero_grad()
-        loss, accuracy = tproblem.get_batch_loss_and_accuracy(batch)
-        loss.mean().backward()
-        optimizer.step()
-```
-
-### Using StandardRunner
-
-The `StandardRunner` automates the entire training workflow:
-
-```python
-import torch.optim as optim
-from deepobs.pytorch.runners import StandardRunner
-
-# Define optimizer and hyperparameters
-optimizer_class = optim.SGD
-hyperparams = [
-    {"name": "momentum", "type": float, "default": 0.0},
-    {"name": "nesterov", "type": bool, "default": False}
-]
-
-# Create runner
-runner = StandardRunner(optimizer_class, hyperparams)
-
-# Run benchmark
-runner.run(
-    testproblem='mnist_mlp',
-    batch_size=128,
-    num_epochs=10,
-    learning_rate=0.01,
-    momentum=0.9,
-    random_seed=42,
-    output_dir='./results'
-)
-```
-
-### Learning Rate Scheduling
-
-```python
-from torch.optim.lr_scheduler import MultiStepLR
-
-# Create test problem
-tproblem = testproblems.cifar100_wrn404(batch_size=128)
-tproblem.set_up()
-
-# Create optimizer
-optimizer = torch.optim.SGD(
-    tproblem.model.parameters(),
-    lr=0.1,
-    momentum=0.9,
-    weight_decay=5e-4
-)
-
-# Create scheduler: reduce LR by 0.1 at epochs 60, 120, 160
-scheduler = MultiStepLR(optimizer, milestones=[60, 120, 160], gamma=0.1)
-
-# Training loop
-for epoch in range(200):
-    # Train
-    tproblem.model.train()
-    for batch in tproblem.train_loader:
-        optimizer.zero_grad()
-        loss, accuracy = tproblem.get_batch_loss_and_accuracy(batch)
-        loss.mean().backward()
-        optimizer.step()
-
-    # Step scheduler at epoch end
-    scheduler.step()
-
-    print(f'Epoch {epoch}, LR: {scheduler.get_last_lr()[0]:.6f}')
-```
-
-### Accessing Per-Example Losses
-
-DeepOBS returns per-example losses for advanced optimizer development:
-
-```python
-tproblem = testproblems.mnist_mlp(batch_size=128)
-tproblem.set_up()
-
-optimizer = torch.optim.SGD(tproblem.model.parameters(), lr=0.01)
-
-for batch in tproblem.train_loader:
-    optimizer.zero_grad()
-
-    # Get per-example losses (shape: [batch_size])
-    losses, accuracy = tproblem.get_batch_loss_and_accuracy(batch)
-
-    # Can use individual losses for custom weighting, sampling, etc.
-    print(f'Per-example losses shape: {losses.shape}')
-    print(f'Loss statistics: min={losses.min():.4f}, '
-          f'max={losses.max():.4f}, mean={losses.mean():.4f}')
-
-    # Compute mean for standard training
-    loss = losses.mean()
-    loss.backward()
-    optimizer.step()
-```
+For detailed programmatic usage including GPU training, learning rate schedules, and advanced features, see [PyTorch Usage Guide](docs/README_PYTORCH.md).
 
 ## Configuration
 
-DeepOBS uses a global configuration system for data and baseline directories.
+DeepOBS uses YAML configuration files for benchmark setup. See [Quick Start Guide](docs/QUICK_START_BENCHMARK.md) for examples.
 
-### Setting Data Directory
+### Data Directory
+
+DeepOBS automatically downloads most datasets. You can configure the data directory:
 
 ```python
 from deepobs.pytorch import config
-
-# Set custom data directory
 config.set_data_dir('/path/to/data')
-
-# Get current data directory
-data_dir = config.get_data_dir()
-print(f'Data directory: {data_dir}')
 ```
 
-### Data Directory Structure
+**Note**: ImageNet requires manual download due to licensing. Place images in `<data_dir>/imagenet/train/` and `<data_dir>/imagenet/val/`.
 
-DeepOBS automatically downloads and organizes datasets:
-
-```
-<data_dir>/
-├── mnist/
-│   ├── MNIST/
-│   │   └── raw/
-├── fashion-mnist/
-│   └── FashionMNIST/
-├── cifar-10/
-│   └── cifar-10-batches-py/
-├── cifar-100/
-│   └── cifar-100-python/
-├── svhn/
-│   ├── train_32x32.mat
-│   └── test_32x32.mat
-├── imagenet/
-│   ├── train/  (user must provide)
-│   └── val/    (user must provide)
-├── penn_treebank/  (automatically downloaded)
-│   └── ptb_processed.pt
-└── tolstoi/  (deprecated, requires manual download)
-    └── war_and_peace.txt
-```
-
-**Note**: ImageNet requires manual download due to licensing. Place training images in `<data_dir>/imagenet/train/` and validation images in `<data_dir>/imagenet/val/`.
-
-### Setting Data Type
-
-```python
-from deepobs.pytorch import config
-import torch
-
-# Use float32 (default)
-config.set_dtype(torch.float32)
-
-# Use float64 for higher precision
-config.set_dtype(torch.float64)
-
-# Get current dtype
-dtype = config.get_dtype()
-print(f'Data type: {dtype}')
-```
+For advanced configuration options, see [PyTorch Usage Guide](docs/README_PYTORCH.md).
 
 ## FAQ
 
-### How do I use a specific GPU?
+### How do I run benchmarks?
 
-```python
-import torch
-
-# DeepOBS auto-selects the best available device by default
-# Priority: MPS (Apple Silicon) > CUDA > CPU
-
-# For NVIDIA GPUs (CUDA)
-device = torch.device('cuda:0')  # Use GPU 0
-tproblem = testproblems.mnist_mlp(batch_size=128, device=device)
-tproblem.set_up()
-
-# For Apple Silicon (MPS)
-device = torch.device('mps')
-tproblem = testproblems.mnist_mlp(batch_size=128, device=device)
-tproblem.set_up()
-
-# For CPU only
-device = torch.device('cpu')
-tproblem = testproblems.mnist_mlp(batch_size=128, device=device)
-tproblem.set_up()
+Use the CLI:
+```bash
+uv run deepobs benchmark my_config.yaml
 ```
 
-### How do I ensure reproducibility?
+See [Quick Start Guide](docs/QUICK_START_BENCHMARK.md) for configuration examples.
 
-```python
-import torch
-import numpy as np
-import random
+### How do I analyze results?
 
-def set_seed(seed=42):
-    random.seed(seed)
-    np.random.seed(seed)
-    torch.manual_seed(seed)  # Also seeds MPS
-    if torch.cuda.is_available():
-        torch.cuda.manual_seed(seed)
-        torch.cuda.manual_seed_all(seed)
-        # For deterministic behavior (may impact performance)
-        torch.backends.cudnn.deterministic = True
-        torch.backends.cudnn.benchmark = False
-
-set_seed(42)
+```bash
+uv run deepobs analyze ./results
 ```
 
-### Can I use mixed precision training?
+This generates an interactive HTML report with plots and statistics.
 
-```python
-from torch.cuda.amp import GradScaler, autocast
+### Can I use DeepOBS programmatically?
 
-scaler = GradScaler()
-
-for batch in tproblem.train_loader:
-    optimizer.zero_grad()
-
-    with autocast():
-        loss, accuracy = tproblem.get_batch_loss_and_accuracy(batch)
-        loss = loss.mean()
-
-    scaler.scale(loss).backward()
-    scaler.step(optimizer)
-    scaler.update()
-```
-
-### How do I save and load checkpoints?
-
-```python
-# Save checkpoint
-checkpoint = {
-    'epoch': epoch,
-    'model_state_dict': tproblem.model.state_dict(),
-    'optimizer_state_dict': optimizer.state_dict(),
-    'loss': loss,
-}
-torch.save(checkpoint, 'checkpoint.pth')
-
-# Load checkpoint
-checkpoint = torch.load('checkpoint.pth')
-tproblem.model.load_state_dict(checkpoint['model_state_dict'])
-optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
-epoch = checkpoint['epoch']
-loss = checkpoint['loss']
-```
-
-### How do I handle out-of-memory errors?
-
-- Reduce batch size
-- Use gradient accumulation
-- Enable mixed precision training
-- Use gradient checkpointing for very deep models
-
-```python
-# Gradient accumulation example
-accumulation_steps = 4
-optimizer.zero_grad()
-
-for i, batch in enumerate(tproblem.train_loader):
-    loss, accuracy = tproblem.get_batch_loss_and_accuracy(batch)
-    loss = loss.mean() / accumulation_steps
-    loss.backward()
-
-    if (i + 1) % accumulation_steps == 0:
-        optimizer.step()
-        optimizer.zero_grad()
-```
-
-### Can I access the dataset directly without test problems?
-
-Yes! Datasets can be used independently:
-
-```python
-from deepobs.pytorch.datasets import MNIST
-from torch.utils.data import DataLoader
-
-# Create dataset
-dataset = MNIST(batch_size=128)
-
-# Access train/test loaders
-for batch in dataset.train_loader:
-    images, labels = batch
-    # Your training code here
-```
+Yes! See [PyTorch Usage Guide](docs/README_PYTORCH.md) for detailed examples including:
+- GPU training (CUDA, MPS)
+- Learning rate schedules
+- Mixed precision training
+- Custom training loops
+- Reproducibility
+- Checkpointing
 
 ## Documentation
 

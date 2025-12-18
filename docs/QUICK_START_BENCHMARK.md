@@ -1,22 +1,19 @@
-# Quick Start: Configuration-Driven Benchmark Suite
+# Quick Start: DeepOBS Benchmark Suite
 
-## What's New
+## Overview
 
-You now have a complete configuration-driven benchmark system for DeepOBS!
-
-## Files Created
-
-1. **`run_benchmark.py`** - Main benchmark runner script
-2. **`benchmark_config.yaml`** - Full configuration example
-3. **`benchmark_config_quick.yaml`** - Quick test configuration
-4. **`BENCHMARK_SUITE_README.md`** - Complete documentation
+DeepOBS provides a streamlined command-line interface for running comprehensive optimizer benchmarks.
 
 ## Quick Test (2 minutes)
 
 Run a minimal benchmark to verify everything works:
 
 ```bash
-uv run python run_benchmark.py benchmark_config_quick.yaml
+# Run benchmark with quick configuration
+uv run deepobs benchmark benchmark_config_quick.yaml
+
+# Or just use the default configuration
+uv run deepobs benchmark
 ```
 
 This runs:
@@ -30,23 +27,27 @@ This runs:
 After the benchmark completes:
 
 ```bash
-uv run python examples/result_analysis.py
+# Analyze and generate interactive HTML report
+uv run deepobs analyze
+
+# Or analyze results from a custom directory
+uv run deepobs analyze ./results
 ```
 
 This generates:
-- Learning curves
+- Interactive learning curves
 - Comparison charts
 - Performance profiles
 - Statistical summaries
 
-Plots saved to: `./results/plots/`
+Results saved to: `./results/benchmark_report.html`
 
 ## Full Benchmark
 
 Edit `benchmark_config.yaml` and run:
 
 ```bash
-uv run python run_benchmark.py benchmark_config.yaml
+uv run deepobs benchmark benchmark_config.yaml
 ```
 
 ## Key Features
@@ -92,7 +93,7 @@ optimizers:
 
 ### 5. Dry Run
 ```bash
-uv run python run_benchmark.py my_config.yaml --dry-run
+uv run deepobs benchmark my_config.yaml --dry-run
 ```
 
 ## Example Workflow
@@ -102,28 +103,55 @@ uv run python run_benchmark.py my_config.yaml --dry-run
 nano my_benchmark.yaml
 
 # 2. Test with dry run
-uv run python run_benchmark.py my_benchmark.yaml --dry-run
+uv run deepobs benchmark my_benchmark.yaml --dry-run
 
 # 3. Run actual benchmark
-uv run python run_benchmark.py my_benchmark.yaml
+uv run deepobs benchmark my_benchmark.yaml
 
 # 4. Analyze results
-uv run python examples/result_analysis.py
+uv run deepobs analyze
 
-# 5. View plots
-open results/plots/
+# 5. View interactive report
+open results/benchmark_report.html
 ```
 
-## Compatible with result_analysis.py
+## CLI Commands
 
-Results are automatically saved in the format expected by the existing `result_analysis.py` script. No changes needed!
+### Benchmark Command
+
+```bash
+# Run with default config (benchmark_config.yaml)
+uv run deepobs benchmark
+
+# Run with custom config
+uv run deepobs benchmark my_config.yaml
+
+# Dry run to preview what will be executed
+uv run deepobs benchmark my_config.yaml --dry-run
+
+# Get help
+uv run deepobs benchmark --help
+```
+
+### Analyze Command
+
+```bash
+# Analyze default results directory (./results)
+uv run deepobs analyze
+
+# Analyze custom results directory
+uv run deepobs analyze ./my_results
+
+# Get help
+uv run deepobs analyze --help
+```
 
 ## Next Steps
 
 1. **Read** `BENCHMARK_SUITE_README.md` for full documentation
 2. **Edit** `benchmark_config.yaml` to select your problems
-3. **Run** your benchmark suite
-4. **Analyze** with `result_analysis.py`
+3. **Run** your benchmark suite with `uv run deepobs benchmark`
+4. **Analyze** results with `uv run deepobs analyze`
 
 ## Need Help?
 

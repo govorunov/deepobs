@@ -32,18 +32,20 @@ Use the provided quick configuration for testing:
 
 ```bash
 # Run quick benchmark (2 problems × 2 optimizers = 4 runs)
-uv run python run_benchmark.py benchmark_config_quick.yaml
+uv run deepobs benchmark benchmark_config_quick.yaml
 ```
 
 This will complete in a few minutes and create results in `./results/`.
 
 ### 3. Analyze Results
 
-Generate plots and statistics:
+Generate interactive plots and statistics:
 
 ```bash
-uv run python examples/result_analysis.py
+uv run deepobs analyze
 ```
+
+This creates an interactive HTML report at `./results/benchmark_report.html`.
 
 ## Configuration File Format
 
@@ -234,7 +236,7 @@ overrides:
 
 ```bash
 # Run complete benchmark suite
-uv run python run_benchmark.py benchmark_config.yaml
+uv run deepobs benchmark benchmark_config.yaml
 ```
 
 ### Dry Run
@@ -242,14 +244,14 @@ uv run python run_benchmark.py benchmark_config.yaml
 Preview what will be executed without running:
 
 ```bash
-uv run python run_benchmark.py benchmark_config.yaml --dry-run
+uv run deepobs benchmark benchmark_config.yaml --dry-run
 ```
 
 ### Custom Configuration
 
 ```bash
 # Use your own config file
-uv run python run_benchmark.py my_custom_config.yaml
+uv run deepobs benchmark my_custom_config.yaml
 ```
 
 ### Analyze Results
@@ -257,8 +259,8 @@ uv run python run_benchmark.py my_custom_config.yaml
 After benchmarks complete:
 
 ```bash
-# Generate plots and statistics
-uv run python examples/result_analysis.py
+# Generate interactive HTML report with plots and statistics
+uv run deepobs analyze
 ```
 
 This creates:
@@ -398,7 +400,7 @@ Each JSON file contains:
 Begin with a quick configuration to verify everything works:
 
 ```bash
-uv run python run_benchmark.py benchmark_config_quick.yaml
+uv run deepobs benchmark benchmark_config_quick.yaml
 ```
 
 ### Use Overrides Wisely
@@ -475,16 +477,16 @@ Results should be in `results/[problem]/[optimizer]/[run_id]/results.json`.
 
 ## Integration with Existing Tools
 
-### result_analysis.py
+### Analysis and Visualization
 
-The benchmark suite generates results in the exact format expected:
+The benchmark suite includes integrated analysis tools:
 
 ```bash
 # Run benchmarks
-uv run python run_benchmark.py benchmark_config.yaml
+uv run deepobs benchmark benchmark_config.yaml
 
 # Analyze and visualize
-uv run python examples/result_analysis.py
+uv run deepobs analyze
 ```
 
 ### Custom Analysis

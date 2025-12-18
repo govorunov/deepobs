@@ -39,6 +39,9 @@ dependencies = [
     "plotly>=6.5.0",
 ]
 
+[project.scripts]
+deepobs = "deepobs.cli:main"
+
 [project.optional-dependencies]
 # PyTorch is now a required dependency (kept for backwards compatibility)
 pytorch = []
