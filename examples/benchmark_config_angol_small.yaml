@@ -140,7 +140,7 @@ optimizers:
   - name: Angol
     optimizer_class: angol.Angol
     learning_rate: 0.001
-    lr_min: 0.0001
+    lr_factor: 0.1
 
 # Problem-specific optimizer overrides
 overrides:
@@ -148,45 +148,24 @@ overrides:
   mnist_logreg:
     Angol:
       learning_rate: 0.01
-      lr_min: 0.001
 
   fmnist_logreg:
     Angol:
       learning_rate: 0.01
-      lr_min: 0.001
-
-  # ResNet problems may benefit from learning rate schedule
-  cifar100_wrn404:
-    Angol:
-      learning_rate: 0.001
-
-  svhn_wrn164:
-    Angol:
-      learning_rate: 0.001
-
-  # Character RNN may need different learning rate
-  textgen:
-    Angol:
-      learning_rate: 0.001
-      weight_decay: 0.001  # Lower weight decay for RNN
 
   # Synthetic problems might benefit from higher learning rate
   quadratic_deep:
     Angol:
       learning_rate: 0.01
-      lr_min: 0.001
 
   two_d_rosenbrock:
     Angol:
       learning_rate: 0.01
-      lr_min: 0.001
 
   two_d_beale:
     Angol:
       learning_rate: 0.01
-      lr_min: 0.001
 
   two_d_branin:
     Angol:
       learning_rate: 0.01
-      lr_min: 0.001
