@@ -17,16 +17,21 @@ class VGG(nn.Module):
         variant (int): VGG variant (16 or 19).
         num_outputs (int): Number of output classes.
         input_size (tuple): Input image size (height, width). Default: (224, 224).
+        batch_norm (bool): If True, adds BatchNorm after each conv layer. Default: False.
+        dropout (float): Dropout probability for FC layers. Default: 0.5.
+        bn_momentum (float): Momentum for BatchNorm layers. Default: 0.1.
 
     Note:
         - All conv filters are 3x3
         - ReLU activation after each conv
+        - BatchNorm after conv (if enabled: Conv -> BN -> ReLU)
         - Max pooling (2x2) after each block
-        - Dropout 0.5 on FC layers
+        - Dropout on FC layers (configurable)
         - Xavier/Glorot normal initialization
     """
 
-    def __init__(self, variant=16, num_outputs=10, input_size=(224, 224)):
+    def __init__(self, variant=16, num_outputs=10, input_size=(224, 224),
+                 batch_norm=False, dropout=0.5, bn_momentum=0.1):
         super(VGG, self).__init__()
 
         if variant not in [16, 19]:
@@ -35,6 +40,9 @@ class VGG(nn.Module):
         self.variant = variant
         self.num_outputs = num_outputs
         self.input_size = input_size
+        self.batch_norm = batch_norm
+        self.dropout = dropout
+        self.bn_momentum = bn_momentum
 
         # Build convolutional layers
         self.features = self._make_layers()
@@ -43,10 +51,10 @@ class VGG(nn.Module):
         self.classifier = nn.Sequential(
             nn.Linear(512 * 7 * 7, 4096),
             nn.ReLU(inplace=True),
-            nn.Dropout(0.5),
+            nn.Dropout(self.dropout),
             nn.Linear(4096, 4096),
             nn.ReLU(inplace=True),
-            nn.Dropout(0.5),
+            nn.Dropout(self.dropout),
             nn.Linear(4096, num_outputs)
         )
 
@@ -74,7 +82,16 @@ class VGG(nn.Module):
             if v == 'M':
                 layers.append(nn.MaxPool2d(kernel_size=2, stride=2))
             else:
-                layers.append(nn.Conv2d(in_channels, v, kernel_size=3, padding=1))
+                # Add conv layer (no bias if using BatchNorm)
+                conv = nn.Conv2d(in_channels, v, kernel_size=3, padding=1,
+                               bias=not self.batch_norm)
+                layers.append(conv)
+
+                # Add BatchNorm if enabled
+                if self.batch_norm:
+                    layers.append(nn.BatchNorm2d(v, momentum=self.bn_momentum, eps=1e-5))
+
+                # Add ReLU activation
                 layers.append(nn.ReLU(inplace=True))
                 in_channels = v
 
@@ -88,6 +105,10 @@ class VGG(nn.Module):
                 nn.init.xavier_normal_(m.weight)
                 if m.bias is not None:
                     nn.init.constant_(m.bias, 0.0)
+            elif isinstance(m, nn.BatchNorm2d):
+                # Initialize BatchNorm parameters
+                nn.init.constant_(m.weight, 1.0)
+                nn.init.constant_(m.bias, 0.0)
             elif isinstance(m, nn.Linear):
                 # Xavier/Glorot normal initialization for linear layers
                 nn.init.xavier_normal_(m.weight)
@@ -119,27 +140,37 @@ class VGG(nn.Module):
         return x
 
 
-def vgg16(num_outputs=10, input_size=(224, 224)):
+def vgg16(num_outputs=10, input_size=(224, 224), batch_norm=False,
+          dropout=0.5, bn_momentum=0.1):
     """Create a VGG16 model.
 
     Args:
         num_outputs (int): Number of output classes.
         input_size (tuple): Input image size (height, width).
+        batch_norm (bool): If True, adds BatchNorm after conv layers.
+        dropout (float): Dropout probability for FC layers.
+        bn_momentum (float): Momentum for BatchNorm layers.
 
     Returns:
         VGG: VGG16 model instance.
     """
-    return VGG(variant=16, num_outputs=num_outputs, input_size=input_size)
+    return VGG(variant=16, num_outputs=num_outputs, input_size=input_size,
+               batch_norm=batch_norm, dropout=dropout, bn_momentum=bn_momentum)
 
 
-def vgg19(num_outputs=10, input_size=(224, 224)):
+def vgg19(num_outputs=10, input_size=(224, 224), batch_norm=False,
+          dropout=0.5, bn_momentum=0.1):
     """Create a VGG19 model.
 
     Args:
         num_outputs (int): Number of output classes.
         input_size (tuple): Input image size (height, width).
+        batch_norm (bool): If True, adds BatchNorm after conv layers.
+        dropout (float): Dropout probability for FC layers.
+        bn_momentum (float): Momentum for BatchNorm layers.
 
     Returns:
         VGG: VGG19 model instance.
     """
-    return VGG(variant=19, num_outputs=num_outputs, input_size=input_size)
+    return VGG(variant=19, num_outputs=num_outputs, input_size=input_size,
+               batch_norm=batch_norm, dropout=dropout, bn_momentum=bn_momentum)

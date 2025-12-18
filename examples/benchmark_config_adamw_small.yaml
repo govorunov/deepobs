@@ -75,7 +75,8 @@ test_problems:
     batch_size: 128
 
   # ========================================
-  # CIFAR-100 problems (5 problems, 1.4M-20M params)
+  # CIFAR-100 problems (3 problems, 1.4M-9M params)
+  # Note: VGG16/19 replaced with Food-101 versions
   # ========================================
   - name: cifar100_3c3d
     num_epochs: 50
@@ -89,11 +90,15 @@ test_problems:
     num_epochs: 50
     batch_size: 128
 
-  - name: cifar100_vgg16
+  # ========================================
+  # Food-101 problems (2 problems, 15M-20M params)
+  # Better conditioned than CIFAR-100 VGG due to proper image resolution
+  # ========================================
+  - name: food101_vgg16
     num_epochs: 50
     batch_size: 128
 
-  - name: cifar100_vgg19
+  - name: food101_vgg19
     num_epochs: 50
     batch_size: 128
 

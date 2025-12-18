@@ -16,7 +16,7 @@ class AllCNNC(nn.Module):
 
     All-CNN-C uses only convolutional layers (no max pooling).
     Downsampling is achieved through strided convolutions.
-    Progressive dropout is applied (0.2 -> 0.5).
+    Progressive dropout is applied (0.1 -> 0.3).
 
     Args:
         num_outputs (int): Number of output classes.
@@ -27,20 +27,20 @@ class AllCNNC(nn.Module):
 
         self.num_outputs = num_outputs
 
-        # First block (input dropout 0.2)
-        self.dropout1 = nn.Dropout2d(0.2)
+        # First block (input dropout 0.1)
+        self.dropout1 = nn.Dropout2d(0.1)
         self.conv1_1 = nn.Conv2d(3, 96, kernel_size=3, padding=1)
         self.conv1_2 = nn.Conv2d(96, 96, kernel_size=3, padding=1)
         self.conv1_3 = nn.Conv2d(96, 96, kernel_size=3, stride=2, padding=1)
 
-        # Second block (dropout 0.5)
-        self.dropout2 = nn.Dropout2d(0.5)
+        # Second block (dropout 0.3)
+        self.dropout2 = nn.Dropout2d(0.3)
         self.conv2_1 = nn.Conv2d(96, 192, kernel_size=3, padding=1)
         self.conv2_2 = nn.Conv2d(192, 192, kernel_size=3, padding=1)
         self.conv2_3 = nn.Conv2d(192, 192, kernel_size=3, stride=2, padding=1)
 
-        # Third block (dropout 0.5)
-        self.dropout3 = nn.Dropout2d(0.5)
+        # Third block (dropout 0.3)
+        self.dropout3 = nn.Dropout2d(0.3)
         self.conv3_1 = nn.Conv2d(192, 192, kernel_size=3, padding=0)  # valid padding
         self.conv3_2 = nn.Conv2d(192, 192, kernel_size=1)
         self.conv3_3 = nn.Conv2d(192, num_outputs, kernel_size=1)

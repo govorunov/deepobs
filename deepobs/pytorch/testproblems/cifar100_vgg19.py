@@ -17,9 +17,12 @@ class cifar100_vgg19(TestProblem):
     Details about the architecture can be found in the original paper:
     https://arxiv.org/abs/1409.1556
 
-    VGG 19 consists of 19 weight layers, of mostly convolutions. The model uses
-    cross-entropy loss. A weight decay is used on the weights (but not the biases)
-    which defaults to 5e-4.
+    VGG 19 consists of 19 weight layers, of mostly convolutions. This version
+    uses Batch Normalization after each convolutional layer (momentum=0.1) and
+    reduced dropout (0.2) in the fully connected layers.
+
+    The model uses cross-entropy loss. A weight decay is used on the weights
+    (but not the biases) which defaults to 5e-4.
 
     Args:
         batch_size (int): Batch size to use.
@@ -43,8 +46,9 @@ class cifar100_vgg19(TestProblem):
         # Initialize dataset
         self.dataset = CIFAR100(self._batch_size)
 
-        # Initialize model
-        self.model = vgg19(num_outputs=100, input_size=(224, 224))
+        # Initialize model with BatchNorm and reduced dropout
+        self.model = vgg19(num_outputs=100, input_size=(224, 224),
+                          batch_norm=True, dropout=0.2, bn_momentum=0.1)
         self.model.to(self.device)
 
     def _compute_loss(self, outputs, targets, reduction='mean'):

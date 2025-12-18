@@ -22,6 +22,10 @@ from .cifar100_vgg16 import cifar100_vgg16
 from .cifar100_vgg19 import cifar100_vgg19
 from .cifar100_wrn404 import cifar100_wrn404
 
+# Food-101 test problems
+from .food101_vgg16 import food101_vgg16
+from .food101_vgg19 import food101_vgg19
+
 # CIFAR-10 VGG test problems
 from .cifar10_vgg16 import cifar10_vgg16
 from .cifar10_vgg19 import cifar10_vgg19
@@ -73,6 +77,9 @@ __all__ = [
     'cifar100_vgg16',
     'cifar100_vgg19',
     'cifar100_wrn404',
+    # Food-101
+    'food101_vgg16',
+    'food101_vgg19',
     # SVHN
     'svhn_3c3d',
     'svhn_wrn164',

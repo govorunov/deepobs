@@ -1,18 +1,19 @@
-"""VGG 16 architecture for CIFAR-100."""
+"""VGG 16 architecture for Food-101."""
 
 import torch
 import torch.nn.functional as F
 
 from ._vgg import vgg16
-from ..datasets.cifar100 import CIFAR100
+from ..datasets.food101 import Food101
 from .testproblem import TestProblem
 
 
-class cifar100_vgg16(TestProblem):
-    """DeepOBS test problem class for the VGG 16 network on Cifar-100.
+class food101_vgg16(TestProblem):
+    """DeepOBS test problem class for the VGG 16 network on Food-101.
 
-    The CIFAR-100 images are resized to 224 by 224 to fit the input
-    dimension of the original VGG network, which was designed for ImageNet.
+    Food-101 consists of 101 food categories with 750 training and 250 test
+    images per category. Images are resized and cropped to 224x224 to match
+    the original VGG network architecture designed for ImageNet.
 
     Details about the architecture can be found in the original paper:
     https://arxiv.org/abs/1409.1556
@@ -24,6 +25,9 @@ class cifar100_vgg16(TestProblem):
     The model uses cross-entropy loss. A weight decay is used on the weights
     (but not the biases) which defaults to 5e-4.
 
+    The reference training parameters are batch size = 128, num_epochs = 50-100
+    using SGD with momentum.
+
     Args:
         batch_size (int): Batch size to use.
         weight_decay (float): Weight decay factor. Weight decay (L2-regularization)
@@ -32,22 +36,22 @@ class cifar100_vgg16(TestProblem):
     """
 
     def __init__(self, batch_size, weight_decay=5e-4, device=None):
-        """Create a new VGG 16 test problem instance on Cifar-100.
+        """Create a new VGG 16 test problem instance on Food-101.
 
         Args:
             batch_size (int): Batch size to use.
             weight_decay (float): Weight decay factor. Defaults to 5e-4.
             device (str or torch.device, optional): Device to use.
         """
-        super(cifar100_vgg16, self).__init__(batch_size, weight_decay, device)
+        super(food101_vgg16, self).__init__(batch_size, weight_decay, device)
 
     def set_up(self):
-        """Set up the VGG 16 test problem on Cifar-100."""
+        """Set up the VGG 16 test problem on Food-101."""
         # Initialize dataset
-        self.dataset = CIFAR100(self._batch_size)
+        self.dataset = Food101(self._batch_size)
 
         # Initialize model with BatchNorm and reduced dropout
-        self.model = vgg16(num_outputs=100, input_size=(224, 224),
+        self.model = vgg16(num_outputs=101, input_size=(224, 224),
                           batch_norm=True, dropout=0.2, bn_momentum=0.1)
         self.model.to(self.device)
 

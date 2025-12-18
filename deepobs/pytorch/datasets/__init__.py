@@ -6,6 +6,7 @@ from .fmnist import FashionMNIST
 from .cifar10 import CIFAR10
 from .cifar100 import CIFAR100
 from .svhn import SVHN
+from .food101 import Food101
 from .imagenet import ImageNet
 from .tolstoi import Tolstoi
 from .penn_treebank import PennTreebank
@@ -19,6 +20,7 @@ __all__ = [
     'CIFAR10',
     'CIFAR100',
     'SVHN',
+    'Food101',
     'ImageNet',
     'Tolstoi',
     'PennTreebank',
