@@ -174,6 +174,39 @@ random.seed(42)
 
 ---
 
+## Train vs Test Accuracy During Evaluation
+
+**Issue**: Training set accuracy may appear **lower** than test set accuracy during evaluation.
+
+**Explanation**: This is expected behavior for datasets with data augmentation (CIFAR-10, CIFAR-100, SVHN, ImageNet, Food-101):
+
+1. **Training evaluation**: When measuring training accuracy, the training dataset's data augmentation transforms (random crops, flips, color jitter) are **still applied** during evaluation. This makes the training examples harder to classify.
+
+2. **Test evaluation**: Test data uses only normalization/standardization without augmentation, making it easier to classify.
+
+3. **Result**: Test accuracy can appear higher than train accuracy, which is the opposite of typical overfitting patterns.
+
+**What's reported in analysis**:
+- The analysis tools (e.g., `result_analysis.py`) report **test accuracy and test loss only**
+- Test metrics are **correctly measured** and **unaffected** by this issue
+- Test data always uses consistent, non-augmented transforms
+
+**Expected behavior**:
+- For CIFAR-10/100, SVHN: Train accuracy during evaluation may be 2-5% lower than without augmentation
+- For ImageNet, Food-101: Train accuracy may be 5-10% lower due to random crops
+
+**Why this design**:
+- Training data augmentation improves generalization and is standard practice
+- The primary metric of interest is **test accuracy**, which is correctly measured
+- Train accuracy with augmentation provides a conservative estimate of training set performance
+
+**Note**: If you need true training set accuracy (without augmentation) for analysis:
+- You would need to implement a separate evaluation path
+- However, this is not the standard metric for optimizer benchmarking
+- Test accuracy remains the primary metric for comparing optimizers
+
+---
+
 ## Memory Usage
 
 ### Large Batch Sizes
