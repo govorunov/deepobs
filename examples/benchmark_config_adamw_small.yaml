@@ -1,5 +1,5 @@
 # DeepOBS Benchmark Configuration - AdamW on Small to Medium Problems
-# All test problems with under 10M parameters
+# Test problems from small to large (up to ~20M parameters)
 
 # Global settings
 global:
@@ -24,7 +24,7 @@ global:
   # Data directory (where datasets are stored)
   data_dir: null  # null = use default
 
-# Test problems to benchmark (19 problems under 10M parameters)
+# Test problems to benchmark (21 problems)
 test_problems:
   # ========================================
   # MNIST problems (4 problems, 7.8K-3M params)
@@ -75,8 +75,7 @@ test_problems:
     batch_size: 128
 
   # ========================================
-  # CIFAR-100 problems (3 problems, 1.4M-9M params)
-  # Note: VGG16/19 excluded (>10M params)
+  # CIFAR-100 problems (5 problems, 1.4M-20M params)
   # ========================================
   - name: cifar100_3c3d
     num_epochs: 50
@@ -87,6 +86,14 @@ test_problems:
     batch_size: 256
 
   - name: cifar100_wrn404
+    num_epochs: 50
+    batch_size: 128
+
+  - name: cifar100_vgg16
+    num_epochs: 50
+    batch_size: 128
+
+  - name: cifar100_vgg19
     num_epochs: 50
     batch_size: 128
 
