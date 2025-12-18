@@ -103,33 +103,105 @@ For more programmatic examples, see [PyTorch Usage Guide](docs/README_PYTORCH.md
 
 ## Available Test Problems
 
-All 26 test problems are available:
+All **27 test problems** are currently implemented and available:
 
-| Dataset | Problems |
-|---------|----------|
-| **MNIST** | `mnist_logreg`, `mnist_mlp`, `mnist_2c2d`, `mnist_vae` |
-| **Fashion-MNIST** | `fmnist_logreg`, `fmnist_mlp`, `fmnist_2c2d`, `fmnist_vae` |
-| **CIFAR-10** | `cifar10_3c3d`, `cifar10_vgg16`, `cifar10_vgg19` |
-| **CIFAR-100** | `cifar100_3c3d`, `cifar100_allcnnc`, `cifar100_vgg16`, `cifar100_vgg19`, `cifar100_wrn404` |
-| **SVHN** | `svhn_3c3d`, `svhn_wrn164` |
-| **ImageNet** | `imagenet_vgg16`, `imagenet_vgg19`, `imagenet_inception_v3` |
-| **Text** | `textgen` (Penn Treebank), `tolstoi_char_rnn` (deprecated) |
-| **Synthetic** | `quadratic_deep`, `two_d_rosenbrock`, `two_d_beale`, `two_d_branin` |
+### MNIST (4 problems)
+| Problem | Architecture | Parameters | Description |
+|---------|-------------|------------|-------------|
+| `mnist_logreg` | Logistic Regression | 7,850 | Single linear layer |
+| `mnist_mlp` | Multi-Layer Perceptron | 1,134,410 | 4-layer fully connected |
+| `mnist_2c2d` | 2Conv+2Dense | 2,949,120 | 2 conv + 2 dense layers |
+| `mnist_vae` | Variational Autoencoder | ~500,000 | Encoder-decoder architecture |
+
+### Fashion-MNIST (4 problems)
+| Problem | Architecture | Parameters | Description |
+|---------|-------------|------------|-------------|
+| `fmnist_logreg` | Logistic Regression | 7,850 | Single linear layer |
+| `fmnist_mlp` | Multi-Layer Perceptron | 1,134,410 | 4-layer fully connected |
+| `fmnist_2c2d` | 2Conv+2Dense | 2,949,120 | 2 conv + 2 dense layers |
+| `fmnist_vae` | Variational Autoencoder | ~500,000 | Encoder-decoder architecture |
+
+### CIFAR-10 (3 problems)
+| Problem | Architecture | Parameters | Description |
+|---------|-------------|------------|-------------|
+| `cifar10_3c3d` | 3Conv+3Dense | 1,411,850 | 3 conv + 3 dense layers |
+| `cifar10_vgg16` | VGG-16 | 14,987,722 | 13 conv + 3 FC layers |
+| `cifar10_vgg19` | VGG-19 | 20,040,522 | 16 conv + 3 FC layers |
+
+### CIFAR-100 (5 problems)
+| Problem | Architecture | Parameters | Description |
+|---------|-------------|------------|-------------|
+| `cifar100_3c3d` | 3Conv+3Dense | 1,461,700 | 3 conv + 3 dense layers (100 classes) |
+| `cifar100_allcnnc` | All-CNN-C | 1,387,108 | All-convolutional network |
+| `cifar100_vgg16` | VGG-16 | 15,002,212 | 13 conv + 3 FC layers |
+| `cifar100_vgg19` | VGG-19 | 20,055,012 | 16 conv + 3 FC layers |
+| `cifar100_wrn404` | Wide ResNet 40-4 | 8,952,420 | 40-layer ResNet, width factor 4 |
+
+### SVHN (2 problems)
+| Problem | Architecture | Parameters | Description |
+|---------|-------------|------------|-------------|
+| `svhn_3c3d` | 3Conv+3Dense | 1,411,850 | 3 conv + 3 dense layers |
+| `svhn_wrn164` | Wide ResNet 16-4 | 2,748,218 | 16-layer ResNet, width factor 4 |
+
+### ImageNet (3 problems)
+| Problem | Architecture | Parameters | Description |
+|---------|-------------|------------|-------------|
+| `imagenet_vgg16` | VGG-16 | 138,357,544 | VGG-16 on ImageNet (1001 classes) |
+| `imagenet_vgg19` | VGG-19 | 143,667,240 | VGG-19 on ImageNet (1001 classes) |
+| `imagenet_inception_v3` | Inception V3 | ~27,000,000 | Multi-branch architecture |
+
+**Note**: ImageNet problems require manual dataset download due to licensing restrictions.
+
+### Text Generation (2 problems)
+| Problem | Architecture | Parameters | Description |
+|---------|-------------|------------|-------------|
+| `textgen` | 2-Layer LSTM | ~500,000 | Penn Treebank (recommended) |
+| `tolstoi_char_rnn` | 2-Layer LSTM | ~500,000 | War and Peace (deprecated) |
+
+### Synthetic Optimization (4 problems)
+| Problem | Parameters | Description |
+|---------|------------|-------------|
+| `quadratic_deep` | 100 | 100D quadratic with deep learning eigenspectrum |
+| `two_d_rosenbrock` | 2 | Rosenbrock function (narrow valley) |
+| `two_d_beale` | 2 | Beale function (flat regions) |
+| `two_d_branin` | 2 | Branin function (multi-modal) |
 
 ### Problem Categories
 
-**Classification Problems**: mnist_*, fmnist_*, cifar10_*, cifar100_*, svhn_*, imagenet_*
-**Generative Models**: mnist_vae, fmnist_vae
-**Sequential Models**: textgen (recommended), tolstoi_char_rnn (deprecated)
-**Optimization Benchmarks**: quadratic_deep, two_d_*
+- **Classification**: mnist_*, fmnist_*, cifar10_*, cifar100_*, svhn_*, imagenet_*
+- **Generative Models**: mnist_vae, fmnist_vae
+- **Sequential Models**: textgen (recommended), tolstoi_char_rnn (deprecated)
+- **Optimization Benchmarks**: quadratic_deep, two_d_*
+
+---
+
+## Available Datasets
+
+All **10 datasets** are currently implemented:
+
+### Vision Datasets
+- **MNIST**: 60,000 train / 10,000 test, 28×28 grayscale, 10 classes (digits)
+- **Fashion-MNIST**: 60,000 train / 10,000 test, 28×28 grayscale, 10 classes (fashion items)
+- **CIFAR-10**: 50,000 train / 10,000 test, 32×32 RGB, 10 classes
+- **CIFAR-100**: 50,000 train / 10,000 test, 32×32 RGB, 100 classes
+- **SVHN**: 73,257 train / 26,032 test, 32×32 RGB, 10 classes (street view house numbers)
+- **ImageNet**: 1,281,167 train / 50,000 val, variable size→224×224, 1001 classes
+
+### Text Datasets
+- **Penn Treebank**: Text generation corpus for language modeling
+- **Tolstoi**: War and Peace by Leo Tolstoy, 83 unique characters
+
+### Synthetic Datasets
+- **Quadratic**: Synthetic Gaussian samples for quadratic optimization
+- **TwoD**: 2D noisy samples for optimization benchmarks
 
 ---
 
 ## Features
 
-- **26 Test Problems**: Realistic deep learning benchmarks across multiple domains
+- **27 Test Problems**: Realistic deep learning benchmarks across multiple domains
 - **9 Architectures**: MLPs, CNNs, ResNets, VGG, Inception, VAE, RNN
-- **9 Datasets**: MNIST, CIFAR, ImageNet, and more
+- **10 Datasets**: MNIST, Fashion-MNIST, CIFAR-10/100, SVHN, ImageNet, Penn Treebank, Tolstoi, and synthetic datasets
 - **PyTorch Implementation**: Modern PyTorch-based framework
 - **Automated Benchmarking**: Run experiments with minimal code
 - **Baseline Comparisons**: Compare against established optimizers
