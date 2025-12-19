@@ -152,11 +152,10 @@ All **27 test problems** are currently implemented and available:
 
 **Note**: ImageNet problems require manual dataset download due to licensing restrictions.
 
-### Text Generation (2 problems)
+### Text Generation (1 problem)
 | Problem | Architecture | Parameters | Description |
 |---------|-------------|------------|-------------|
-| `textgen` | 2-Layer LSTM | ~500,000 | Penn Treebank (recommended) |
-| `tolstoi_char_rnn` | 2-Layer LSTM | ~500,000 | War and Peace (deprecated) |
+| `textgen` | 2-Layer LSTM | ~500,000 | Penn Treebank |
 
 ### Synthetic Optimization (4 problems)
 | Problem | Parameters | Description |
@@ -170,14 +169,14 @@ All **27 test problems** are currently implemented and available:
 
 - **Classification**: mnist_*, fmnist_*, cifar10_*, cifar100_*, svhn_*, imagenet_*
 - **Generative Models**: mnist_vae, fmnist_vae
-- **Sequential Models**: textgen (recommended), tolstoi_char_rnn (deprecated)
+- **Sequential Models**: textgen
 - **Optimization Benchmarks**: quadratic_deep, two_d_*
 
 ---
 
 ## Available Datasets
 
-All **10 datasets** are currently implemented:
+All **9 datasets** are currently implemented:
 
 ### Vision Datasets
 - **MNIST**: 60,000 train / 10,000 test, 28×28 grayscale, 10 classes (digits)
@@ -189,7 +188,6 @@ All **10 datasets** are currently implemented:
 
 ### Text Datasets
 - **Penn Treebank**: Text generation corpus for language modeling
-- **Tolstoi**: War and Peace by Leo Tolstoy, 83 unique characters
 
 ### Synthetic Datasets
 - **Quadratic**: Synthetic Gaussian samples for quadratic optimization
@@ -199,9 +197,9 @@ All **10 datasets** are currently implemented:
 
 ## Features
 
-- **27 Test Problems**: Realistic deep learning benchmarks across multiple domains
+- **25 Test Problems**: Realistic deep learning benchmarks across multiple domains
 - **9 Architectures**: MLPs, CNNs, ResNets, VGG, Inception, VAE, RNN
-- **10 Datasets**: MNIST, Fashion-MNIST, CIFAR-10/100, SVHN, ImageNet, Penn Treebank, Tolstoi, and synthetic datasets
+- **9 Datasets**: MNIST, Fashion-MNIST, CIFAR-10/100, SVHN, ImageNet, Penn Treebank, and synthetic datasets
 - **PyTorch Implementation**: Modern PyTorch-based framework
 - **Automated Benchmarking**: Run experiments with minimal code
 - **Baseline Comparisons**: Compare against established optimizers

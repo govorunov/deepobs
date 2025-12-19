@@ -205,8 +205,8 @@ class TestProblemCoverage:
         total = len(AVAILABLE_PROBLEMS) + len(MANUAL_PROBLEMS)
 
         # Expected: 4 (MNIST) + 4 (Fashion-MNIST) + 3 (CIFAR-10) + 5 (CIFAR-100)
-        #         + 2 (SVHN) + 3 (ImageNet) + 1 (Tolstoi) + 4 (Synthetic) = 26
-        assert total == 26, f"Expected 26 test problems, found {total}"
+        #         + 2 (SVHN) + 3 (ImageNet) + 4 (Synthetic) = 25
+        assert total == 25, f"Expected 25 test problems, found {total}"
 
 
 if __name__ == "__main__":

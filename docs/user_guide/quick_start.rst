@@ -40,23 +40,18 @@ You can install the latest stable release of DeepOBS using `pip`:
 Set-Up Data Sets
 ================
 
-After installing DeepOBS, you have to download the data sets for the test
-problems. This can be done by simply running the
-:doc:`../api/scripts/deepobs_prepare_data` script:
+DeepOBS **automatically downloads** most datasets when you first use them via
+PyTorch/torchvision. You don't need to run any preparation scripts - simply create
+a test problem and the required data will be downloaded on first use.
 
-.. code-block:: bash
-
-  deepobs_prepare_data.sh
-
-This will automatically download, sort and prepare all the data sets
-(except ImageNet) in a folder called ``data_deepobs`` in the current directory.
-It can take a while, as it will download roughly 1 GB.
+Datasets will be stored in the default PyTorch data directory or in a custom
+directory if you configure it using ``deepobs.config.set_data_dir()``.
 
 .. NOTE::
-  The ImageNet data set is currently excluded from this automatic downloading
-  and preprocessing. ImageNet requires a registration to do this and has a total
-  size of hundreds of GBs. You can download it and add it to the ``imagenet``
-  folder by yourself if you wish to use the ImageNet data set.
+  The ImageNet data set requires manual download due to licensing restrictions.
+  ImageNet requires registration and has a total size of hundreds of GBs.
+  Download it separately and place it in the ``imagenet`` folder within your
+  data directory if you wish to use ImageNet test problems.
 
 .. HINT::
   If you already have some of the data sets on your computer, you can only

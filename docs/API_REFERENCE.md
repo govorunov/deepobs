@@ -500,41 +500,6 @@ Inception V3 on ImageNet.
 
 ---
 
-### Tolstoi Test Problems
-
-#### `tolstoi_char_rnn(batch_size, weight_decay=None, device=None)`
-
-Character-level LSTM on War and Peace.
-
-**Model**: Embedding(83, 128) → 2-layer LSTM(128) → FC(83)
-**Parameters**: ~500,000
-**Default Batch Size**: 64
-**Suggested LR**: 0.001
-**Sequence Length**: 50 characters
-**Vocabulary**: 83 unique characters
-**Loss**: Cross-entropy (character prediction)
-**Accuracy**: Per-character accuracy
-
-**Note**: LSTM state is automatically managed. State persists across batches and resets at epoch boundaries.
-
-**Example**:
-```python
-tproblem = testproblems.tolstoi_char_rnn(batch_size=64)
-tproblem.set_up()
-
-optimizer = torch.optim.Adam(tproblem.model.parameters(), lr=0.001)
-
-for epoch in range(10):
-    # State automatically resets at epoch start
-    for batch in tproblem.dataset.train_loader:
-        optimizer.zero_grad()
-        loss, accuracy = tproblem.get_batch_loss_and_accuracy(batch)
-        loss.mean().backward()
-        optimizer.step()
-```
-
----
-
 ### Quadratic Test Problems
 
 #### `quadratic_deep(batch_size, weight_decay=None, device=None)`
@@ -700,22 +665,6 @@ dataset = ImageNet(batch_size=128)
 - Validation: 50,000 samples
 - Classes: 1001 (1000 + background)
 - **Requires manual download**
-
----
-
-### Tolstoi
-
-```python
-from deepobs.pytorch.datasets import Tolstoi
-
-dataset = Tolstoi(batch_size=64, seq_length=50)
-```
-
-**Properties**:
-- Text: War and Peace by Leo Tolstoi
-- Vocabulary: 83 unique characters
-- Sequence length: 50 (default)
-- Format: Character indices
 
 ---
 

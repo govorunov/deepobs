@@ -309,19 +309,6 @@ class TestImageNetProblems:
             pytest.skip("ImageNet data not available")
 
 
-@pytest.mark.skip(reason="Tolstoi requires manual download")
-class TestTolstoiProblems:
-    """Tests for Tolstoi-based problems."""
-
-    def test_tolstoi_char_rnn(self):
-        """Test Tolstoi character RNN problem."""
-        try:
-            problem = testproblems.testproblem('tolstoi_char_rnn', batch_size=32)
-            assert problem is not None
-        except FileNotFoundError:
-            pytest.skip("Tolstoi data not available")
-
-
 class TestProblemModes:
     """Test train/eval mode switching for test problems."""
 

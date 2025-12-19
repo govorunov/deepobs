@@ -7,6 +7,8 @@
 **Status**: ✅ COMPLETE - All phases finished
 **Location**: /Users/yaroslav/Sources/Angol/DeepOBS/planning/
 
+**NOTE (2025-12-19)**: Tolstoi dataset and `tolstoi_char_rnn` test problem have been removed from the codebase. Use Penn Treebank (`textgen` problem) instead. This planning document may still reference tolstoi in historical contexts.
+
 ---
 
 ## 📁 IMPORTANT: Documentation Organization
@@ -86,13 +88,9 @@ DeepOBS/
 │   │   └── runners/                  # Training orchestration
 │   │       ├── standard_runner.py    # Main runner class (24KB)
 │   │       └── runner_utils.py       # Utilities
-│   ├── analyzer/                     # Result analysis (MOSTLY FRAMEWORK-AGNOSTIC)
-│   │   ├── analyze.py
-│   │   └── analyze_utils.py          # 40KB+ of plotting/analysis code
 │   └── scripts/                      # Command-line tools
 │       ├── deepobs_prepare_data.sh   # Data downloading
 │       ├── deepobs_get_baselines.sh  # Baseline downloading
-│       ├── deepobs_plot_results.py   # Visualization
 │       └── deepobs_estimate_runtime.py
 ├── docs/                             # Sphinx documentation
 ├── tests/                            # Unit tests

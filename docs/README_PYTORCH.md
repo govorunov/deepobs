@@ -24,8 +24,8 @@ DeepOBS PyTorch is a comprehensive benchmarking framework for deep learning opti
 
 ## Features
 
-- **26 Test Problems**: Realistic deep learning benchmarks across multiple domains
-- **9 Datasets**: MNIST, Fashion-MNIST, CIFAR-10/100, SVHN, ImageNet, Tolstoi, and synthetic datasets
+- **25 Test Problems**: Realistic deep learning benchmarks across multiple domains
+- **8 Datasets**: MNIST, Fashion-MNIST, CIFAR-10/100, SVHN, ImageNet, and synthetic datasets
 - **9 Architectures**: From simple logistic regression to Inception V3, VAE, and LSTMs
 - **Automated Benchmarking**: Complete workflow from data loading to result visualization
 - **Baseline Comparisons**: Compare against well-tuned SGD and Adam baselines
@@ -152,9 +152,8 @@ DeepOBS PyTorch provides **26 test problems** across 9 datasets and 9 architectu
 | `imagenet_vgg16` | ImageNet | VGG-16 | 138,357,544 | 128 | Large-scale VGG |
 | `imagenet_vgg19` | ImageNet | VGG-19 | 143,667,240 | 128 | Large-scale VGG |
 | `imagenet_inception_v3` | ImageNet | Inception V3 | ~27M | 128 | Multi-branch architecture |
-| **Text Generation (2 problems)** |
-| `textgen` | Penn Treebank | 2-layer LSTM | ~500k | 64 | Character-level RNN (recommended) |
-| `tolstoi_char_rnn` | Tolstoi | 2-layer LSTM | ~500k | 64 | Character-level RNN (deprecated) |
+| **Text Generation (1 problem)** |
+| `textgen` | Penn Treebank | 2-layer LSTM | ~500k | 64 | Character-level RNN |
 | **Quadratic (1 problem)** |
 | `quadratic_deep` | Synthetic | 100-D quadratic | 100 | 128 | Deep learning eigenspectrum |
 | **2D Optimization (3 problems)** |
@@ -166,7 +165,7 @@ DeepOBS PyTorch provides **26 test problems** across 9 datasets and 9 architectu
 
 **Classification Problems**: mnist_*, fmnist_*, cifar10_*, cifar100_*, svhn_*, imagenet_*
 **Generative Models**: mnist_vae, fmnist_vae
-**Sequential Models**: textgen (recommended), tolstoi_char_rnn (deprecated)
+**Sequential Models**: textgen
 **Optimization Benchmarks**: quadratic_deep, two_d_*
 
 ---
@@ -463,10 +462,8 @@ DeepOBS automatically downloads and organizes datasets:
 ├── imagenet/
 │   ├── train/  (user must provide)
 │   └── val/    (user must provide)
-├── penn_treebank/  (automatically downloaded)
-│   └── ptb_processed.pt
-└── tolstoi/  (deprecated, requires manual download)
-    └── war_and_peace.txt
+└── penn_treebank/  (automatically downloaded)
+    └── ptb_processed.pt
 ```
 
 **Note**: ImageNet requires manual download due to licensing. Place training images in `<data_dir>/imagenet/train/` and validation images in `<data_dir>/imagenet/val/`.

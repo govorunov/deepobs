@@ -72,52 +72,28 @@ We can use DeepOBS to automatically find the best of the hyperparameter
 settings.
 
 In this example we will directly access the (lower-level) functions of DeepOBS.
-In the section :doc:`suggested_protocol` we show you how to use the convenience
-scripts to do the following steps automatically.
+In the section :doc:`suggested_protocol` we show you how to analyze benchmark
+results.
 
-.. code-block:: python3
-
-  import deepobs
-
-  analyzer = deepobs.analyzer.analyze_utils.Analyzer("results")
-  deepobs.analyzer.analyze.get_best_run(analyzer)
+Analyze Results
+===============
 
 Since all of our results from the previous section are stored in the ``results``
-folder, we pass this path to the DeepOBS :doc:`../api/analyzer/analyzer`. Next,
-we can call the ``get_best_run`` function with this analyzer and get an output
-like this
+folder, we can analyze them using the DeepOBS CLI:
 
-.. code-block:: console
+.. code-block:: bash
 
-  ***********************
-  Analyzing quadratic_deep
-  ***********************
-  Checked 4 settings for MomentumOptimizer and found the following
-  Best Setting (Final Value) num_epochs__10__batch_size__10__momentum__9.9e-01__use_nesterov__False__lr__1.e-04 with final performance of 115.23509434291294
-  Best Setting (Best Value) num_epochs__10__batch_size__10__momentum__9.9e-01__use_nesterov__False__lr__1.e-03 with best performance of 111.36394282749721
+  deepobs analyze results/
 
+This will generate an interactive HTML report with:
 
-Plot Results
-============
+- Performance comparison across all test problems
+- Learning curves for each optimizer
+- Statistical summaries
+- Best hyperparameter settings
 
-Similarly, we can plot the sensitivity of the (final) performance with regard to
-the ``learning rate`` by calling the appropriate DeepOBS function
-
-.. code-block:: python3
-
-  deepobs.analyzer.analyze.plot_lr_sensitivity(analyzer)
-
-and getting a plot like this
-
-.. image:: plot_lr_sensitivity.png
-    :scale: 20%
-
-And most importantly, a performance plot of the best performing hyperparameter
-setting (when looking at the final performance)
-
-.. code-block:: python3
-
-  deepobs.analyzer.analyze.plot_performance(analyzer, mode='final')
+The report will be saved as ``results/benchmark_report.html`` and can be opened
+in any web browser.
 
 .. image:: plot_performance.png
     :scale: 30%

@@ -51,26 +51,21 @@ runs with the best hyperparameter setting multiple times. This allows an
 assessment of the variance of the optimizer's performance.
 
 For the baselines we determined the best learning rate looking at the final
-performance of each run, which can be done using
+performance of each run, which can be done by analyzing the benchmark results.
 
-.. code-block:: bash
+Then run the best performing setting again using ten different random seeds.
 
-  deepobs_plot_results results/ --get_best_run
-
-and then running the best performing setting again using ten different random
-seeds.
-
-Plot Results
-============
+Analyze Results
+===============
 
 To visualize the final results it is sufficient to run
 
 .. code-block:: bash
 
-  deepobs_plot_results results/ --full
+  deepobs analyze results/
 
-This will show the performance plots for the ``small`` and ``large`` benchmark
-set
+This will generate an interactive HTML report with performance plots and statistics
+for all benchmarks
 
 .. image:: performance_plot.png
     :scale: 40%

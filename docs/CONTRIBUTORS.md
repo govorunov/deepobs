@@ -100,7 +100,7 @@
 - **CIFAR-10/100**: Alex Krizhevsky, Vinod Nair, Geoffrey Hinton
 - **SVHN**: Yuval Netzer, Tao Wang, Adam Coates, Alessandro Bissacco, Bo Wu, Andrew Y. Ng
 - **ImageNet**: ImageNet Large Scale Visual Recognition Challenge (ILSVRC)
-- **Tolstoi**: Project Gutenberg (War and Peace text)
+- **Penn Treebank**: Linguistic Data Consortium
 
 ### Architecture References
 

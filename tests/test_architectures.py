@@ -6,7 +6,7 @@ import torch.nn as nn
 
 from deepobs.pytorch.testproblems import (
     _logreg, _mlp, _2c2d, _3c3d, _vgg, _wrn,
-    _inception_v3, _vae, _allcnnc, tolstoi_char_rnn
+    _inception_v3, _vae, _allcnnc
 )
 from tests.test_utils import (
     set_seed, assert_shape, count_parameters,
@@ -307,38 +307,6 @@ class TestAllCNNC:
         # Check that there are no MaxPool layers
         has_pooling = any(isinstance(m, nn.MaxPool2d) for m in model.modules())
         assert not has_pooling, "All-CNN-C should not have max pooling layers"
-
-
-class TestCharRNN:
-    """Tests for Character-level RNN."""
-
-    def test_char_rnn_creation(self):
-        """Test Char RNN can be created."""
-        model = tolstoi_char_rnn.char_rnn_model(vocab_size=83)
-        assert model is not None
-
-    def test_char_rnn_forward_pass(self):
-        """Test Char RNN forward pass."""
-        model = tolstoi_char_rnn.char_rnn_model(vocab_size=83)
-        x = torch.randint(0, 83, (32, 50))  # batch_size=32, seq_len=50
-
-        output, hidden = model(x)
-        assert_shape(output, (32, 50, 83), "Char RNN output")
-        assert hidden is not None
-
-    def test_char_rnn_hidden_state(self):
-        """Test Char RNN hidden state persistence."""
-        model = tolstoi_char_rnn.char_rnn_model(vocab_size=83)
-        x = torch.randint(0, 83, (32, 50))
-
-        # First forward pass
-        output1, hidden1 = model(x)
-
-        # Second forward pass with hidden state
-        output2, hidden2 = model(x, hidden1)
-
-        # Outputs should be different when using hidden state
-        assert not torch.allclose(output1, output2)
 
 
 # Parametrized tests for all architectures

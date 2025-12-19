@@ -55,22 +55,15 @@ These tests are marked with `@pytest.mark.skip` by default.
 
 ### Text Generation Dataset
 
-**Status**: Penn Treebank now used (automatic download)
+**Status**: Penn Treebank used (automatic download)
 
-The original `tolstoi_char_rnn` problem required manual download of War and Peace text, which was unreliable.
-
-**New Recommendation**: Use `textgen` problem instead
+The `textgen` problem uses Penn Treebank for character-level text generation.
 - Automatically downloads Penn Treebank via torchtext
 - No manual download required
-- More reliable and standardized dataset
-
-**Legacy**: `tolstoi_char_rnn` is still available but deprecated
-- Requires manual download of War and Peace text
-- Place `train.npy` and `test.npy` in `data/tolstoi/`
+- Reliable and standardized dataset
 
 **Tests Affected**:
-- `test_tolstoi_char_rnn` (deprecated)
-- `test_textgen` (recommended)
+- `test_textgen`
 
 ---
 
@@ -417,8 +410,8 @@ If you encounter any issues not listed here:
 - **1.2.0-pytorch** (2025-12-15): Initial PyTorch implementation
   - All known issues documented
   - ImageNet manual download required
-  - Text generation now uses Penn Treebank (automatic download)
-  - Tolstoi dataset deprecated in favor of Penn Treebank
+  - Text generation uses Penn Treebank (automatic download)
+  - Tolstoi dataset removed - use Penn Treebank instead
 
 ---
 

@@ -68,11 +68,6 @@ all = [
 
 [tool.setuptools]
 zip-safe = false
-script-files = [
-    "deepobs/scripts/deepobs_prepare_data.sh",
-    "deepobs/scripts/deepobs_get_baselines.sh",
-    "deepobs/scripts/deepobs_plot_results.py",
-]
 
 [tool.setuptools.packages.find]
 where = ["."]

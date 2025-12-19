@@ -7,14 +7,14 @@ This directory contains comprehensive tests for the DeepOBS PyTorch implementati
 ```
 tests/
 ├── test_utils.py              # Testing utilities and helpers
-├── test_datasets.py           # Tests for all 9 datasets
-├── test_architectures.py      # Tests for all 9 architectures
-├── test_testproblems.py       # Tests for all 26 test problems
+├── test_datasets.py           # Tests for all 8 datasets
+├── test_architectures.py      # Tests for all 8 architectures
+├── test_testproblems.py       # Tests for all 25 test problems
 ├── test_runner.py             # Tests for StandardRunner
 ├── test_config.py             # Tests for configuration system
 ├── integration/               # Integration tests
 │   ├── test_end_to_end.py     # Full training runs
-│   └── test_all_problems.py   # Smoke test for all 26 problems
+│   └── test_all_problems.py   # Smoke test for all 25 problems
 └── README.md                  # This file
 ```
 
@@ -63,14 +63,13 @@ This runs basic import, instantiation, and training tests on simple problems.
 
 ### 1. Dataset Tests (`test_datasets.py`)
 
-Tests for all 9 datasets:
+Tests for all 8 datasets:
 - MNIST
 - Fashion-MNIST
 - CIFAR-10
 - CIFAR-100
 - SVHN
 - ImageNet (requires manual setup - skipped by default)
-- Tolstoi (requires manual setup - skipped by default)
 - Quadratic
 - Two-D
 
@@ -83,7 +82,7 @@ Tests for all 9 datasets:
 
 ### 2. Architecture Tests (`test_architectures.py`)
 
-Tests for all 9 architecture types:
+Tests for all 8 architecture types:
 - Logistic Regression
 - Multi-Layer Perceptron (MLP)
 - 2C2D (2 conv + 2 dense)
@@ -93,7 +92,6 @@ Tests for all 9 architecture types:
 - Inception V3
 - Variational Autoencoder (VAE)
 - All-CNN-C
-- Character RNN (LSTM)
 
 **What's tested:**
 - Model instantiation
@@ -106,7 +104,7 @@ Tests for all 9 architecture types:
 
 ### 3. Test Problem Tests (`test_testproblems.py`)
 
-Tests for all 26 test problems:
+Tests for all 25 test problems:
 
 **MNIST (4):** logreg, mlp, 2c2d, vae
 **Fashion-MNIST (4):** logreg, mlp, 2c2d, vae
@@ -114,7 +112,6 @@ Tests for all 26 test problems:
 **CIFAR-100 (5):** 3c3d, allcnnc, vgg16, vgg19, wrn404
 **SVHN (2):** 3c3d, wrn164
 **ImageNet (3):** vgg16, vgg19, inception_v3 (requires manual setup)
-**Tolstoi (1):** char_rnn (requires manual setup)
 **Synthetic (4):** quadratic_deep, two_d_rosenbrock, two_d_beale, two_d_branin
 
 **What's tested:**
@@ -162,7 +159,7 @@ Full training runs on small problems:
 
 #### All Problems Test (`test_all_problems.py`)
 
-Quick smoke test of all 26 problems:
+Quick smoke test of all 25 problems:
 - Instantiates each problem
 - Runs 1 forward + backward pass
 - Verifies no errors
@@ -174,7 +171,7 @@ Quick smoke test of all 26 problems:
 Tests are marked with pytest markers for selective execution:
 
 - `@pytest.mark.slow` - Long-running tests (multi-epoch training)
-- `@pytest.mark.skip` - Tests requiring manual setup (ImageNet, Tolstoi)
+- `@pytest.mark.skip` - Tests requiring manual setup (ImageNet)
 
 ### Run Only Fast Tests
 
@@ -209,11 +206,10 @@ These datasets are automatically downloaded on first use:
 
 ### Manual Setup Required
 
-These datasets require manual download and setup:
+This dataset requires manual download and setup:
 - **ImageNet**: Download from http://image-net.org and place in data directory
-- **Tolstoi**: Download from DeepOBS repository and place in data directory
 
-Tests for these datasets are skipped by default.
+Tests for this dataset are skipped by default.
 
 ## Expected Test Results
 
@@ -227,15 +223,15 @@ All tests should pass if:
 ### Skipped Tests
 
 Some tests may be skipped due to:
-- Missing manual datasets (ImageNet, Tolstoi)
+- Missing manual datasets (ImageNet)
 - CUDA not available (GPU tests)
 - Marked as slow (unless explicitly run)
 
 ### Test Coverage Goals
 
-- **Dataset tests**: 100% (all 9 datasets)
-- **Architecture tests**: 100% (all 9 types)
-- **Test problem tests**: 100% (all 26 problems)
+- **Dataset tests**: 100% (all 8 datasets)
+- **Architecture tests**: 100% (all 8 types)
+- **Test problem tests**: 100% (all 25 problems)
 - **Runner tests**: 80%+ (core functionality)
 - **Integration tests**: Representative subset
 
@@ -243,7 +239,7 @@ Some tests may be skipped due to:
 
 ### Tests Fail with "Data not available"
 
-**Solution**: Tests are skipped automatically if data is not available. This is expected for ImageNet and Tolstoi. For other datasets, ensure internet connection is available for auto-download.
+**Solution**: Tests are skipped automatically if data is not available. This is expected for ImageNet. For other datasets, ensure internet connection is available for auto-download.
 
 ### Tests Fail with "CUDA out of memory"
 

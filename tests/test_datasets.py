@@ -7,7 +7,7 @@ from torch.utils.data import DataLoader
 
 from deepobs.pytorch.datasets import (
     MNIST, FashionMNIST, CIFAR10, CIFAR100, SVHN,
-    ImageNet, Tolstoi, Quadratic, TwoD
+    ImageNet, Quadratic, TwoD
 )
 from .test_utils import set_seed, assert_shape
 
@@ -165,29 +165,6 @@ class TestImageNet:
             assert_shape(y, (32,), "ImageNet labels")
         except FileNotFoundError:
             pytest.skip("ImageNet data not available")
-
-
-@pytest.mark.skip(reason="Tolstoi requires manual download")
-class TestTolstoi:
-    """Tests for Tolstoi dataset."""
-
-    def test_instantiation(self):
-        """Test dataset can be instantiated."""
-        try:
-            dataset = Tolstoi(batch_size=32)
-            assert dataset is not None
-        except FileNotFoundError:
-            pytest.skip("Tolstoi data not available")
-
-    def test_data_loading(self):
-        """Test data can be loaded."""
-        try:
-            dataset = Tolstoi(batch_size=32)
-            x, y = next(iter(dataset.train_loader))
-            assert x.dtype == torch.long  # Character indices
-            assert y.dtype == torch.long
-        except FileNotFoundError:
-            pytest.skip("Tolstoi data not available")
 
 
 class TestQuadratic:

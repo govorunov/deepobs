@@ -48,7 +48,6 @@ DeepOBS has been fully migrated to PyTorch. All TensorFlow code has been removed
   api/testproblems
   api/runner
   api/analyzer
-  api/scripts
 
 
 

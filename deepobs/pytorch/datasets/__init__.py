@@ -8,7 +8,6 @@ from .cifar100 import CIFAR100
 from .svhn import SVHN
 from .food101 import Food101
 from .imagenet import ImageNet
-from .tolstoi import Tolstoi
 from .penn_treebank import PennTreebank
 from .quadratic import Quadratic
 from .two_d import TwoD
@@ -22,7 +21,6 @@ __all__ = [
     'SVHN',
     'Food101',
     'ImageNet',
-    'Tolstoi',
     'PennTreebank',
     'Quadratic',
     'TwoD'

@@ -31,25 +31,20 @@ This includes
     <https://www.cs.toronto.edu/~kriz/cifar.html>`_
   - `Street View House Numbers (SVHN)\
     <http://ufldl.stanford.edu/housenumbers/>`_
-  - Leo Tolstoi's War and Peace
+  - Penn Treebank
 
   .. NOTE::
 
     While `ImageNet <http://www.image-net.org/>`_ is part of DeepOBS, it is
-    currently not part of the automatic data downloading pipeline mechanic.
+    currently not part of the automatic data downloading pipeline.
     Downloading the `ImageNet` data set requires an account and can take a lot
-    of time to download. Additonally, it requires quite a large amount of memory.
+    of time to download. Additionally, it requires quite a large amount of memory.
     The best way currently is to download and preprocess the `ImageNet` data set
     separately if needed and move it into the DeepOBS data folder.
 
-The automatic data preparation script can be run using
-
-.. code-block:: bash
-
-  deepobs_prepare_data.sh
-
-and is described in the API section under
-:doc:`../api/scripts/deepobs_prepare_data`.
+Most datasets are **automatically downloaded** by PyTorch/torchvision when you first
+use them. You don't need to run any preparation scripts - just create a test problem
+and the data will be downloaded on first use.
 
 
 Data Loading
@@ -115,34 +110,9 @@ computational overhead, and without risk of conscious or unconscious bias
 against the competition.
 
 Baselines for further optimizers will be added when authors provide the
-optimizer’s code, assuming the method perform competitively. Currently,
+optimizer's code, assuming the method perform competitively. Currently,
 baselines are available for all test problems in the small and large benchmark
 set.
-
-The baselines can be downloaded automatically by running
-
-.. code-block:: bash
-
-  deepobs_get_baselines.sh
-
-and the script is described in the API section under
-:doc:`../api/scripts/deepobs_get_baselines`.
-
-
-Runtime Estimation
-==================
-
-DeepOBS provides an option to quickly estimate the runtime overhead of a new
-optimization method compared to ``SGD``. It measures the ratio of wall-clock
-time between the new optimizer and ``SGD``.
-
-By default this ratio is measured on five runs each, for three epochs, on a
-fully connected network on ``MNIST``. However, this can be adapted to a setting
-which fairly evaluates the new optimizer, as some optimizers might have a high
-initial cost that amortizes over many epochs.
-
-The :doc:`../api/scripts/deepobs_estimate_runtime` script is described in the
-API section.
 
 
 Visualization
@@ -164,5 +134,5 @@ shown below, a more comprehensive example can be seen in section 4 of the
 .. image:: ../deepobs.jpg
     :scale: 40%
 
-The :doc:`../api/scripts/deepobs_plot_results` script is described in the
-API section, as well as the lower-level functions it is relying on.
+The ``deepobs analyze`` command generates interactive HTML reports with
+performance plots and statistics. See :doc:`../QUICK_START_BENCHMARK` for details.

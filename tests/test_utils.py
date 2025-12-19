@@ -180,9 +180,6 @@ def get_available_test_problems():
     # ImageNet-based (3) - may not be available
     imagenet_problems = ['imagenet_vgg16', 'imagenet_vgg19', 'imagenet_inception_v3']
 
-    # Tolstoi-based (1) - may not be available
-    tolstoi_problems = ['tolstoi_char_rnn']
-
     # Synthetic problems (4)
     synthetic_problems = ['quadratic_deep', 'two_d_rosenbrock',
                          'two_d_beale', 'two_d_branin']
@@ -192,6 +189,6 @@ def get_available_test_problems():
                 cifar100_problems + svhn_problems + synthetic_problems)
 
     # Problems requiring manual setup
-    manual = imagenet_problems + tolstoi_problems
+    manual = imagenet_problems
 
     return available, manual

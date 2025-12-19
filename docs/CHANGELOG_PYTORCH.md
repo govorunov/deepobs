@@ -25,7 +25,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **CIFAR-100**: Object classification (32x32 RGB, 50k train, 10k test, 100 classes)
 - **SVHN**: Street View House Numbers (32x32 RGB, 73k train, 26k test)
 - **ImageNet**: Large-scale classification (224x224 RGB, 1.28M train, 50k val, 1001 classes)
-- **Tolstoi**: Character-level text from War and Peace (83 unique characters)
+- **Penn Treebank**: Character-level text for language modeling
 - **Quadratic**: Synthetic n-dimensional quadratic optimization problems
 - **Two-D**: 2D optimization test functions (Rosenbrock, Beale, Branin)
 
@@ -41,14 +41,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **All-CNN-C**: All-convolutional network (no pooling)
 - **CharRNN**: 2-layer LSTM for character-level language modeling
 
-#### Test Problems (26 total)
+#### Test Problems (25 total)
 - **MNIST** (4): logreg, mlp, 2c2d, vae
 - **Fashion-MNIST** (4): logreg, mlp, 2c2d, vae
 - **CIFAR-10** (3): 3c3d, vgg16, vgg19
 - **CIFAR-100** (5): 3c3d, allcnnc, vgg16, vgg19, wrn404
 - **SVHN** (2): 3c3d, wrn164
 - **ImageNet** (3): vgg16, vgg19, inception_v3
-- **Tolstoi** (1): char_rnn
+- **Penn Treebank** (1): textgen
 - **Quadratic** (1): deep
 - **Two-D** (3): rosenbrock, beale, branin
 

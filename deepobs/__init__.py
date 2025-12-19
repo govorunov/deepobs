@@ -6,12 +6,7 @@ try:
 except ImportError:
     pytorch = None
 
-# Import analyzer and scripts (framework-agnostic, but may require dependencies)
-try:
-    from . import analyzer
-except ImportError:
-    analyzer = None
-
+# Import scripts (framework-agnostic, but may require dependencies)
 try:
     from . import scripts
 except ImportError:

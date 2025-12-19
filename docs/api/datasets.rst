@@ -2,7 +2,7 @@
 Data Sets
 ============
 
-Currently DeepOBS includes nine different data sets. Each data set inherits from
+Currently DeepOBS includes eight different data sets. Each data set inherits from
 the same base class with the following signature.
 
 .. currentmodule:: deepobs.tensorflow.datasets.dataset
@@ -23,4 +23,3 @@ the same base class with the following signature.
   datasets/cifar100
   datasets/svhn
   datasets/imagenet
-  datasets/tolstoi

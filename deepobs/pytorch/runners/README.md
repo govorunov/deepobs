@@ -262,11 +262,11 @@ adam_runner._run(
     output_dir="results"
 )
 
-# Results can be analyzed with deepobs.analyzer
+# Results can be analyzed with: deepobs analyze results/
 ```
 
 ## See Also
 
 - Test problems: `deepobs.pytorch.testproblems`
 - Datasets: `deepobs.pytorch.datasets`
-- Analysis tools: `deepobs.analyzer` (framework-agnostic)
+- Analysis tools: `deepobs analyze` command (generates interactive HTML reports)

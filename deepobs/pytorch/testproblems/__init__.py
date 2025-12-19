@@ -44,7 +44,6 @@ from .mnist_vae import mnist_vae
 from .fmnist_vae import fmnist_vae
 
 # Text generation test problems
-from .tolstoi_char_rnn import tolstoi_char_rnn
 from .textgen import textgen
 
 # Quadratic test problems
@@ -88,7 +87,6 @@ __all__ = [
     'imagenet_vgg19',
     'imagenet_inception_v3',
     # Text generation
-    'tolstoi_char_rnn',
     'textgen',
     # Quadratic
     'quadratic_deep',
