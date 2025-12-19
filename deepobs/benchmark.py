@@ -333,6 +333,16 @@ def main():
         action='store_true',
         help='Print what would be run without actually running'
     )
+    parser.add_argument(
+        '--problems',
+        nargs='+',
+        help='Filter test problems to run (space-separated list of problem names)'
+    )
+    parser.add_argument(
+        '--optimizers',
+        nargs='+',
+        help='Filter optimizers to run (space-separated list of optimizer names)'
+    )
 
     args = parser.parse_args()
 
@@ -362,6 +372,38 @@ def main():
     if not optimizers:
         print("Error: No optimizers specified in configuration")
         return 1
+
+    # Filter test problems if --problems is specified
+    if args.problems:
+        available_problems = {p['name'] for p in test_problems}
+        requested_problems = set(args.problems)
+
+        # Check for invalid problem names
+        invalid_problems = requested_problems - available_problems
+        if invalid_problems:
+            print(f"Error: Unknown test problems: {', '.join(sorted(invalid_problems))}")
+            print(f"Available problems in config: {', '.join(sorted(available_problems))}")
+            return 1
+
+        # Filter the list
+        test_problems = [p for p in test_problems if p['name'] in requested_problems]
+        print(f"\nFiltering to {len(test_problems)} problem(s): {', '.join(args.problems)}")
+
+    # Filter optimizers if --optimizers is specified
+    if args.optimizers:
+        available_optimizers = {o['name'] for o in optimizers}
+        requested_optimizers = set(args.optimizers)
+
+        # Check for invalid optimizer names
+        invalid_optimizers = requested_optimizers - available_optimizers
+        if invalid_optimizers:
+            print(f"Error: Unknown optimizers: {', '.join(sorted(invalid_optimizers))}")
+            print(f"Available optimizers in config: {', '.join(sorted(available_optimizers))}")
+            return 1
+
+        # Filter the list
+        optimizers = [o for o in optimizers if o['name'] in requested_optimizers]
+        print(f"\nFiltering to {len(optimizers)} optimizer(s): {', '.join(args.optimizers)}")
 
     # Print configuration summary
     print(f"\nTest Problems: {len(test_problems)}")

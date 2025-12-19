@@ -24,11 +24,29 @@ Examples:
   # Run benchmark with custom config
   deepobs benchmark my_config.yaml
 
+  # Run only specific test problems
+  deepobs benchmark my_config.yaml --problems mnist_mlp cifar10_3c3d
+
+  # Run only specific optimizers
+  deepobs benchmark my_config.yaml --optimizers SGD Adam
+
+  # Run specific problems with specific optimizers
+  deepobs benchmark my_config.yaml --problems mnist_logreg --optimizers SGD
+
   # Analyze results
   deepobs analyze
 
   # Analyze results from custom directory
-  deepobs analyze --results-dir ./my_results
+  deepobs analyze ./my_results
+
+  # Analyze only specific test problems
+  deepobs analyze --problems mnist_mlp cifar10_3c3d
+
+  # Analyze only specific optimizers
+  deepobs analyze --optimizers SGD Adam
+
+  # Analyze specific problems and optimizers
+  deepobs analyze --problems mnist_logreg --optimizers SGD Adam
 
 For more information, visit: https://github.com/fsschneider/DeepOBS
         """
@@ -65,6 +83,16 @@ For more information, visit: https://github.com/fsschneider/DeepOBS
         action='store_true',
         help='Print what would be run without actually running'
     )
+    benchmark_parser.add_argument(
+        '--problems',
+        nargs='+',
+        help='Filter test problems to run (space-separated list of problem names)'
+    )
+    benchmark_parser.add_argument(
+        '--optimizers',
+        nargs='+',
+        help='Filter optimizers to run (space-separated list of optimizer names)'
+    )
 
     # Analyze command
     analyze_parser = subparsers.add_parser(
@@ -77,6 +105,16 @@ For more information, visit: https://github.com/fsschneider/DeepOBS
         nargs='?',
         default='./results',
         help='Path to results directory (default: ./results)'
+    )
+    analyze_parser.add_argument(
+        '--problems',
+        nargs='+',
+        help='Filter results to specific test problems (space-separated list of problem names)'
+    )
+    analyze_parser.add_argument(
+        '--optimizers',
+        nargs='+',
+        help='Filter results to specific optimizers (space-separated list of optimizer names)'
     )
 
     # Parse arguments
@@ -93,11 +131,23 @@ For more information, visit: https://github.com/fsschneider/DeepOBS
         sys.argv = ['deepobs benchmark', args.config]
         if args.dry_run:
             sys.argv.append('--dry-run')
+        if args.problems:
+            sys.argv.append('--problems')
+            sys.argv.extend(args.problems)
+        if args.optimizers:
+            sys.argv.append('--optimizers')
+            sys.argv.extend(args.optimizers)
         return benchmark_main()
 
     elif args.command == 'analyze':
         from deepobs.analyze import main as analyze_main
         sys.argv = ['deepobs analyze', args.results_dir]
+        if args.problems:
+            sys.argv.append('--problems')
+            sys.argv.extend(args.problems)
+        if args.optimizers:
+            sys.argv.append('--optimizers')
+            sys.argv.extend(args.optimizers)
         return analyze_main()
 
     return 0

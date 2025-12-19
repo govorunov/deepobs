@@ -398,6 +398,16 @@ def main():
         default='./results',
         help='Path to the directory containing result files (default: ./results)'
     )
+    parser.add_argument(
+        '--problems',
+        nargs='+',
+        help='Filter results to specific test problems (space-separated list of problem names)'
+    )
+    parser.add_argument(
+        '--optimizers',
+        nargs='+',
+        help='Filter results to specific optimizers (space-separated list of optimizer names)'
+    )
     args = parser.parse_args()
 
     print("=" * 80)
@@ -415,6 +425,47 @@ def main():
         return
 
     print(f"\nLoaded {len(results)} unique (test_problem, optimizer) combinations")
+
+    # Filter results if --problems or --optimizers is specified
+    if args.problems or args.optimizers:
+        available_problems = {tp for tp, _ in results.keys()}
+        available_optimizers = {opt for _, opt in results.keys()}
+
+        # Filter by problems if specified
+        if args.problems:
+            requested_problems = set(args.problems)
+
+            # Check for invalid problem names
+            invalid_problems = requested_problems - available_problems
+            if invalid_problems:
+                print(f"\nWarning: Unknown test problems (will be ignored): {', '.join(sorted(invalid_problems))}")
+                print(f"Available problems in results: {', '.join(sorted(available_problems))}")
+
+            # Filter the results
+            results = {k: v for k, v in results.items() if k[0] in requested_problems}
+            print(f"\nFiltering to problem(s): {', '.join(sorted(requested_problems & available_problems))}")
+
+        # Filter by optimizers if specified
+        if args.optimizers:
+            requested_optimizers = set(args.optimizers)
+
+            # Check for invalid optimizer names
+            invalid_optimizers = requested_optimizers - available_optimizers
+            if invalid_optimizers:
+                print(f"\nWarning: Unknown optimizers (will be ignored): {', '.join(sorted(invalid_optimizers))}")
+                print(f"Available optimizers in results: {', '.join(sorted(available_optimizers))}")
+
+            # Filter the results
+            results = {k: v for k, v in results.items() if k[1] in requested_optimizers}
+            print(f"\nFiltering to optimizer(s): {', '.join(sorted(requested_optimizers & available_optimizers))}")
+
+        # Check if any results remain after filtering
+        if not results:
+            print("\n✗ No results match the specified filters!")
+            print("Please check the problem and optimizer names and try again.")
+            return
+
+        print(f"\nAfter filtering: {len(results)} unique (test_problem, optimizer) combinations")
 
     # Print summaries
     print_detailed_summary(results)
