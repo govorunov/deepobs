@@ -116,7 +116,7 @@ test_problems:
   # ========================================
   # Text generation problems (1 problem, ~500K params)
   # ========================================
-  - name: textgen
+  - name: ptb_lstm
     num_epochs: 30
     batch_size: 64
 

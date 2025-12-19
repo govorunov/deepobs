@@ -116,7 +116,7 @@ test_problems:
   # ========================================
   # Text generation problems (1 problem, ~500K params)
   # ========================================
-  - name: textgen
+  - name: ptb_lstm
     num_epochs: 30
     batch_size: 64
 
@@ -175,7 +175,7 @@ overrides:
         factors: [0.1, 0.1]
 
   # Character RNN may need different learning rate
-  textgen:
+  ptb_lstm:
     AdamW:
       learning_rate: 0.001
       weight_decay: 0.001  # Lower weight decay for RNN

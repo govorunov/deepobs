@@ -7,7 +7,7 @@
 **Status**: ✅ COMPLETE - All phases finished
 **Location**: /Users/yaroslav/Sources/Angol/DeepOBS/planning/
 
-**NOTE (2025-12-19)**: Tolstoi dataset and `tolstoi_char_rnn` test problem have been removed from the codebase. Use Penn Treebank (`textgen` problem) instead. This planning document may still reference tolstoi in historical contexts.
+**NOTE (2025-12-19)**: Tolstoi dataset and `tolstoi_char_rnn` test problem have been removed from the codebase. Use Penn Treebank (`ptb_lstm` problem) instead. This planning document may still reference tolstoi in historical contexts.
 
 ---
 

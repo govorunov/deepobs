@@ -152,7 +152,7 @@ DeepOBS PyTorch provides **26 test problems** across 9 datasets and 9 architectu
 | `imagenet_vgg19` | ImageNet | VGG-19 | 143,667,240 | 128 | Large-scale VGG |
 | `imagenet_inception_v3` | ImageNet | Inception V3 | ~27M | 128 | Multi-branch architecture |
 | **Text Generation (1 problem)** |
-| `textgen` | Penn Treebank | 2-layer LSTM | ~500k | 64 | Character-level RNN |
+| `ptb_lstm` | Penn Treebank | 2-layer LSTM | ~500k | 64 | Character-level RNN |
 | **Quadratic (1 problem)** |
 | `quadratic_deep` | Synthetic | 100-D quadratic | 100 | 128 | Deep learning eigenspectrum |
 | **2D Optimization (3 problems)** |
@@ -164,7 +164,7 @@ DeepOBS PyTorch provides **26 test problems** across 9 datasets and 9 architectu
 
 **Classification Problems**: mnist_*, fmnist_*, cifar10_*, cifar100_*, svhn_*, imagenet_*
 **Generative Models**: mnist_vae, fmnist_vae
-**Sequential Models**: textgen
+**Sequential Models**: ptb_lstm
 **Optimization Benchmarks**: quadratic_deep, two_d_*
 
 ---

@@ -155,7 +155,7 @@ All **27 test problems** are currently implemented and available:
 ### Text Generation (1 problem)
 | Problem | Architecture | Parameters | Description |
 |---------|-------------|------------|-------------|
-| `textgen` | 2-Layer LSTM | ~500,000 | Penn Treebank |
+| `ptb_lstm` | 2-Layer LSTM | ~500,000 | Penn Treebank |
 
 ### Synthetic Optimization (4 problems)
 | Problem | Parameters | Description |
@@ -169,7 +169,7 @@ All **27 test problems** are currently implemented and available:
 
 - **Classification**: mnist_*, fmnist_*, cifar10_*, cifar100_*, svhn_*, imagenet_*
 - **Generative Models**: mnist_vae, fmnist_vae
-- **Sequential Models**: textgen
+- **Sequential Models**: ptb_lstm
 - **Optimization Benchmarks**: quadratic_deep, two_d_*
 
 ---

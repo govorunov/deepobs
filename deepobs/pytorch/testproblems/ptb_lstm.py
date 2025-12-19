@@ -28,12 +28,7 @@ class CharRNN(nn.Module):
     """
 
     def __init__(
-        self,
-        vocab_size,
-        embedding_dim=128,
-        hidden_size=128,
-        num_layers=2,
-        dropout=0.2
+        self, vocab_size, embedding_dim=128, hidden_size=128, num_layers=2, dropout=0.2
     ):
         super(CharRNN, self).__init__()
 
@@ -48,11 +43,7 @@ class CharRNN(nn.Module):
 
         # LSTM layers with dropout
         self.lstm = nn.LSTM(
-            embedding_dim,
-            hidden_size,
-            num_layers,
-            dropout=dropout,
-            batch_first=True
+            embedding_dim, hidden_size, num_layers, dropout=dropout, batch_first=True
         )
 
         # Dropout layers for input and output (mimicking DropoutWrapper)
@@ -119,7 +110,7 @@ class CharRNN(nn.Module):
         self.hidden = None
 
 
-class textgen(TestProblem):
+class ptb_lstm(TestProblem):
     """DeepOBS test problem class for a two-layer LSTM for character-level language
     modelling (Char RNN) on Penn Treebank.
 
@@ -157,7 +148,7 @@ class textgen(TestProblem):
                 test problem. Defaults to ``None`` and any input here is ignored.
             device (str or torch.device, optional): Device to use.
         """
-        super(textgen, self).__init__(batch_size, weight_decay, device)
+        super(ptb_lstm, self).__init__(batch_size, weight_decay, device)
 
         if weight_decay is not None:
             print(
@@ -176,15 +167,17 @@ class textgen(TestProblem):
             embedding_dim=128,
             hidden_size=128,
             num_layers=2,
-            dropout=0.2
+            dropout=0.2,
         )
         self.model.to(self.device)
 
         print(f"Text generation model initialized:")
         print(f"  Vocabulary size: {self.dataset.vocab_size}")
-        print(f"  Model parameters: ~{sum(p.numel() for p in self.model.parameters()):,}")
+        print(
+            f"  Model parameters: ~{sum(p.numel() for p in self.model.parameters()):,}"
+        )
 
-    def _compute_loss(self, outputs, targets, reduction='mean'):
+    def _compute_loss(self, outputs, targets, reduction="mean"):
         """Compute the cross-entropy loss for sequence prediction.
 
         The loss is computed per character position and averaged over the sequence.
@@ -211,9 +204,7 @@ class textgen(TestProblem):
         # Compute cross-entropy loss per token
         # reduction='none' gives loss per token
         token_losses = F.cross_entropy(
-            outputs_reshaped,
-            targets_reshaped,
-            reduction='none'
+            outputs_reshaped, targets_reshaped, reduction="none"
         )  # Shape: (batch_size * seq_length,)
 
         # Reshape to (batch_size, seq_length)
@@ -223,9 +214,9 @@ class textgen(TestProblem):
         # This gives per-example losses
         example_losses = token_losses.mean(dim=1)  # Shape: (batch_size,)
 
-        if reduction == 'mean':
+        if reduction == "mean":
             return example_losses.mean()
-        elif reduction == 'none':
+        elif reduction == "none":
             return example_losses
         else:
             raise ValueError(f"Invalid reduction mode: {reduction}")
@@ -253,7 +244,7 @@ class textgen(TestProblem):
 
         return accuracy
 
-    def get_batch_loss_and_accuracy(self, batch, reduction='mean'):
+    def get_batch_loss_and_accuracy(self, batch, reduction="mean"):
         """Compute loss and accuracy for a batch.
 
         This method overrides the base class to handle LSTM state management.

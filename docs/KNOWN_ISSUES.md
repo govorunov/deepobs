@@ -57,13 +57,13 @@ These tests are marked with `@pytest.mark.skip` by default.
 
 **Status**: Penn Treebank used (automatic download)
 
-The `textgen` problem uses Penn Treebank for character-level text generation.
+The `ptb_lstm` problem uses Penn Treebank for character-level text generation.
 - Automatically downloads Penn Treebank via torchtext
 - No manual download required
 - Reliable and standardized dataset
 
 **Tests Affected**:
-- `test_textgen`
+- `test_ptb_lstm`
 
 ---
 

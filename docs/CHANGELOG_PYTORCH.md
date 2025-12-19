@@ -48,7 +48,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **CIFAR-100** (5): 3c3d, allcnnc, vgg16, vgg19, wrn404
 - **SVHN** (2): 3c3d, wrn164
 - **ImageNet** (3): vgg16, vgg19, inception_v3
-- **Penn Treebank** (1): textgen
+- **Penn Treebank** (1): ptb_lstm
 - **Quadratic** (1): deep
 - **Two-D** (3): rosenbrock, beale, branin
 
