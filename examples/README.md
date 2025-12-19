@@ -71,8 +71,24 @@ Examples save results to:
 - Use GPU if available for faster training (set `device='cuda'`)
 - Check comments in each script for detailed explanations
 
+## Configuration Files
+
+The following YAML configuration files are provided for CLI benchmarking:
+
+- **benchmark_config.yaml** - Full benchmark configuration example
+- **benchmark_config_quick.yaml** - Quick test configuration
+- **benchmark_config_adamw_small.yaml** - AdamW optimizer example
+- **benchmark_config_angol_small.yaml** - Custom optimizer example
+
+Use with the DeepOBS CLI:
+```bash
+uv run deepobs benchmark benchmark_config_quick.yaml
+```
+
+See [QUICK_START_BENCHMARK.md](../docs/QUICK_START_BENCHMARK.md) for more details on CLI usage.
+
 ## See Also
 
-- [README_PYTORCH.md](../README_PYTORCH.md) - Main usage guide
-- [API_REFERENCE.md](../API_REFERENCE.md) - Complete API documentation
-- [MIGRATION_GUIDE.md](../MIGRATION_GUIDE.md) - Migrating from TensorFlow
+- [README_PYTORCH.md](../docs/README_PYTORCH.md) - Main usage guide
+- [QUICK_START_BENCHMARK.md](../docs/QUICK_START_BENCHMARK.md) - CLI benchmarking guide
+- [API_REFERENCE.md](../docs/API_REFERENCE.md) - Complete API documentation

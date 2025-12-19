@@ -904,7 +904,7 @@ optimizer = torch.optim.SGD(tproblem.model.parameters(), lr=0.1)
 ## See Also
 
 - **README_PYTORCH.md**: Main usage guide
-- **MIGRATION_GUIDE.md**: Migration from TensorFlow
+- **QUICK_START_BENCHMARK.md**: CLI usage guide
 - **examples/**: Complete example scripts
 
 ---

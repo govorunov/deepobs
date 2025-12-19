@@ -385,10 +385,10 @@ Yes! See [PyTorch Usage Guide](docs/README_PYTORCH.md) for detailed examples inc
 ### Additional Resources
 
 - **[README_PYTORCH.md](docs/README_PYTORCH.md)** - Detailed PyTorch usage guide with advanced topics
-- **[docs/API_REFERENCE.md](docs/API_REFERENCE.md)** - API documentation
-- **[examples/](examples/)** - Usage examples and tutorials
-- **[docs/KNOWN_ISSUES.md](docs/KNOWN_ISSUES.md)** - Known issues and limitations
-- **[docs/MIGRATION_GUIDE.md](docs/MIGRATION_GUIDE.md)** - Migrating from TensorFlow
+- **[QUICK_START_BENCHMARK.md](docs/QUICK_START_BENCHMARK.md)** - CLI benchmarking guide
+- **[API_REFERENCE.md](docs/API_REFERENCE.md)** - Complete API documentation
+- **[examples/](examples/)** - Usage examples and configuration files
+- **[KNOWN_ISSUES.md](docs/KNOWN_ISSUES.md)** - Known issues and limitations
 
 **Online Documentation**: https://deepobs.readthedocs.io/
 
@@ -402,14 +402,6 @@ The `examples/` directory contains complete, runnable examples:
 - `learning_rate_schedule.py` - Using learning rate schedules
 - `result_analysis.py` - Analyzing and plotting results
 
-### Migrating from TensorFlow
-
-If you're migrating from the TensorFlow version of DeepOBS, see [README_PYTORCH.md](docs/README_PYTORCH.md#migration-from-tensorflow) for detailed migration instructions including:
-
-- API changes
-- Training loop differences
-- Batch normalization handling
-- Common gotchas
 
 ## Paper
 

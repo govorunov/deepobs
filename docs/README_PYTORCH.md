@@ -17,7 +17,6 @@ DeepOBS PyTorch is a comprehensive benchmarking framework for deep learning opti
 - [Usage Examples](#usage-examples)
 - [Configuration](#configuration)
 - [Documentation](#documentation)
-- [Migration from TensorFlow](#migration-from-tensorflow)
 - [FAQ](#faq)
 
 ---
@@ -475,8 +474,7 @@ DeepOBS automatically downloads and organizes datasets:
 ### Additional Resources
 
 - **API Reference**: See [API_REFERENCE.md](API_REFERENCE.md) for detailed API documentation
-- **Migration Guide**: See [MIGRATION_GUIDE.md](MIGRATION_GUIDE.md) for migrating from TensorFlow
-- **Examples**: See [examples/](examples/) directory for complete example scripts
+- **Examples**: See [examples/](../examples/) directory for complete example scripts
 - **Original Paper**: [DeepOBS: A Deep Learning Optimizer Benchmark Suite (ICLR 2019)](https://openreview.net/forum?id=rJg6ssC5Y7)
 
 ### Example Scripts
@@ -488,59 +486,6 @@ The `examples/` directory contains complete, runnable examples:
 - `multiple_test_problems.py` - Running multiple test problems
 - `learning_rate_schedule.py` - Using learning rate schedules
 - `result_analysis.py` - Analyzing and plotting results
-
----
-
-## Migration from TensorFlow
-
-If you're migrating from the TensorFlow version of DeepOBS, key differences include:
-
-### API Changes
-
-```python
-# TensorFlow (old)
-from deepobs.tensorflow import testproblems
-tproblem = testproblems.mnist_mlp(batch_size=128)
-tproblem.set_up()
-
-# PyTorch (new)
-from deepobs.pytorch import testproblems
-tproblem = testproblems.mnist_mlp(batch_size=128)
-tproblem.set_up()
-```
-
-### Training Loop
-
-```python
-# TensorFlow (old) - Session-based
-with tf.Session() as sess:
-    sess.run(tf.global_variables_initializer())
-    sess.run(tproblem.train_init_op)
-    while True:
-        try:
-            _, loss = sess.run([train_op, loss_tensor])
-        except tf.errors.OutOfRangeError:
-            break
-
-# PyTorch (new) - Eager execution
-for batch in tproblem.dataset.train_loader:
-    optimizer.zero_grad()
-    loss, accuracy = tproblem.get_batch_loss_and_accuracy(batch)
-    loss.mean().backward()
-    optimizer.step()
-```
-
-### Batch Normalization
-
-PyTorch handles batch normalization automatically through `model.train()` and `model.eval()`:
-
-```python
-# No manual UPDATE_OPS collection needed (like in TensorFlow)
-model.train()  # Enables batch norm training mode
-model.eval()   # Disables batch norm updates
-```
-
-See [MIGRATION_GUIDE.md](MIGRATION_GUIDE.md) for comprehensive migration instructions.
 
 ---
 
@@ -716,7 +661,7 @@ pip install torch torchvision
 <data_dir>/imagenet/val/
 ```
 
-### Issue: Different results than TensorFlow version
+### Issue: Numerical differences between runs
 
 **Possible causes**:
 - Different random seeds
@@ -782,15 +727,16 @@ DeepOBS is licensed under the MIT License. See [LICENSE](LICENSE) for details.
 
 ## Acknowledgments
 
-**Original DeepOBS (TensorFlow)**:
+**Original DeepOBS Authors**:
 - Frank Schneider, Lukas Balles, Philipp Hennig
 - University of Tübingen
+- ICLR 2019
 
-**PyTorch Migration**:
+**PyTorch Implementation**:
 - Maintained by the DeepOBS community
-- Built on the foundation of the original TensorFlow implementation
+- Version 1.2.0+
 
-**Successor Project**: DeepOBS is superseded by [AlgoPerf](https://github.com/mlcommons/algorithmic-efficiency), a new benchmark suite by MLCommons.
+**Successor Project**: For large-scale benchmarking, see [AlgoPerf](https://github.com/mlcommons/algorithmic-efficiency), the MLCommons algorithmic efficiency benchmark.
 
 ---
 

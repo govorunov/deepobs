@@ -112,39 +112,35 @@ The following tests are skipped by default:
 
 ## Numerical Precision Differences
 
-### TensorFlow vs PyTorch
+**Issue**: Minor numerical differences may exist between different runs.
 
-**Issue**: Minor numerical differences may exist between TensorFlow and PyTorch implementations.
-
-**Expected Difference**:
+**Expected Variance**:
 - Loss values: ±0.1%
 - Accuracy: ±0.5%
 - Final convergence: Within tolerance
 
 **Causes**:
-1. Different random number generators
-2. Different default initializations
-3. Different batch normalization implementations
-4. Floating-point arithmetic differences
+1. Random number generators
+2. Random initializations
+3. Data shuffling and augmentation
+4. Floating-point arithmetic order
 
-**Impact**: Minimal. Both implementations converge to similar final results.
+**Impact**: Minimal. Results converge to similar final values.
 
 ---
 
 ## Batch Normalization Momentum
 
-**Issue**: TensorFlow and PyTorch use inverted momentum definitions.
+**Note**: PyTorch uses a different momentum definition than some other frameworks.
 
-**Conversion**:
+**PyTorch Definition**:
 ```python
-# TensorFlow momentum: 0.9
-momentum_tf = 0.9
-
-# PyTorch momentum: 0.1
-momentum_pt = 1 - momentum_tf  # 0.1
+# PyTorch batch normalization uses momentum for exponential moving average
+# Default momentum: 0.1
+# running_mean = (1 - momentum) * running_mean + momentum * batch_mean
 ```
 
-**Status**: Already handled in all architecture implementations.
+**Status**: All DeepOBS architectures use the correct PyTorch momentum values.
 
 ---
 
@@ -333,15 +329,15 @@ torch.backends.cudnn.benchmark = False
 
 ### API Documentation
 
-**Status**: Sphinx documentation not yet built for PyTorch version.
+**Status**: All documentation is in markdown format.
 
-**Current**: All documentation is in markdown files:
-- `README_PYTORCH.md` - Main PyTorch documentation
-- `MIGRATION_GUIDE.md` - TensorFlow → PyTorch migration
+**Available Documentation**:
+- `README_PYTORCH.md` - Main PyTorch usage guide
+- `QUICK_START_BENCHMARK.md` - CLI and benchmarking guide
 - `API_REFERENCE.md` - Complete API reference
-- `EXAMPLES.md` - Usage examples
+- `examples/` - Runnable example scripts and configurations
 
-**Future**: Will integrate with existing ReadTheDocs site.
+**Note**: Legacy Sphinx documentation has been removed in favor of streamlined markdown documentation.
 
 ---
 
