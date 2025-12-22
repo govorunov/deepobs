@@ -425,11 +425,13 @@ class StandardRunner(object):
 
             Returns:
                 tuple: (average_loss, average_accuracy)
+                    - average_accuracy is None if the problem doesn't compute accuracy
             """
             tproblem.model.eval()
             total_loss = 0.0
             total_acc = 0.0
             num_batches = 0
+            has_accuracy = False
 
             with torch.no_grad():
                 for batch in data_loader:
@@ -444,17 +446,21 @@ class StandardRunner(object):
                     total_loss += loss.item()
 
                     if accuracy is not None:
+                        has_accuracy = True
                         total_acc += accuracy.item()
 
                     num_batches += 1
 
             # Compute averages
             avg_loss = total_loss / max(num_batches, 1)
-            avg_acc = total_acc / max(num_batches, 1)
+            avg_acc = (total_acc / max(num_batches, 1)) if has_accuracy else None
 
             # Log results
             msg = "TEST:" if is_test else "TRAIN:"
-            print("{0:s} loss {1:g}, acc {2:f}".format(msg, avg_loss, avg_acc))
+            if avg_acc is not None:
+                print("{0:s} loss {1:g}, acc {2:f}".format(msg, avg_loss, avg_acc))
+            else:
+                print("{0:s} loss {1:g}".format(msg, avg_loss))
 
             return avg_loss, avg_acc
 
@@ -527,7 +533,8 @@ class StandardRunner(object):
         }
 
         # Only add accuracies if they are computed (not None)
-        if train_accuracies and train_accuracies[0] != 0.0:
+        # Check if the first accuracy is not None (indicating the problem computes accuracy)
+        if train_accuracies and train_accuracies[0] is not None:
             output["train_accuracies"] = train_accuracies
             output["test_accuracies"] = test_accuracies
 
