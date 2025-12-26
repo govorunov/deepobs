@@ -13,8 +13,8 @@ import argparse
 def main():
     """Main CLI entry point."""
     parser = argparse.ArgumentParser(
-        prog='deepobs',
-        description='DeepOBS - Deep Learning Optimizer Benchmark Suite',
+        prog="deepobs",
+        description="DeepOBS - Deep Learning Optimizer Benchmark Suite",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
@@ -47,74 +47,68 @@ Examples:
 
   # Analyze specific problems and optimizers
   deepobs analyze --problems mnist_logreg --optimizers SGD Adam
-
-For more information, visit: https://github.com/fsschneider/DeepOBS
-        """
+        """,
     )
 
-    parser.add_argument(
-        '--version',
-        action='version',
-        version='DeepOBS 1.2.0'
-    )
+    parser.add_argument("--version", action="version", version="DeepOBS 1.2.0")
 
     # Create subparsers for commands
     subparsers = parser.add_subparsers(
-        title='commands',
-        description='Available commands',
-        dest='command',
-        help='Command to run'
+        title="commands",
+        description="Available commands",
+        dest="command",
+        help="Command to run",
     )
 
     # Benchmark command
     benchmark_parser = subparsers.add_parser(
-        'benchmark',
-        help='Run optimizer benchmark suite',
-        description='Run a comprehensive benchmark of optimizers on test problems'
+        "benchmark",
+        help="Run optimizer benchmark suite",
+        description="Run a comprehensive benchmark of optimizers on test problems",
     )
     benchmark_parser.add_argument(
-        'config',
-        nargs='?',
-        default='benchmark_config.yaml',
-        help='Path to YAML configuration file (default: benchmark_config.yaml)'
+        "config",
+        nargs="?",
+        default="benchmark_config.yaml",
+        help="Path to YAML configuration file (default: benchmark_config.yaml)",
     )
     benchmark_parser.add_argument(
-        '--dry-run',
-        action='store_true',
-        help='Print what would be run without actually running'
+        "--dry-run",
+        action="store_true",
+        help="Print what would be run without actually running",
     )
     benchmark_parser.add_argument(
-        '--problems',
-        nargs='+',
-        help='Filter test problems to run (space-separated list of problem names)'
+        "--problems",
+        nargs="+",
+        help="Filter test problems to run (space-separated list of problem names)",
     )
     benchmark_parser.add_argument(
-        '--optimizers',
-        nargs='+',
-        help='Filter optimizers to run (space-separated list of optimizer names)'
+        "--optimizers",
+        nargs="+",
+        help="Filter optimizers to run (space-separated list of optimizer names)",
     )
 
     # Analyze command
     analyze_parser = subparsers.add_parser(
-        'analyze',
-        help='Analyze and visualize benchmark results',
-        description='Generate plots and statistics from benchmark results'
+        "analyze",
+        help="Analyze and visualize benchmark results",
+        description="Generate plots and statistics from benchmark results",
     )
     analyze_parser.add_argument(
-        'results_dir',
-        nargs='?',
-        default='./results',
-        help='Path to results directory (default: ./results)'
+        "results_dir",
+        nargs="?",
+        default="./results",
+        help="Path to results directory (default: ./results)",
     )
     analyze_parser.add_argument(
-        '--problems',
-        nargs='+',
-        help='Filter results to specific test problems (space-separated list of problem names)'
+        "--problems",
+        nargs="+",
+        help="Filter results to specific test problems (space-separated list of problem names)",
     )
     analyze_parser.add_argument(
-        '--optimizers',
-        nargs='+',
-        help='Filter results to specific optimizers (space-separated list of optimizer names)'
+        "--optimizers",
+        nargs="+",
+        help="Filter results to specific optimizers (space-separated list of optimizer names)",
     )
 
     # Parse arguments
@@ -126,32 +120,34 @@ For more information, visit: https://github.com/fsschneider/DeepOBS
         return 0
 
     # Import and run the appropriate command
-    if args.command == 'benchmark':
+    if args.command == "benchmark":
         from deepobs.benchmark import main as benchmark_main
-        sys.argv = ['deepobs benchmark', args.config]
+
+        sys.argv = ["deepobs benchmark", args.config]
         if args.dry_run:
-            sys.argv.append('--dry-run')
+            sys.argv.append("--dry-run")
         if args.problems:
-            sys.argv.append('--problems')
+            sys.argv.append("--problems")
             sys.argv.extend(args.problems)
         if args.optimizers:
-            sys.argv.append('--optimizers')
+            sys.argv.append("--optimizers")
             sys.argv.extend(args.optimizers)
         return benchmark_main()
 
-    elif args.command == 'analyze':
+    elif args.command == "analyze":
         from deepobs.analyze import main as analyze_main
-        sys.argv = ['deepobs analyze', args.results_dir]
+
+        sys.argv = ["deepobs analyze", args.results_dir]
         if args.problems:
-            sys.argv.append('--problems')
+            sys.argv.append("--problems")
             sys.argv.extend(args.problems)
         if args.optimizers:
-            sys.argv.append('--optimizers')
+            sys.argv.append("--optimizers")
             sys.argv.extend(args.optimizers)
         return analyze_main()
 
     return 0
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sys.exit(main())

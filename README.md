@@ -1,18 +1,4 @@
-# DeepOBS - A Deep Learning Optimizer Benchmark Suite
-
-----
-
-> **Note**: DeepOBS is now a **PyTorch-only** project. All TensorFlow code has been removed. For large-scale benchmarking, see the [AlgoPerf benchmark suite](https://github.com/mlcommons/algorithmic-efficiency).
-
------
-
-![DeepOBS](docs/deepobs_banner.png "DeepOBS")
-
-[![PyPI version](https://badge.fury.io/py/deepobs.svg)](https://badge.fury.io/py/deepobs)
-[![Documentation Status](https://readthedocs.org/projects/deepobs/badge/?version=stable)](https://deepobs.readthedocs.io/en/stable/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)
-![PyTorch](https://img.shields.io/badge/PyTorch-1.9+-ee4c2c.svg)
+# DeepOBS Pytorch - A Deep Learning Optimizer Benchmark Suite
 
 
 **DeepOBS** is a benchmarking suite that drastically simplifies, automates and
@@ -31,8 +17,6 @@ DeepOBS automates several steps when benchmarking deep learning optimizers:
     metrics.
   - Reporting and visualizing the results of the optimizer benchmark.
 
-![DeepOBS Output](docs/deepobs.jpg "DeepOBS_output")
-
 ## Table of Contents
 
 - [Quick Start](#quick-start)
@@ -49,19 +33,42 @@ DeepOBS automates several steps when benchmarking deep learning optimizers:
 
 ## Quick Start
 
-The easiest way to use DeepOBS is through the command-line interface:
+Get started with DeepOBS in 5 minutes:
 
-### 1. Run a Benchmark
+### 1. Install UV
+
+[UV](https://github.com/astral-sh/uv) is a fast Python package manager:
 
 ```bash
-# Run benchmark with default configuration
-uv run deepobs benchmark
+# Install UV
+curl -LsSf https://astral.sh/uv/install.sh | sh
 
-# Or with a custom configuration
+# Or with pip
+pip install uv
+```
+
+### 2. Clone and Setup
+
+```bash
+# Clone the repository
+git clone THIS_REPO_URL
+cd deepobs
+
+# Sync dependencies (installs everything you need)
+uv sync
+```
+
+### 3. Run a Benchmark
+
+```bash
+# Use an example configuration
+uv run deepobs benchmark examples/benchmark_config_adamw_small.yaml
+
+# Or create your own config (see below)
 uv run deepobs benchmark my_config.yaml
 ```
 
-### 2. Analyze Results
+### 4. Analyze Results
 
 ```bash
 # Generate interactive plots and statistics
@@ -71,35 +78,80 @@ uv run deepobs analyze
 uv run deepobs analyze ./my_results
 ```
 
-That's it! DeepOBS will run your benchmarks and generate an interactive HTML report with all results.
+### 5. Using Custom Optimizers
 
-See [Quick Start Guide](docs/QUICK_START_BENCHMARK.md) for detailed instructions.
+DeepOBS works with any PyTorch optimizer. If you have a custom optimizer package, install it first:
 
-### Programmatic Usage
+```bash
+# Install your own optimizer package
+uv pip install /path/to/your/optimizer
 
-You can also use DeepOBS as a Python library:
-
-```python
-import torch
-from deepobs.pytorch import testproblems
-
-# Create a test problem
-tproblem = testproblems.mnist_mlp(batch_size=128)
-tproblem.set_up()
-
-# Train with any PyTorch optimizer
-optimizer = torch.optim.Adam(tproblem.model.parameters(), lr=0.001)
-
-for epoch in range(10):
-    for batch in tproblem.train_loader:
-        optimizer.zero_grad()
-        losses, accuracy = tproblem.get_batch_loss_and_accuracy(batch)
-        loss = losses.mean()
-        loss.backward()
-        optimizer.step()
+# Or install from PyPI
+uv pip install your-optimizer-package
 ```
 
-For more programmatic examples, see [PyTorch Usage Guide](docs/README_PYTORCH.md).
+**Example configuration:**
+
+```yaml
+# my_config.yaml
+global:
+  output_dir: "./results"
+  random_seed: 42
+  num_epochs: 10
+
+test_problems:
+  - name: mnist_mlp
+    batch_size: 128
+
+  - name: cifar10_3c3d
+    batch_size: 128
+    num_epochs: 50
+
+optimizers:
+  # Built-in PyTorch optimizer (no optimizer_class needed)
+  - name: Adam
+    learning_rate: 0.001
+    betas: [0.9, 0.999]
+    eps: 1.0e-08
+
+  # Custom optimizer - specify full import path
+  - name: MyCustomOptimizer
+    optimizer_class: my_package.optimizers.MyCustomOptimizer
+    learning_rate: 0.01
+    momentum: 0.9
+
+# Optional: override settings per problem
+overrides:
+  mnist_mlp:
+    Adam:
+      learning_rate: 0.0001
+```
+
+**Using pytorch-optimizer package** (already included):
+
+```yaml
+optimizers:
+  # Ranger optimizer from pytorch-optimizer
+  - name: Ranger
+    optimizer_class: torch_optimizer.Ranger
+    learning_rate: 0.001
+
+  # Lamb optimizer
+  - name: Lamb
+    optimizer_class: torch_optimizer.Lamb
+    learning_rate: 0.001
+    weight_decay: 0.01
+
+  # AdaBound optimizer
+  - name: AdaBound
+    optimizer_class: torch_optimizer.AdaBound
+    learning_rate: 0.001
+    final_lr: 0.1
+```
+
+That's it! DeepOBS will run your benchmarks and generate an interactive HTML report with all results.
+
+See [Quick Start Guide](docs/QUICK_START_BENCHMARK.md) for detailed instructions and more configuration examples.
 
 ## Available Test Problems
 
@@ -208,7 +260,7 @@ All **9 datasets** are currently implemented:
 
 ## Installation
 
-### Using UV (Recommended)
+### Install UV
 
 [UV](https://github.com/astral-sh/uv) is a fast Python package manager. Install it first:
 
@@ -220,75 +272,17 @@ curl -LsSf https://astral.sh/uv/install.sh | sh
 pip install uv
 ```
 
-Then install DeepOBS:
+### Install DeepOBS
 
 ```bash
-# Basic installation
-uv pip install deepobs
-
-# PyTorch support (recommended)
-uv pip install deepobs[pytorch]
-
-# All dependencies
-uv pip install deepobs[all]
-
-# Development installation
-uv pip install deepobs[dev]
-```
-
-### From Source with UV
-
-```bash
-# Clone repository
-git clone https://github.com/fsschneider/DeepOBS.git
-cd DeepOBS
+# Navigate to repository
+git clone ...
+cd deepobs
 
 # Create virtual environment
-uv venv
+uv sync
 
-# Activate virtual environment
-source .venv/bin/activate  # On Unix/macOS
-# or
-.venv\Scripts\activate  # On Windows
-
-# Install in development mode
-uv pip install -e .
-
-# With PyTorch
-uv pip install -e ".[pytorch]"
-
-# Sync all dependencies including dev
-uv pip install -e ".[all,dev]"
-```
-
-### Using pip
-
-```bash
-# Basic installation
-pip install deepobs
-
-# PyTorch support (recommended)
-pip install deepobs[pytorch]
-
-# All dependencies
-pip install deepobs[all]
-
-# Development installation
-pip install deepobs[dev]
-```
-
-### From Source with pip
-
-```bash
-# Clone repository
-git clone https://github.com/fsschneider/DeepOBS.git
-cd DeepOBS
-
-# Install in development mode
-pip install -e .
-
-# With PyTorch
-pip install -e ".[pytorch]"
+uv run deepobs --help
 ```
 
 ## Usage Examples
@@ -423,30 +417,11 @@ If you use DeepOBS in your research, please cite:
 }
 ```
 
-## Requirements
-
-- Python >= 3.8
-- PyTorch >= 1.9.0 (PyTorch >= 2.0 recommended)
-- torchvision >= 0.10.0
-- NumPy >= 1.19.0
-- Pandas >= 1.1.0
-- Matplotlib >= 3.3.0
-- Seaborn >= 0.11.0
-
 ## Project Status
 
-- **Current Version**: PyTorch-only (v1.2.0), actively maintained
-- **Legacy**: TensorFlow code has been removed
-- **Successor Project**: [AlgoPerf](https://github.com/mlcommons/algorithmic-efficiency) for large-scale benchmarking
+- **Current Version**: PyTorch-only (v1.2.0)
 
-## Contributing
-
-We welcome contributions! Please see [CONTRIBUTORS.md](CONTRIBUTORS.md) for guidelines.
-
-If you find any bugs or have suggestions, please:
-1. Check existing [GitHub issues](https://github.com/fsschneider/DeepOBS/issues)
-2. Create a new issue with details
-3. Or contact: frank.schneider@tue.mpg.de
+This is a complete rewrite of the original DeepOBS project using Pytorch. 
 
 ## License
 
@@ -458,17 +433,6 @@ DeepOBS is licensed under the MIT License. See [LICENSE](LICENSE) for details.
 - Frank Schneider
 - Lukas Balles
 - Philipp Hennig
-
-**PyTorch Implementation**:
-- Aaron Bahde (DeepOBS 1.2.0 development lead)
-- PyTorch migration team (2025)
-
-See [CONTRIBUTORS.md](CONTRIBUTORS.md) for full acknowledgments.
-
-## Related Projects
-
-- **[AlgoPerf](https://github.com/mlcommons/algorithmic-efficiency)** - MLCommons algorithmic efficiency benchmark
-- **[TorchVision](https://github.com/pytorch/vision)** - PyTorch vision models and datasets
 
 ---
 

@@ -90,10 +90,16 @@ uv run pytest tests/ --cov=deepobs.pytorch
 
 ## Development Workflow
 
-1. Make changes to code
-2. Run tests with `uv run pytest`
-3. Format with `uv run black .`
-4. Lint with `uv run flake8`
+This project follows a **document-driven development** approach:
+
+1. **Investigate** - Understand the current codebase, identify what needs to change
+2. **Plan changes** - Design the solution, consider alternatives and trade-offs
+3. **Document changes plan** - Write the plan in `planning/` folder
+4. **Implement changes** - Make the code changes according to the plan
+5. **Run tests** - Verify with `uv run pytest`
+6. **Format and lint** - Clean up with `uv run black .` and `uv run flake8`
+7. **Update documentation** - Update all affected docs in `docs/`, `README.md`, etc.
+8. **Cleanup planning docs** - Remove or archive temporary planning documentation
 
 ## Documentation Organization
 

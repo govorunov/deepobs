@@ -1,7 +1,7 @@
 # DeepOBS PyTorch API Reference
 
 **Version**: 1.2.0-pytorch
-**Last Updated**: 2025-12-14
+**Last Updated**: 2025-12-26
 
 Complete API documentation for DeepOBS PyTorch.
 
@@ -183,7 +183,7 @@ TestProblem(batch_size, weight_decay=None, device=None)
 **Arguments**:
 - `batch_size` (int): Batch size for training and testing.
 - `weight_decay` (float, optional): Weight decay factor. Defaults to `None`.
-- `device` (str or torch.device, optional): Device to use. Defaults to `'cuda'` if available, else `'cpu'`.
+- `device` (str or torch.device, optional): Device to use. Defaults to MPS (macOS) if available, then CUDA, then CPU.
 
 #### Attributes
 
@@ -211,22 +211,23 @@ tproblem.set_up()
 
 ---
 
-##### `get_batch_loss_and_accuracy(batch)`
+##### `get_batch_loss_and_accuracy(batch, reduction='mean')`
 
-Compute the per-example losses and accuracy for a batch.
+Compute the loss and accuracy for a batch.
 
 **Arguments**:
 - `batch` (tuple): Batch of data `(inputs, targets)` from DataLoader.
+- `reduction` (str, optional): Loss reduction method - `'mean'` (default) for scalar loss or `'none'` for per-example losses.
 
 **Returns**:
-- `losses` (torch.Tensor): Per-example losses, shape `[batch_size]`.
+- `loss` (torch.Tensor): Scalar loss (with `reduction='mean'`) or per-example losses with shape `[batch_size]` (with `reduction='none'`).
 - `accuracy` (float or None): Accuracy for the batch, or `None` for non-classification tasks.
 
 **Example**:
 ```python
 for batch in tproblem.dataset.train_loader:
-    losses, accuracy = tproblem.get_batch_loss_and_accuracy(batch)
-    print(f'Batch loss: {losses.mean().item():.4f}, Accuracy: {accuracy:.4f}')
+    loss, accuracy = tproblem.get_batch_loss_and_accuracy(batch)
+    print(f'Batch loss: {loss.item():.4f}, Accuracy: {accuracy:.4f}')
 ```
 
 ---
@@ -243,7 +244,7 @@ Get the regularization loss (if any).
 **Example**:
 ```python
 reg_loss = tproblem.get_regularization_loss()
-total_loss = losses.mean() + reg_loss
+total_loss = loss + reg_loss
 ```
 
 ---
@@ -833,10 +834,10 @@ def train_model(tproblem: TestProblem,
         for batch in tproblem.dataset.train_loader:
             optimizer.zero_grad()
             loss, accuracy = tproblem.get_batch_loss_and_accuracy(batch)
-            loss.mean().backward()
+            loss.backward()
             optimizer.step()
 
-    return loss.mean().item(), accuracy
+    return loss.item(), accuracy
 ```
 
 ---
@@ -903,11 +904,12 @@ optimizer = torch.optim.SGD(tproblem.model.parameters(), lr=0.1)
 
 ## See Also
 
-- **README_PYTORCH.md**: Main usage guide
-- **QUICK_START_BENCHMARK.md**: CLI usage guide
+- **README.md**: Main project overview and usage guide
+- **BENCHMARK_SUITE_README.md**: Comprehensive benchmark documentation
+- **QUICKSTART.md**: Quick start guide
 - **examples/**: Complete example scripts
 
 ---
 
-**Last Updated**: 2025-12-14
+**Last Updated**: 2025-12-26
 **Version**: 1.2.0-pytorch

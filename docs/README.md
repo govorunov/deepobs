@@ -11,8 +11,6 @@ This directory contains all documentation for DeepOBS.
 - **[BENCHMARK_SUITE_README.md](BENCHMARK_SUITE_README.md)** - Detailed benchmark suite documentation
 - **[API_REFERENCE.md](API_REFERENCE.md)** - Complete API reference
 - **[KNOWN_ISSUES.md](KNOWN_ISSUES.md)** - Known limitations and workarounds
-- **[CHANGELOG_PYTORCH.md](CHANGELOG_PYTORCH.md)** - Version history
-- **[CONTRIBUTORS.md](CONTRIBUTORS.md)** - Contributors and acknowledgments
 
 ### Quick Links
 

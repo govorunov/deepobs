@@ -174,11 +174,3 @@ overrides:
   two_d_branin:
     Angol:
       learning_rate: 0.01
-
-  food101_vgg16:
-    Angol:
-      learning_rate: 0.001
-      lr_factor: null
-      lr_schedule:
-        epochs: [25, 35]
-        factors: [0.1, 0.1]

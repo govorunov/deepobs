@@ -479,9 +479,14 @@ def main():
     try:
         output_file = generate_html_report(results)
 
+        # Create clickable link for terminal (OSC 8 hyperlink)
+        abs_path = os.path.abspath(output_file)
+        file_url = f"file://{abs_path}"
+        clickable_link = f"\033]8;;{file_url}\033\\{output_file}\033]8;;\033\\"
+
         print("\n" + "=" * 80)
         print("✓ HTML report created successfully!")
-        print(f"Open the report: {output_file}")
+        print(f"Open the report: {clickable_link}")
         print("=" * 80)
 
     except Exception as e:

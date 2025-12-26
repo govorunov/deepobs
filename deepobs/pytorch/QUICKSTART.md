@@ -7,8 +7,7 @@ This guide shows how to use the PyTorch implementation of DeepOBS datasets.
 ## Installation
 
 ```bash
-# Clone the repository
-git clone https://github.com/fsschneider/DeepOBS.git
+# Navigate to the repository
 cd DeepOBS
 
 # Install PyTorch (if not already installed)
@@ -377,7 +376,6 @@ dataset = CIFAR10(batch_size=128, num_workers=2)  # Instead of 4
 - **Documentation**: See `deepobs/pytorch/datasets/README.md`
 - **Tests**: See `tests/test_pytorch_datasets.py` for usage examples
 - **Original Paper**: https://openreview.net/forum?id=rJg6ssC5Y7
-- **GitHub Issues**: https://github.com/fsschneider/DeepOBS/issues
 
 ---
 

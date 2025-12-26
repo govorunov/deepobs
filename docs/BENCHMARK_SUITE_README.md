@@ -587,6 +587,5 @@ optimizers:
 ## Support
 
 For issues or questions:
-- Check [GitHub Issues](https://github.com/fsschneider/DeepOBS/issues)
 - Review [API_REFERENCE.md](docs/API_REFERENCE.md)
 - Read [KNOWN_ISSUES.md](docs/KNOWN_ISSUES.md)
