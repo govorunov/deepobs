@@ -2,6 +2,24 @@
 
 from .testproblem import TestProblem
 
+
+def testproblem(name, **kwargs):
+    """Factory function to instantiate a test problem by name.
+
+    Args:
+        name (str): Name of the test problem (e.g., 'mnist_logreg').
+        **kwargs: Arguments to pass to the test problem constructor.
+
+    Returns:
+        TestProblem: Instance of the requested test problem.
+
+    Example:
+        >>> problem = testproblem('mnist_logreg', batch_size=32)
+    """
+    import deepobs.pytorch.testproblems as tp
+    problem_class = getattr(tp, name)
+    return problem_class(**kwargs)
+
 # MNIST test problems
 from .mnist_logreg import mnist_logreg
 from .mnist_mlp import mnist_mlp
@@ -56,6 +74,7 @@ from .two_d_branin import two_d_branin
 
 __all__ = [
     "TestProblem",
+    "testproblem",
     # MNIST
     "mnist_logreg",
     "mnist_mlp",

@@ -54,7 +54,7 @@ pytest tests/integration/
 For rapid validation without full test suite:
 
 ```bash
-python smoke_test.py
+python tests/smoke_test.py
 ```
 
 This runs basic import, instantiation, and training tests on simple problems.
@@ -269,13 +269,13 @@ For CI/CD pipelines, recommended test commands:
 
 ```bash
 # Fast tests only (for quick feedback)
-pytest tests/ -m "not slow" -v
+uv run pytest tests/ -m "not slow" -v
 
 # Full test suite (for comprehensive validation)
-pytest tests/ -v --cov=deepobs.pytorch
+uv run pytest tests/ -v --cov=deepobs.pytorch
 
 # Smoke test only (for rapid validation)
-python smoke_test.py
+uv run python tests/smoke_test.py
 ```
 
 ## Adding New Tests
@@ -320,7 +320,7 @@ If tests fail unexpectedly:
 
 1. Check you're using compatible PyTorch version (>= 1.9.0)
 2. Verify all dependencies are installed
-3. Try running smoke test first: `python smoke_test.py`
+3. Try running smoke test first: `uv run python tests/smoke_test.py`
 4. Check individual test files for more details
 5. Review test output for specific error messages
 

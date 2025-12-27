@@ -8,7 +8,7 @@ import pytest
 import torch
 
 from deepobs.pytorch import testproblems
-from tests.test_utils import get_available_test_problems, set_seed
+from test_utils import get_available_test_problems, set_seed
 
 
 # Get all available test problems
@@ -33,10 +33,12 @@ class TestAllProblems:
 
         try:
             # Instantiate problem
-            problem = testproblems.testproblem(problem_name, batch_size=32)
+            problem_class = getattr(testproblems, problem_name)
+            problem = problem_class(batch_size=32)
+            problem.set_up()
 
             # Get a batch
-            batch = next(iter(problem.train_loader))
+            batch = next(iter(problem.dataset.train_loader))
             x, y = batch
 
             # Verify batch shapes are reasonable
@@ -46,7 +48,7 @@ class TestAllProblems:
 
             # Forward pass
             problem.model.train()
-            losses, accuracy = problem.get_batch_loss_and_accuracy(batch)
+            losses, accuracy = problem.get_batch_loss_and_accuracy(batch, reduction='none')
 
             # Verify losses
             assert losses.shape[0] == 32, f"{problem_name}: wrong loss shape"
@@ -94,7 +96,8 @@ class TestManualProblems:
 
         try:
             problem = testproblems.testproblem(problem_name, batch_size=32)
-            batch = next(iter(problem.train_loader))
+            problem.set_up()
+            batch = next(iter(problem.dataset.train_loader))
 
             problem.model.train()
             losses, accuracy = problem.get_batch_loss_and_accuracy(batch)

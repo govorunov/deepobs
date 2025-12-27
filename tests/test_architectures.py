@@ -6,9 +6,10 @@ import torch.nn as nn
 
 from deepobs.pytorch.testproblems import (
     _logreg, _mlp, _2c2d, _3c3d, _vgg, _wrn,
-    _inception_v3, _vae, _allcnnc
+    _inception_v3, _vae
 )
-from tests.test_utils import (
+from deepobs.pytorch.testproblems.cifar100_allcnnc import AllCNNC
+from test_utils import (
     set_seed, assert_shape, count_parameters,
     check_gpu_available, get_dummy_batch, get_dummy_sequence_batch
 )
@@ -19,13 +20,13 @@ class TestLogisticRegression:
 
     def test_model_creation(self):
         """Test model can be created."""
-        model = _logreg.logreg_model(num_outputs=10)
+        model = _logreg.LogisticRegression(num_outputs=10)
         assert model is not None
         assert isinstance(model, nn.Module)
 
     def test_forward_pass(self):
         """Test forward pass with random input."""
-        model = _logreg.logreg_model(num_outputs=10)
+        model = _logreg.LogisticRegression(num_outputs=10)
         x = torch.randn(32, 1, 28, 28)
 
         output = model(x)
@@ -33,7 +34,7 @@ class TestLogisticRegression:
 
     def test_parameter_count(self):
         """Test parameter count is reasonable."""
-        model = _logreg.logreg_model(num_outputs=10)
+        model = _logreg.LogisticRegression(num_outputs=10)
         num_params = count_parameters(model)
 
         # 784 * 10 + 10 = 7850
@@ -42,7 +43,7 @@ class TestLogisticRegression:
 
     def test_gradient_flow(self):
         """Test gradients flow through model."""
-        model = _logreg.logreg_model(num_outputs=10)
+        model = _logreg.LogisticRegression(num_outputs=10)
         x = torch.randn(32, 1, 28, 28)
         y = torch.randint(0, 10, (32,))
 
@@ -60,12 +61,12 @@ class TestMLP:
 
     def test_model_creation(self):
         """Test model can be created."""
-        model = _mlp.mlp_model(num_outputs=10)
+        model = _mlp.MLP(num_outputs=10)
         assert model is not None
 
     def test_forward_pass(self):
         """Test forward pass with random input."""
-        model = _mlp.mlp_model(num_outputs=10)
+        model = _mlp.MLP(num_outputs=10)
         x = torch.randn(32, 1, 28, 28)
 
         output = model(x)
@@ -73,7 +74,7 @@ class TestMLP:
 
     def test_different_batch_sizes(self):
         """Test with different batch sizes."""
-        model = _mlp.mlp_model(num_outputs=10)
+        model = _mlp.MLP(num_outputs=10)
 
         for batch_size in [1, 16, 32, 64, 128]:
             x = torch.randn(batch_size, 1, 28, 28)
@@ -82,11 +83,12 @@ class TestMLP:
 
     def test_parameter_count(self):
         """Test parameter count is reasonable."""
-        model = _mlp.mlp_model(num_outputs=10)
+        model = _mlp.MLP(num_outputs=10)
         num_params = count_parameters(model)
 
-        # Should be several hundred thousand parameters
-        assert 100000 < num_params < 1000000
+        # Expected: 784*1000 + 1000 + 1000*500 + 500 + 500*100 + 100 + 100*10 + 10
+        # = 784,000 + 1,000 + 500,000 + 500 + 50,000 + 100 + 1,000 + 10 = 1,336,610
+        assert 1_336_000 < num_params < 1_337_000
 
 
 class Test2C2D:
@@ -94,12 +96,12 @@ class Test2C2D:
 
     def test_model_creation(self):
         """Test model can be created."""
-        model = _2c2d.two_c_two_d_model(num_outputs=10)
+        model = _2c2d.TwoC2D(num_outputs=10)
         assert model is not None
 
     def test_forward_pass(self):
         """Test forward pass with random input."""
-        model = _2c2d.two_c_two_d_model(num_outputs=10)
+        model = _2c2d.TwoC2D(num_outputs=10)
         x = torch.randn(32, 1, 28, 28)
 
         output = model(x)
@@ -107,7 +109,7 @@ class Test2C2D:
 
     def test_gradient_flow(self):
         """Test gradients flow through conv and dense layers."""
-        model = _2c2d.two_c_two_d_model(num_outputs=10)
+        model = _2c2d.TwoC2D(num_outputs=10)
         x = torch.randn(32, 1, 28, 28)
         y = torch.randint(0, 10, (32,))
 
@@ -124,12 +126,12 @@ class Test3C3D:
 
     def test_model_creation(self):
         """Test model can be created."""
-        model = _3c3d.three_c_three_d_model(num_outputs=10)
+        model = _3c3d.ThreeC3D(num_outputs=10)
         assert model is not None
 
     def test_forward_pass(self):
         """Test forward pass with CIFAR-10 sized input."""
-        model = _3c3d.three_c_three_d_model(num_outputs=10)
+        model = _3c3d.ThreeC3D(num_outputs=10)
         x = torch.randn(32, 3, 32, 32)
 
         output = model(x)
@@ -137,7 +139,7 @@ class Test3C3D:
 
     def test_parameter_count(self):
         """Test parameter count is reasonable."""
-        model = _3c3d.three_c_three_d_model(num_outputs=10)
+        model = _3c3d.ThreeC3D(num_outputs=10)
         num_params = count_parameters(model)
 
         # Should be several hundred thousand parameters
@@ -149,12 +151,12 @@ class TestVGG:
 
     def test_vgg16_creation(self):
         """Test VGG16 can be created."""
-        model = _vgg.vgg16_model(num_outputs=10)
+        model = _vgg.vgg16(num_outputs=10)
         assert model is not None
 
     def test_vgg16_forward_pass(self):
         """Test VGG16 forward pass."""
-        model = _vgg.vgg16_model(num_outputs=10)
+        model = _vgg.vgg16(num_outputs=10)
         x = torch.randn(8, 3, 32, 32)  # Smaller batch for VGG
 
         output = model(x)
@@ -162,12 +164,12 @@ class TestVGG:
 
     def test_vgg19_creation(self):
         """Test VGG19 can be created."""
-        model = _vgg.vgg19_model(num_outputs=10)
+        model = _vgg.vgg19(num_outputs=10)
         assert model is not None
 
     def test_vgg19_forward_pass(self):
         """Test VGG19 forward pass."""
-        model = _vgg.vgg19_model(num_outputs=10)
+        model = _vgg.vgg19(num_outputs=10)
         x = torch.randn(8, 3, 32, 32)
 
         output = model(x)
@@ -175,8 +177,8 @@ class TestVGG:
 
     def test_vgg16_parameter_count(self):
         """Test VGG16 has more parameters than VGG19."""
-        model16 = _vgg.vgg16_model(num_outputs=10)
-        model19 = _vgg.vgg19_model(num_outputs=10)
+        model16 = _vgg.vgg16(num_outputs=10)
+        model19 = _vgg.vgg19(num_outputs=10)
 
         params16 = count_parameters(model16)
         params19 = count_parameters(model19)
@@ -191,12 +193,12 @@ class TestWRN:
     def test_wrn_creation(self):
         """Test WRN can be created."""
         # WRN-16-4
-        model = _wrn.wrn_model(depth=16, width=4, num_outputs=10)
+        model = _wrn.wrn_16_4(num_outputs=10)
         assert model is not None
 
     def test_wrn_forward_pass(self):
         """Test WRN forward pass."""
-        model = _wrn.wrn_model(depth=16, width=4, num_outputs=10)
+        model = _wrn.wrn_16_4(num_outputs=10)
         x = torch.randn(16, 3, 32, 32)
 
         output = model(x)
@@ -204,7 +206,7 @@ class TestWRN:
 
     def test_wrn_train_mode(self):
         """Test WRN in train mode (batch norm)."""
-        model = _wrn.wrn_model(depth=16, width=4, num_outputs=10)
+        model = _wrn.wrn_16_4(num_outputs=10)
         model.train()
 
         x = torch.randn(16, 3, 32, 32)
@@ -214,7 +216,7 @@ class TestWRN:
 
     def test_wrn_eval_mode(self):
         """Test WRN in eval mode (batch norm)."""
-        model = _wrn.wrn_model(depth=16, width=4, num_outputs=10)
+        model = _wrn.wrn_16_4(num_outputs=10)
         model.eval()
 
         x = torch.randn(16, 3, 32, 32)
@@ -228,13 +230,13 @@ class TestInceptionV3:
 
     def test_inception_creation(self):
         """Test Inception V3 can be created."""
-        model = _inception_v3.inception_v3_model(num_outputs=1000)
+        model = _inception_v3.inception_v3(num_classes=1000, aux_logits=False)
         assert model is not None
 
     @pytest.mark.slow
     def test_inception_forward_pass(self):
         """Test Inception V3 forward pass."""
-        model = _inception_v3.inception_v3_model(num_outputs=1000)
+        model = _inception_v3.inception_v3(num_classes=1000, aux_logits=False)
         x = torch.randn(4, 3, 299, 299)  # Small batch, large input
 
         output = model(x)
@@ -242,7 +244,7 @@ class TestInceptionV3:
 
     def test_inception_parameter_count(self):
         """Test Inception V3 has many parameters."""
-        model = _inception_v3.inception_v3_model(num_outputs=1000)
+        model = _inception_v3.inception_v3(num_classes=1000, aux_logits=False)
         num_params = count_parameters(model)
 
         # Inception V3 has ~20M+ parameters
@@ -254,23 +256,23 @@ class TestVAE:
 
     def test_vae_creation(self):
         """Test VAE can be created."""
-        model = _vae.vae_model()
+        model = _vae.vae(n_latent=8)
         assert model is not None
 
     def test_vae_forward_pass(self):
         """Test VAE forward pass."""
-        model = _vae.vae_model()
+        model = _vae.vae(n_latent=8)
         x = torch.randn(32, 1, 28, 28)
 
         reconstruction, mean, logvar = model(x)
 
-        assert_shape(reconstruction, (32, 1, 28, 28), "VAE reconstruction")
-        assert_shape(mean, (32, 20), "VAE mean")  # latent_dim=20
-        assert_shape(logvar, (32, 20), "VAE logvar")
+        assert_shape(reconstruction, (32, 28, 28), "VAE reconstruction")
+        assert_shape(mean, (32, 8), "VAE mean")  # latent_dim=8
+        assert_shape(logvar, (32, 8), "VAE logvar")
 
     def test_vae_train_eval_modes(self):
         """Test VAE in train and eval modes."""
-        model = _vae.vae_model()
+        model = _vae.vae(n_latent=8)
         x = torch.randn(32, 1, 28, 28)
 
         # Train mode
@@ -289,12 +291,12 @@ class TestAllCNNC:
 
     def test_allcnnc_creation(self):
         """Test All-CNN-C can be created."""
-        model = _allcnnc.allcnnc_model(num_outputs=100)
+        model = AllCNNC(num_outputs=100)
         assert model is not None
 
     def test_allcnnc_forward_pass(self):
         """Test All-CNN-C forward pass."""
-        model = _allcnnc.allcnnc_model(num_outputs=100)
+        model = AllCNNC(num_outputs=100)
         x = torch.randn(32, 3, 32, 32)
 
         output = model(x)
@@ -302,7 +304,7 @@ class TestAllCNNC:
 
     def test_allcnnc_no_pooling(self):
         """Test that All-CNN-C uses strided conv instead of pooling."""
-        model = _allcnnc.allcnnc_model(num_outputs=100)
+        model = AllCNNC(num_outputs=100)
 
         # Check that there are no MaxPool layers
         has_pooling = any(isinstance(m, nn.MaxPool2d) for m in model.modules())
@@ -311,11 +313,11 @@ class TestAllCNNC:
 
 # Parametrized tests for all architectures
 @pytest.mark.parametrize("model_fn,input_shape,output_size", [
-    (_logreg.logreg_model, (16, 1, 28, 28), 10),
-    (_mlp.mlp_model, (16, 1, 28, 28), 10),
-    (_2c2d.two_c_two_d_model, (16, 1, 28, 28), 10),
-    (_3c3d.three_c_three_d_model, (16, 3, 32, 32), 10),
-    (_allcnnc.allcnnc_model, (16, 3, 32, 32), 100),
+    (_logreg.LogisticRegression, (16, 1, 28, 28), 10),
+    (_mlp.MLP, (16, 1, 28, 28), 10),
+    (_2c2d.TwoC2D, (16, 1, 28, 28), 10),
+    (_3c3d.ThreeC3D, (16, 3, 32, 32), 10),
+    (AllCNNC, (16, 3, 32, 32), 100),
 ])
 def test_architecture_backward_pass(model_fn, input_shape, output_size):
     """Test that backward pass works for all architectures."""
@@ -335,9 +337,9 @@ def test_architecture_backward_pass(model_fn, input_shape, output_size):
 
 @pytest.mark.skipif(not check_gpu_available(), reason="CUDA not available")
 @pytest.mark.parametrize("model_fn,input_shape,output_size", [
-    (_logreg.logreg_model, (16, 1, 28, 28), 10),
-    (_mlp.mlp_model, (16, 1, 28, 28), 10),
-    (_2c2d.two_c_two_d_model, (16, 1, 28, 28), 10),
+    (_logreg.LogisticRegression, (16, 1, 28, 28), 10),
+    (_mlp.MLP, (16, 1, 28, 28), 10),
+    (_2c2d.TwoC2D, (16, 1, 28, 28), 10),
 ])
 def test_architecture_gpu(model_fn, input_shape, output_size):
     """Test architectures work on GPU."""

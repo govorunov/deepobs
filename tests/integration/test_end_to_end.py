@@ -13,7 +13,7 @@ import shutil
 
 from deepobs.pytorch.runners import StandardRunner
 from deepobs.pytorch import testproblems
-from tests.test_utils import set_seed, assert_decreasing, assert_increasing
+from test_utils import set_seed, assert_decreasing, assert_increasing
 
 
 @pytest.mark.slow
@@ -270,9 +270,10 @@ class TestMinimalTraining:
         try:
             # Create problem
             problem = testproblems.testproblem('mnist_logreg', batch_size=32)
+            problem.set_up()
 
             # Get a batch
-            batch = next(iter(problem.train_loader))
+            batch = next(iter(problem.dataset.train_loader))
 
             # Forward pass
             problem.model.train()
@@ -303,6 +304,7 @@ class TestMinimalTraining:
 
         try:
             problem = testproblems.testproblem('mnist_logreg', batch_size=128)
+            problem.set_up()
             optimizer = optim.SGD(problem.model.parameters(), lr=0.1)
 
             # Train for one epoch
@@ -310,7 +312,7 @@ class TestMinimalTraining:
             total_loss = 0.0
             num_batches = 0
 
-            for batch in problem.train_loader:
+            for batch in problem.dataset.train_loader:
                 optimizer.zero_grad()
                 losses, accuracy = problem.get_batch_loss_and_accuracy(batch)
                 loss = losses.mean()
