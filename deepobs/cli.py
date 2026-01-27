@@ -47,6 +47,9 @@ Examples:
 
   # Analyze specific problems and optimizers
   deepobs analyze --problems mnist_logreg --optimizers SGD Adam
+
+  # Analyze results from a specific date
+  deepobs analyze --run-date 2026-01-27
         """,
     )
 
@@ -110,6 +113,12 @@ Examples:
         nargs="+",
         help="Filter results to specific optimizers (space-separated list of optimizer names)",
     )
+    analyze_parser.add_argument(
+        "--run-date",
+        type=str,
+        help="Select results from a specific date (format: YYYY-MM-DD). "
+        "If not specified, the most recent results are used.",
+    )
 
     # Parse arguments
     args = parser.parse_args()
@@ -144,6 +153,9 @@ Examples:
         if args.optimizers:
             sys.argv.append("--optimizers")
             sys.argv.extend(args.optimizers)
+        if args.run_date:
+            sys.argv.append("--run-date")
+            sys.argv.append(args.run_date)
         return analyze_main()
 
     return 0

@@ -6,7 +6,6 @@
 
 1. **Read `README.md`** - Understand the project's purpose, features, and usage
 2. **Review relevant documentation in `docs/`**:
-   - `docs/QUICK_START_BENCHMARK.md` - For benchmark-related tasks
    - `docs/BENCHMARK_SUITE_README.md` - For comprehensive benchmark documentation
    - `docs/README_PYTORCH.md` - For PyTorch API and usage details
    - `docs/API_REFERENCE.md` - For API documentation

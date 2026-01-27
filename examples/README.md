@@ -85,10 +85,10 @@ Use with the DeepOBS CLI:
 uv run deepobs benchmark benchmark_config_quick.yaml
 ```
 
-See [QUICK_START_BENCHMARK.md](../docs/QUICK_START_BENCHMARK.md) for more details on CLI usage.
+See the [main README](../README.md#usage-examples) for more details on CLI usage.
 
 ## See Also
 
-- [README_PYTORCH.md](../docs/README_PYTORCH.md) - Main usage guide
-- [QUICK_START_BENCHMARK.md](../docs/QUICK_START_BENCHMARK.md) - CLI benchmarking guide
+- [README.md](../README.md) - Main project documentation and CLI usage
+- [README_PYTORCH.md](../docs/README_PYTORCH.md) - Detailed PyTorch usage guide
 - [API_REFERENCE.md](../docs/API_REFERENCE.md) - Complete API documentation

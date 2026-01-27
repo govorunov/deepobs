@@ -151,8 +151,6 @@ optimizers:
 
 That's it! DeepOBS will run your benchmarks and generate an interactive HTML report with all results.
 
-See [Quick Start Guide](docs/QUICK_START_BENCHMARK.md) for detailed instructions and more configuration examples.
-
 ## Available Test Problems
 
 All **27 test problems** are currently implemented and available:
@@ -291,15 +289,73 @@ uv run deepobs --help
 
 The recommended way to use DeepOBS:
 
+#### Benchmark Command
+
 ```bash
-# Run a benchmark suite
+# Run with default config (benchmark_config.yaml)
+uv run deepobs benchmark
+
+# Run with custom config
 uv run deepobs benchmark my_config.yaml
 
-# Analyze and visualize results
-uv run deepobs analyze ./results
+# Dry run to preview what will be executed
+uv run deepobs benchmark my_config.yaml --dry-run
+
+# Run only specific problems or optimizers
+uv run deepobs benchmark my_config.yaml --problems mnist_mlp cifar10_3c3d
+uv run deepobs benchmark my_config.yaml --optimizers SGD Adam
+
+# Get help
+uv run deepobs benchmark --help
 ```
 
-See [Quick Start Guide](docs/QUICK_START_BENCHMARK.md) for configuration examples.
+#### Analyze Command
+
+```bash
+# Analyze default results directory (./results)
+# By default, selects the most recent results for each optimizer
+uv run deepobs analyze
+
+# Analyze custom results directory
+uv run deepobs analyze ./my_results
+
+# Analyze results from a specific date (useful when you have multiple runs)
+uv run deepobs analyze --run-date 2026-01-27
+
+# Filter to specific problems or optimizers
+uv run deepobs analyze --problems mnist_mlp cifar10_3c3d
+uv run deepobs analyze --optimizers SGD Adam
+
+# Get help
+uv run deepobs analyze --help
+```
+
+This generates:
+- Interactive learning curves
+- Comparison charts
+- Performance profiles
+- Statistical summaries
+
+Results saved to: `./results/benchmark_report.html`
+
+#### Example Workflow
+
+```bash
+# 1. Create/edit configuration
+nano my_benchmark.yaml
+
+# 2. Test with dry run
+uv run deepobs benchmark my_benchmark.yaml --dry-run
+
+# 3. Run actual benchmark
+uv run deepobs benchmark my_benchmark.yaml
+
+# 4. Analyze results
+uv run deepobs analyze
+
+# 5. View interactive report
+open results/benchmark_report.html
+```
 
 ### Programmatic API
 
@@ -330,7 +386,27 @@ For detailed programmatic usage including GPU training, learning rate schedules,
 
 ## Configuration
 
-DeepOBS uses YAML configuration files for benchmark setup. See [Quick Start Guide](docs/QUICK_START_BENCHMARK.md) for examples.
+DeepOBS uses YAML configuration files for benchmark setup.
+
+### YAML Configuration Features
+
+**Problem-Specific Overrides:**
+```yaml
+overrides:
+  mnist_logreg:
+    SGD:
+      learning_rate: 0.1  # Higher LR for simple problems
+```
+
+**Learning Rate Schedules:**
+```yaml
+optimizers:
+  - name: SGD
+    learning_rate: 0.1
+    lr_schedule:
+      epochs: [30, 60, 90]
+      factors: [0.1, 0.1, 0.1]
+```
 
 ### Data Directory
 
@@ -354,7 +430,7 @@ Use the CLI:
 uv run deepobs benchmark my_config.yaml
 ```
 
-See [Quick Start Guide](docs/QUICK_START_BENCHMARK.md) for configuration examples.
+See the [Usage Examples](#usage-examples) section above for configuration examples.
 
 ### How do I analyze results?
 
@@ -379,7 +455,6 @@ Yes! See [PyTorch Usage Guide](docs/README_PYTORCH.md) for detailed examples inc
 ### Additional Resources
 
 - **[README_PYTORCH.md](docs/README_PYTORCH.md)** - Detailed PyTorch usage guide with advanced topics
-- **[QUICK_START_BENCHMARK.md](docs/QUICK_START_BENCHMARK.md)** - CLI benchmarking guide
 - **[API_REFERENCE.md](docs/API_REFERENCE.md)** - Complete API documentation
 - **[examples/](examples/)** - Usage examples and configuration files
 - **[KNOWN_ISSUES.md](docs/KNOWN_ISSUES.md)** - Known issues and limitations
@@ -436,6 +511,6 @@ DeepOBS is licensed under the MIT License. See [LICENSE](LICENSE) for details.
 
 ---
 
-**Last Updated**: 2025-12-16
+**Last Updated**: 2026-01-27
 **Version**: 1.2.0-pytorch
 **Framework**: PyTorch >= 1.9.0

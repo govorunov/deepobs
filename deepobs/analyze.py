@@ -8,28 +8,75 @@ import json
 import os
 import glob
 import argparse
+import re
+from datetime import datetime
 import numpy as np
 from collections import defaultdict
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
 
-def load_results(results_dir):
+def parse_timestamp_from_filename(filepath):
+    """Extract timestamp from a result filename.
+
+    Filenames follow the pattern: random_seed__{seed}__YYYY-MM-DD-HH-MM-SS.json
+
+    Args:
+        filepath: Path to the result file
+
+    Returns:
+        datetime object if timestamp found, None otherwise
+    """
+    filename = os.path.basename(filepath)
+    # Match pattern: YYYY-MM-DD-HH-MM-SS at the end of filename (before .json)
+    match = re.search(r'(\d{4}-\d{2}-\d{2}-\d{2}-\d{2}-\d{2})\.json$', filename)
+    if match:
+        try:
+            return datetime.strptime(match.group(1), '%Y-%m-%d-%H-%M-%S')
+        except ValueError:
+            return None
+    return None
+
+
+def parse_date_from_filename(filepath):
+    """Extract date (without time) from a result filename.
+
+    Args:
+        filepath: Path to the result file
+
+    Returns:
+        date string (YYYY-MM-DD) if found, None otherwise
+    """
+    timestamp = parse_timestamp_from_filename(filepath)
+    if timestamp:
+        return timestamp.strftime('%Y-%m-%d')
+    return None
+
+
+def load_results(results_dir, run_date=None):
     """Load all result JSON files from a directory.
 
     Args:
         results_dir: Directory containing result files
+        run_date: Optional date string (YYYY-MM-DD) to filter results.
+                  If None, selects the most recent result for each
+                  (testproblem, optimizer) combination.
 
     Returns:
-        Dictionary mapping (testproblem, optimizer) to results
+        tuple: (results_dict, selected_date) where:
+            - results_dict: Dictionary mapping (testproblem, optimizer) to results
+            - selected_date: The date of the selected results (for display)
     """
-    results = {}
-
-    # Find all JSON files (excluding results.json since actual files have different names)
+    # Find all JSON files
     pattern = os.path.join(results_dir, '**', '*.json')
     result_files = glob.glob(pattern, recursive=True)
 
     print(f"Found {len(result_files)} result files")
+
+    # Collect all results with their timestamps
+    # Key: (testproblem, optimizer), Value: list of (timestamp, filepath, data)
+    all_results = defaultdict(list)
+    available_dates = set()
 
     for filepath in result_files:
         try:
@@ -40,15 +87,74 @@ def load_results(results_dir):
             if 'testproblem' in data and 'optimizer' in data:
                 testproblem = data['testproblem']
                 optimizer = data['optimizer']
+                timestamp = parse_timestamp_from_filename(filepath)
+                date_str = parse_date_from_filename(filepath)
 
-                # Use the most recent result for each combination
-                # (or you could average multiple runs)
-                results[(testproblem, optimizer)] = data
+                if date_str:
+                    available_dates.add(date_str)
+
+                all_results[(testproblem, optimizer)].append({
+                    'timestamp': timestamp,
+                    'date': date_str,
+                    'filepath': filepath,
+                    'data': data
+                })
 
         except Exception as e:
             print(f"Error loading {filepath}: {e}")
 
-    return results
+    if not all_results:
+        return {}, None
+
+    # Report available dates
+    if available_dates:
+        sorted_dates = sorted(available_dates, reverse=True)
+        print(f"Available run dates: {', '.join(sorted_dates)}")
+
+    # Filter or select results
+    results = {}
+    selected_date = None
+
+    if run_date:
+        # Filter to specific date
+        print(f"Filtering to run date: {run_date}")
+        matched = False
+        for key, entries in all_results.items():
+            for entry in entries:
+                if entry['date'] == run_date:
+                    results[key] = entry['data']
+                    matched = True
+                    break
+        if not matched:
+            print(f"\nWarning: No results found for date '{run_date}'")
+            print(f"Available dates: {', '.join(sorted(available_dates, reverse=True))}")
+        selected_date = run_date
+    else:
+        # Select the most recent result for each (testproblem, optimizer)
+        for key, entries in all_results.items():
+            # Sort by timestamp (most recent first), handle None timestamps
+            sorted_entries = sorted(
+                entries,
+                key=lambda x: x['timestamp'] or datetime.min,
+                reverse=True
+            )
+            best_entry = sorted_entries[0]
+            results[key] = best_entry['data']
+
+            # Track the date of selected results
+            if best_entry['date']:
+                if selected_date is None:
+                    selected_date = best_entry['date']
+                elif best_entry['date'] != selected_date:
+                    # Multiple dates in selected results
+                    selected_date = "mixed"
+
+        if selected_date and selected_date != "mixed":
+            print(f"Selected most recent results from: {selected_date}")
+        elif selected_date == "mixed":
+            print("Selected most recent results (from multiple dates)")
+
+    return results, selected_date
 
 
 def create_learning_curve_figures(results):
@@ -408,6 +514,12 @@ def main():
         nargs='+',
         help='Filter results to specific optimizers (space-separated list of optimizer names)'
     )
+    parser.add_argument(
+        '--run-date',
+        type=str,
+        help='Select results from a specific date (format: YYYY-MM-DD). '
+             'If not specified, the most recent results are used.'
+    )
     args = parser.parse_args()
 
     print("=" * 80)
@@ -418,7 +530,7 @@ def main():
     results_dir = args.results_dir
     print(f"\nLoading results from: {results_dir}")
 
-    results = load_results(results_dir)
+    results, selected_date = load_results(results_dir, run_date=args.run_date)
 
     if not results:
         print("\nNo results found!")
