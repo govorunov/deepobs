@@ -59,8 +59,9 @@ def load_results(results_dir, run_date=None):
     Args:
         results_dir: Directory containing result files
         run_date: Optional date string (YYYY-MM-DD) to filter results.
-                  If None, selects the most recent result for each
-                  (testproblem, optimizer) combination.
+                  If specified, selects the most recent result for each
+                  (testproblem, optimizer) combination that is on or before
+                  this date. If None, selects the most recent result overall.
 
     Returns:
         tuple: (results_dict, selected_date) where:
@@ -116,17 +117,26 @@ def load_results(results_dir, run_date=None):
     selected_date = None
 
     if run_date:
-        # Filter to specific date
-        print(f"Filtering to run date: {run_date}")
+        # Filter to results on or before the specified date
+        print(f"Filtering to results on or before: {run_date}")
         matched = False
         for key, entries in all_results.items():
-            for entry in entries:
-                if entry['date'] == run_date:
-                    results[key] = entry['data']
-                    matched = True
-                    break
+            # Filter entries to those on or before run_date
+            valid_entries = [
+                entry for entry in entries
+                if entry['date'] and entry['date'] <= run_date
+            ]
+            if valid_entries:
+                # Sort by timestamp (most recent first) and select the best one
+                sorted_entries = sorted(
+                    valid_entries,
+                    key=lambda x: x['timestamp'] or datetime.min,
+                    reverse=True
+                )
+                results[key] = sorted_entries[0]['data']
+                matched = True
         if not matched:
-            print(f"\nWarning: No results found for date '{run_date}'")
+            print(f"\nWarning: No results found on or before date '{run_date}'")
             print(f"Available dates: {', '.join(sorted(available_dates, reverse=True))}")
         selected_date = run_date
     else:
@@ -517,7 +527,8 @@ def main():
     parser.add_argument(
         '--run-date',
         type=str,
-        help='Select results from a specific date (format: YYYY-MM-DD). '
+        help='Select results on or before this date (format: YYYY-MM-DD). '
+             'For each optimizer, the most recent run up to this date is used. '
              'If not specified, the most recent results are used.'
     )
     args = parser.parse_args()

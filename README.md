@@ -319,7 +319,8 @@ uv run deepobs analyze
 # Analyze custom results directory
 uv run deepobs analyze ./my_results
 
-# Analyze results from a specific date (useful when you have multiple runs)
+# Analyze results up to a specific date (useful when you have multiple runs)
+# Selects the most recent run for each optimizer that is on or before this date
 uv run deepobs analyze --run-date 2026-01-27
 
 # Filter to specific problems or optimizers
