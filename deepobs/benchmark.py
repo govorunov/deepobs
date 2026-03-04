@@ -313,7 +313,7 @@ def print_summary(results):
 
     print("\n" + "="*80)
     print(f"Results saved to: {results[0][3] if results else './results'}")
-    print("Run 'python examples/result_analysis.py' to analyze and visualize results")
+    print("Run 'uv run deepobs analyze ./results' to analyze and visualize results")
     print("="*80)
 
 
