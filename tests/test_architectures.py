@@ -9,6 +9,7 @@ from deepobs.pytorch.testproblems import (
     _inception_v3, _vae
 )
 from deepobs.pytorch.testproblems.cifar100_allcnnc import AllCNNC
+from deepobs.pytorch.testproblems._gpt_micro import GPTMicro
 from test_utils import (
     set_seed, assert_shape, count_parameters,
     check_gpu_available, get_dummy_batch, get_dummy_sequence_batch
@@ -309,6 +310,79 @@ class TestAllCNNC:
         # Check that there are no MaxPool layers
         has_pooling = any(isinstance(m, nn.MaxPool2d) for m in model.modules())
         assert not has_pooling, "All-CNN-C should not have max pooling layers"
+
+
+class TestGPTMicro:
+    """Tests for GPT-Micro architecture."""
+
+    def test_model_creation(self):
+        """Test model can be created."""
+        model = GPTMicro()
+        assert model is not None
+        assert isinstance(model, torch.nn.Module)
+
+    def test_forward_pass(self):
+        """Test forward pass with random integer input."""
+        model = GPTMicro()
+        model.eval()
+        B, T = 4, 64
+        x = torch.randint(0, 256, (B, T))
+
+        with torch.no_grad():
+            out = model(x)
+
+        assert_shape(out, (B, T, 256), "GPTMicro output")
+
+    def test_parameter_count(self):
+        """Test parameter count is in the 1.2M–1.3M range."""
+        model = GPTMicro()
+        # Weight tying: lm_head shares weights with token_emb, so
+        # count_parameters (which uses requires_grad) will count them once.
+        # Use numel() across all unique parameter tensors instead.
+        unique_params = {id(p): p for p in model.parameters()}
+        num_params = sum(p.numel() for p in unique_params.values())
+        assert 1_200_000 <= num_params <= 1_300_000, (
+            f"Expected 1.2M–1.3M params, got {num_params:,}"
+        )
+
+    def test_gradient_flow(self):
+        """Test gradients flow through all parameters."""
+        model = GPTMicro()
+        model.train()
+        B, T = 2, 32
+        x = torch.randint(0, 256, (B, T))
+        targets = torch.randint(0, 256, (B, T))
+
+        logits = model(x)
+        loss = torch.nn.functional.cross_entropy(
+            logits.view(-1, 256), targets.view(-1)
+        )
+        loss.backward()
+
+        for name, param in model.named_parameters():
+            if param.requires_grad:
+                assert param.grad is not None, f"No gradient for {name}"
+
+    def test_causal_mask(self):
+        """Test that changing a future token does not affect earlier logits."""
+        model = GPTMicro()
+        model.eval()
+
+        B, T = 1, 16
+        x1 = torch.randint(0, 256, (B, T))
+        x2 = x1.clone()
+        # Modify position 8 onwards — should not affect logits at position 7
+        x2[:, 8:] = torch.randint(0, 256, (B, T - 8))
+
+        with torch.no_grad():
+            out1 = model(x1)
+            out2 = model(x2)
+
+        # Logits at position 7 must be identical (causality)
+        assert torch.allclose(out1[:, :8, :], out2[:, :8, :]), (
+            "Causal mask violation: logits at earlier positions changed "
+            "when only future tokens were modified."
+        )
 
 
 # Parametrized tests for all architectures

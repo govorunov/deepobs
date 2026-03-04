@@ -114,9 +114,13 @@ test_problems:
     batch_size: 128
 
   # ========================================
-  # Text generation problems (1 problem, ~500K params)
+  # Text generation problems (~500K-1.2M params)
   # ========================================
   - name: ptb_lstm
+    num_epochs: 30
+    batch_size: 64
+
+  - name: ptb_gpt_micro
     num_epochs: 30
     batch_size: 64
 

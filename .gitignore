@@ -58,6 +58,8 @@ results/
 !results/.gitkeep
 baselines/
 !baselines/.gitkeep
+/planning/*
+!/planning/.gitkeep
 
 ### Testing ###
 .pytest_cache/
@@ -70,3 +72,4 @@ htmlcov/
 *.swp
 *.swo
 *~
+

@@ -501,6 +501,33 @@ Inception V3 on ImageNet.
 
 ---
 
+### Text Generation Test Problems
+
+#### `ptb_lstm(batch_size, weight_decay=None, device=None)`
+
+Two-layer LSTM for character-level language modelling on Penn Treebank.
+
+**Model**: 2-layer LSTM, 128 hidden units, vocab derived from dataset (~83 chars)
+**Default Batch Size**: 64
+**Suggested LR**: 0.001 (Adam)
+**Sequence Length**: 50
+**Parameters**: ~300K
+
+---
+
+#### `ptb_gpt_micro(batch_size, weight_decay=None, device=None)`
+
+Small decoder-only GPT for byte-level language modelling on Penn Treebank.
+
+**Model**: 6-layer transformer, d_model=128, 4 heads, d_ff=512, vocab derived from dataset (~83 chars)
+**Default Batch Size**: 64
+**Suggested LR**: 3e-4 (Adam)
+**Sequence Length**: 128
+**Parameters**: ~1.22M
+**Features**: Pre-LayerNorm, causal self-attention, GELU FFN, weight-tied LM head
+
+---
+
 ### Quadratic Test Problems
 
 #### `quadratic_deep(batch_size, weight_decay=None, device=None)`

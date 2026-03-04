@@ -184,9 +184,13 @@ def get_available_test_problems():
     synthetic_problems = ['quadratic_deep', 'two_d_rosenbrock',
                          'two_d_beale', 'two_d_branin']
 
+    # Text generation problems (auto-download PTB)
+    text_problems = ['ptb_lstm', 'ptb_gpt_micro']
+
     # Problems that should work with downloaded data
     available = (mnist_problems + fmnist_problems + cifar10_problems +
-                cifar100_problems + svhn_problems + synthetic_problems)
+                cifar100_problems + svhn_problems + synthetic_problems +
+                text_problems)
 
     # Problems requiring manual setup
     manual = imagenet_problems

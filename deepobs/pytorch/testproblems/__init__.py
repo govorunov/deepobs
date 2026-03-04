@@ -63,6 +63,7 @@ from .fmnist_vae import fmnist_vae
 
 # Text generation test problems
 from .ptb_lstm import ptb_lstm
+from .ptb_gpt_micro import ptb_gpt_micro
 
 # Quadratic test problems
 from .quadratic_deep import quadratic_deep
@@ -107,6 +108,7 @@ __all__ = [
     "imagenet_inception_v3",
     # Text generation
     "ptb_lstm",
+    "ptb_gpt_micro",
     # Quadratic
     "quadratic_deep",
     # 2D optimization
