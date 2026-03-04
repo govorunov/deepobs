@@ -156,6 +156,15 @@ optimizers:
     eps: 1.0e-08
     weight_decay: 0.01
 
+  # Example how to add a custom optimizer:
+  # A custom optimizer need to implement PyTorch optimizer interface (inherit from torch.optim.Optimizer)
+  # and be importable by its class name
+  # - name: Angol
+  #   optimizer_class: angol.Angol # Import path to the custom optimizer class
+  #   learning_rate: 0.001
+  #   lr_factor: 0.1 # A custom hyperparameter that the custom optimizer can use (e.g. for learning rate schedule)
+
+
 # Problem-specific optimizer overrides
 overrides:
   # Logistic regression problems need higher learning rate

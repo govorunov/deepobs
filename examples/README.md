@@ -1,94 +1,58 @@
 # DeepOBS PyTorch Examples
 
-This directory contains complete, runnable examples demonstrating various features of DeepOBS PyTorch.
+This directory contains runnable examples demonstrating DeepOBS PyTorch.
 
-## Examples Overview
+## Recommended workflow
 
-1. **basic_usage.py** - Simple end-to-end example
-   - Basic training loop
-   - Loss and accuracy computation
-   - Model evaluation
-
-2. **custom_optimizer_benchmark.py** - Benchmarking custom optimizers
-   - Implementing a custom optimizer
-   - Using StandardRunner
-   - Saving and analyzing results
-
-3. **multiple_test_problems.py** - Running multiple test problems
-   - Batch benchmarking
-   - Comparing across problems
-   - Aggregating results
-
-4. **learning_rate_schedule.py** - Learning rate scheduling
-   - MultiStepLR scheduling
-   - Cosine annealing
-   - Custom schedules
-
-5. **result_analysis.py** - Analyzing and plotting results
-   - Loading results from JSON
-   - Creating plots
-   - Statistical analysis
-
-## Running Examples
-
-Each example is self-contained and can be run directly:
+The primary way to use DeepOBS is through the CLI and YAML config files:
 
 ```bash
-cd examples
-python basic_usage.py
+# 1. Run a benchmark
+uv run deepobs benchmark examples/benchmark_config_adamw_small.yaml
+
+# 2. Analyze and generate an interactive HTML report
+uv run deepobs analyze
 ```
 
-## Requirements
+The Python example scripts show the **programmatic API**, which is useful
+when you need custom training logic not covered by the CLI.
 
-All examples require:
-- PyTorch >= 1.9.0
-- DeepOBS PyTorch version
-- matplotlib (for visualization examples)
-- numpy
+## Python examples
 
-Install with:
+| Script | What it shows |
+|--------|---------------|
+| **basic_usage.py** | Minimal training loop using the Python API |
+| **custom_optimizer_benchmark.py** | Implementing a custom optimizer; benchmarking via direct loop and StandardRunner |
+| **multiple_test_problems.py** | Running the same optimizer on several test problems programmatically |
+| **learning_rate_schedule.py** | Using PyTorch's scheduler API with DeepOBS test problems |
+| **result_analysis.py** | Loading and summarising JSON result files produced by the benchmark |
+
+Run any example with:
+
 ```bash
-pip install torch torchvision matplotlib numpy pandas seaborn
+uv run python examples/basic_usage.py
 ```
 
-## Example Output
+## Configuration files
 
-Examples save results to:
-```
-./results/
-├── <testproblem>/
-│   └── <optimizer>/
-│       └── <run_id>/
-│           └── results.json
-└── plots/
-    └── *.png
-```
+YAML configs for the CLI benchmark command:
 
-## Tips
+| File | Description |
+|------|-------------|
+| **benchmark_config_quick.yaml** | Quick smoke-test (2 problems, 5 epochs) |
+| **benchmark_config_adamw_small.yaml** | AdamW on 22 problems (small–medium models) |
+| **benchmark_config_angol_small.yaml** | Custom optimizer example |
 
-- Start with `basic_usage.py` to understand the fundamentals
-- Modify hyperparameters in examples to experiment
-- Use GPU if available for faster training (set `device='cuda'`)
-- Check comments in each script for detailed explanations
-
-## Configuration Files
-
-The following YAML configuration files are provided for CLI benchmarking:
-
-- **benchmark_config.yaml** - Full benchmark configuration example
-- **benchmark_config_quick.yaml** - Quick test configuration
-- **benchmark_config_adamw_small.yaml** - AdamW optimizer example
-- **benchmark_config_angol_small.yaml** - Custom optimizer example
-
-Use with the DeepOBS CLI:
 ```bash
-uv run deepobs benchmark benchmark_config_quick.yaml
+# Dry-run to preview what will execute
+uv run deepobs benchmark examples/benchmark_config_quick.yaml --dry-run
+
+# Full run
+uv run deepobs benchmark examples/benchmark_config_quick.yaml
 ```
 
-See the [main README](../README.md#usage-examples) for more details on CLI usage.
+## See also
 
-## See Also
-
-- [README.md](../README.md) - Main project documentation and CLI usage
-- [README_PYTORCH.md](../docs/README_PYTORCH.md) - Detailed PyTorch usage guide
-- [API_REFERENCE.md](../docs/API_REFERENCE.md) - Complete API documentation
+- [README.md](../README.md) — main documentation and CLI reference
+- [docs/README_PYTORCH.md](../docs/README_PYTORCH.md) — detailed PyTorch usage guide
+- [docs/API_REFERENCE.md](../docs/API_REFERENCE.md) — API documentation
