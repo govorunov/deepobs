@@ -501,6 +501,33 @@ Inception V3 on ImageNet.
 
 ---
 
+### Food-101 Test Problems
+
+#### `food101_vgg16(batch_size, weight_decay=None, device=None)`
+
+VGG-16 on Food-101.
+
+**Model**: VGG-16 with BatchNorm (momentum=0.1) and reduced dropout (0.2)
+**Parameters**: ~134,000,000
+**Default Batch Size**: 128
+**Suggested LR**: 0.01
+**Input**: Resized to 224x224
+**Classes**: 101
+**Regularization**: Use `weight_decay=5e-4`
+
+---
+
+#### `food101_vgg19(batch_size, weight_decay=None, device=None)`
+
+VGG-19 on Food-101.
+
+**Model**: VGG-19 with BatchNorm (momentum=0.1) and reduced dropout (0.2)
+**Parameters**: ~139,000,000
+**Input**: Resized to 224x224
+**Classes**: 101
+
+---
+
 ### Text Generation Test Problems
 
 #### `ptb_lstm(batch_size, weight_decay=None, device=None)`

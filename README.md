@@ -202,6 +202,12 @@ All **27 test problems** are currently implemented and available:
 
 **Note**: ImageNet problems require manual dataset download due to licensing restrictions.
 
+### Food-101 (2 problems)
+| Problem | Architecture | Parameters | Description |
+|---------|-------------|------------|-------------|
+| `food101_vgg16` | VGG-16 | ~134,000,000 | VGG-16 on Food-101 (101 classes) |
+| `food101_vgg19` | VGG-19 | ~139,000,000 | VGG-19 on Food-101 (101 classes) |
+
 ### Text Generation (1 problem)
 | Problem | Architecture | Parameters | Description |
 |---------|-------------|------------|-------------|
