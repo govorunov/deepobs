@@ -1,5 +1,5 @@
-# DeepOBS Benchmark Configuration
-# This file defines which test problems and optimizers to benchmark
+# DeepOBS Benchmark Configuration - AdamW on Small to Medium Problems
+# Test problems from small to large (up to ~20M parameters)
 
 # Global settings
 global:
@@ -9,10 +9,10 @@ global:
   # Random seed for reproducibility
   random_seed: 42
 
-  # Default number of epochs (can be overridden per problem)
-  num_epochs: 10
+  # Default number of epochs
+  num_epochs: 20
 
-  # Default batch size (can be overridden per problem)
+  # Default batch size
   batch_size: 128
 
   # Training log interval (log every N batches)
@@ -24,9 +24,11 @@ global:
   # Data directory (where datasets are stored)
   data_dir: null  # null = use default
 
-# Test problems to benchmark
+# Test problems to benchmark (22 problems)
 test_problems:
-  # MNIST problems (fast, good for testing)
+  # ========================================
+  # MNIST problems (4 problems, 7.8K-3M params)
+  # ========================================
   - name: mnist_logreg
     num_epochs: 5
     batch_size: 128
@@ -36,81 +38,204 @@ test_problems:
     batch_size: 128
 
   - name: mnist_2c2d
-    num_epochs: 10
+    num_epochs: 20
     batch_size: 128
 
-  # Fashion-MNIST problems
+  # Note: VAE dimension bug fixed, but may have DataLoader issues on macOS
+  - name: mnist_vae
+    num_epochs: 30
+    batch_size: 128
+
+  # ========================================
+  # Fashion-MNIST problems (4 problems, 7.8K-3M params)
+  # ========================================
+  - name: fmnist_logreg
+    num_epochs: 5
+    batch_size: 128
+
   - name: fmnist_mlp
     num_epochs: 10
     batch_size: 128
 
   - name: fmnist_2c2d
-    num_epochs: 10
+    num_epochs: 20
     batch_size: 128
 
-  # CIFAR-10 problems (slower, more challenging)
-  # Uncomment to include:
-  # - name: cifar10_3c3d
-  #   num_epochs: 20
-  #   batch_size: 128
+  # Note: VAE dimension bug fixed, but may have DataLoader issues on macOS
+  - name: fmnist_vae
+    num_epochs: 30
+    batch_size: 128
 
-  # - name: cifar10_vgg16
+  # ========================================
+  # CIFAR-10 problems (1 problem, 1.4M params)
+  # Note: VGG16/19 excluded (>10M params)
+  # ========================================
+  - name: cifar10_3c3d
+    num_epochs: 50
+    batch_size: 128
+
+  # ========================================
+  # CIFAR-100 problems (3 problems, 1.4M-9M params)
+  # Note: VGG16/19 replaced with Food-101 versions
+  # ========================================
+  - name: cifar100_3c3d
+    num_epochs: 50
+    batch_size: 128
+
+  - name: cifar100_allcnnc
+    num_epochs: 50
+    batch_size: 256
+
+  - name: cifar100_wrn404
+    num_epochs: 50
+    batch_size: 128
+
+  # ========================================
+  # Food-101 problems (3 problems, 2.8M-139M params)
+  # ========================================
+  - name: food101_vit_micro
+    num_epochs: 50
+    batch_size: 128
+
+  # VGG variants excluded from small config (>100M params)
+  # - name: food101_vgg16
   #   num_epochs: 50
   #   batch_size: 128
 
+  # - name: food101_vgg19
+  #   num_epochs: 50
+  #   batch_size: 128
+
+  # ========================================
+  # SVHN problems (2 problems, 1.4M-2.7M params)
+  # ========================================
+  - name: svhn_3c3d
+    num_epochs: 40
+    batch_size: 128
+
+  - name: svhn_wrn164
+    num_epochs: 40
+    batch_size: 128
+
+  # ========================================
+  # Text generation problems (~500K-1.2M params)
+  # ========================================
+  - name: ptb_lstm
+    num_epochs: 30
+    batch_size: 64
+
+  - name: ptb_gpt_micro
+    num_epochs: 30
+    batch_size: 64
+
+  # ========================================
+  # Synthetic optimization problems (4 problems, 2-100 params)
+  # ========================================
+  - name: quadratic_deep
+    num_epochs: 100
+    batch_size: 128
+
+  - name: two_d_rosenbrock
+    num_epochs: 100
+    batch_size: 128
+
+  - name: two_d_beale
+    num_epochs: 100
+    batch_size: 128
+
+  - name: two_d_branin
+    num_epochs: 100
+    batch_size: 128
+
 # Optimizers to benchmark
 optimizers:
-  # SGD with momentum
-  - name: SGD
-    learning_rate: 0.01
-    momentum: 0.9
-    nesterov: false
-    # Optional: learning rate schedule
-    # lr_schedule:
-    #   epochs: [30, 60, 90]
-    #   factors: [0.1, 0.1, 0.1]  # multiply by 0.1 at each epoch
-
-  # SGD with Nesterov momentum
-  - name: SGD_Nesterov
-    optimizer_class: SGD  # Use SGD class
-    learning_rate: 0.01
-    momentum: 0.9
-    nesterov: true
-
-  # Adam optimizer
-  - name: Adam
-    learning_rate: 0.001
-    betas: [0.9, 0.999]
-    eps: 1.0e-08
-
-  # AdamW optimizer
+  # AdamW optimizer with standard hyperparameters
   - name: AdamW
     learning_rate: 0.001
     betas: [0.9, 0.999]
     eps: 1.0e-08
     weight_decay: 0.01
 
+  # Example how to add a custom optimizer:
+  # A custom optimizer need to implement PyTorch optimizer interface (inherit from torch.optim.Optimizer)
+  # and be importable by its class name
+  # - name: Angol
+  #   optimizer_class: angol.Angol # Import path to the custom optimizer class
+  #   learning_rate: 0.001
+  #   lr_factor: 0.1 # A custom hyperparameter that the custom optimizer can use (e.g. for learning rate schedule)
+
+
 # Problem-specific optimizer overrides
-# Use this to set different learning rates for specific problems
 overrides:
-  # Example: Use higher learning rate for logreg problems
+  # Logistic regression problems need higher learning rate
   mnist_logreg:
-    SGD:
-      learning_rate: 0.1
-    Adam:
+    AdamW:
       learning_rate: 0.01
 
   fmnist_logreg:
-    SGD:
-      learning_rate: 0.1
+    AdamW:
+      learning_rate: 0.01
 
-# Advanced options
-advanced:
-  # Run optimizers in parallel (requires sufficient resources)
-  parallel: false
+  # ResNet problems may benefit from learning rate schedule
+  cifar100_wrn404:
+    AdamW:
+      learning_rate: 0.001
+      lr_schedule:
+        epochs: [30, 40]
+        factors: [0.1, 0.1]
 
-  # Continue from previous run (skip completed experiments)
-  continue_existing: false
+  svhn_wrn164:
+    AdamW:
+      learning_rate: 0.001
+      lr_schedule:
+        epochs: [25, 35]
+        factors: [0.1, 0.1]
 
-  # Verbose output
-  verbose: true
+  # Character RNN may need different learning rate
+  ptb_lstm:
+    AdamW:
+      learning_rate: 0.001
+      weight_decay: 0.001  # Lower weight decay for RNN
+
+  # GPT-Micro benefits from a higher learning rate
+  ptb_gpt_micro:
+    AdamW:
+      learning_rate: 0.0003
+      weight_decay: 0.001
+
+  # ViT-Micro benefits from the recommended lr=3e-4 and lower weight decay
+  food101_vit_micro:
+    AdamW:
+      learning_rate: 0.0003
+      weight_decay: 0.0001
+
+  # Food-101 VGG problems need lower weight decay to prevent instability
+  # food101_vgg16:
+  #   AdamW:
+  #     learning_rate: 0.001
+  #     weight_decay: 0.0005  # Use problem default (5e-4) instead of 0.01
+  #     lr_schedule:
+  #       epochs: [25, 35]
+  #       factors: [0.1, 0.1]
+
+  # food101_vgg19:
+  #   AdamW:
+  #     learning_rate: 0.001
+  #     weight_decay: 0.0005  # Use problem default (5e-4) instead of 0.01
+
+  # Synthetic problems might benefit from higher learning rate
+  quadratic_deep:
+    AdamW:
+      learning_rate: 0.01
+
+  two_d_rosenbrock:
+    AdamW:
+      learning_rate: 0.01
+
+  two_d_beale:
+    AdamW:
+      learning_rate: 0.01
+
+  two_d_branin:
+    AdamW:
+      learning_rate: 0.01

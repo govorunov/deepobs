@@ -62,7 +62,7 @@ uv sync
 
 ```bash
 # Use an example configuration
-uv run deepobs benchmark examples/benchmark_config_adamw_small.yaml
+uv run deepobs benchmark examples/benchmark_config.yaml
 
 # Or create your own config (see below)
 uv run deepobs benchmark my_config.yaml

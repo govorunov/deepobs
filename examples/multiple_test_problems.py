@@ -4,7 +4,7 @@ Running multiple test problems with DeepOBS PyTorch.
 The recommended way to benchmark an optimizer on many problems is via
 the YAML CLI, which handles logging, reproducibility, and analysis:
 
-    uv run deepobs benchmark examples/benchmark_config_adamw_small.yaml
+    uv run deepobs benchmark examples/benchmark_config.yaml
     uv run deepobs analyze
 
 This script demonstrates the equivalent programmatic approach, which is
@@ -64,7 +64,7 @@ def main():
         print(f"{problem:<20} {final_loss:8.4f} {final_acc:10.4f}")
 
     print("\nFor a full benchmark across all 28 problems, use the CLI:")
-    print("  uv run deepobs benchmark examples/benchmark_config_adamw_small.yaml")
+    print("  uv run deepobs benchmark examples/benchmark_config.yaml")
 
 
 if __name__ == "__main__":

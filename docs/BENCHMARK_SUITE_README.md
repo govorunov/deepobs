@@ -237,7 +237,7 @@ overrides:
 
 ```bash
 # Run complete benchmark suite
-uv run deepobs benchmark benchmark_config.yaml
+uv run deepobs benchmark examples/benchmark_config.yaml
 ```
 
 ### Dry Run
@@ -245,7 +245,7 @@ uv run deepobs benchmark benchmark_config.yaml
 Preview what will be executed without running:
 
 ```bash
-uv run deepobs benchmark benchmark_config.yaml --dry-run
+uv run deepobs benchmark examples/benchmark_config.yaml --dry-run
 ```
 
 ### Custom Configuration
@@ -464,7 +464,7 @@ global:
 
 Ensure the config file path is correct:
 ```bash
-ls benchmark_config.yaml
+ls examples/benchmark_config.yaml
 ```
 
 ### Results Not Showing in result_analysis.py
@@ -474,7 +474,7 @@ Verify results directory structure:
 ls -R results/
 ```
 
-Results should be in `results/[problem]/[optimizer]/[run_id]/results.json`.
+Results should be in `results/[problem]/[optimizer]/[run_id]/random_seed__<N>__<timestamp>.json`.
 
 ## Integration with Existing Tools
 
@@ -484,7 +484,7 @@ The benchmark suite includes integrated analysis tools:
 
 ```bash
 # Run benchmarks
-uv run deepobs benchmark benchmark_config.yaml
+uv run deepobs benchmark examples/benchmark_config.yaml
 
 # Analyze and visualize
 uv run deepobs analyze

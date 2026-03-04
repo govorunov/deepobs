@@ -8,7 +8,7 @@ The primary way to use DeepOBS is through the CLI and YAML config files:
 
 ```bash
 # 1. Run a benchmark
-uv run deepobs benchmark examples/benchmark_config_adamw_small.yaml
+uv run deepobs benchmark examples/benchmark_config.yaml
 
 # 2. Analyze and generate an interactive HTML report
 uv run deepobs analyze
@@ -40,7 +40,7 @@ YAML configs for the CLI benchmark command:
 | File | Description |
 |------|-------------|
 | **benchmark_config_quick.yaml** | Quick smoke-test (2 problems, 5 epochs) |
-| **benchmark_config_adamw_small.yaml** | AdamW on 22 problems (small–medium models) |
+| **benchmark_config.yaml** | AdamW on 22 problems (small–medium models) |
 | **benchmark_config_angol_small.yaml** | Custom optimizer example |
 
 ```bash

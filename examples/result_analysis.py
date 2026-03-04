@@ -98,7 +98,7 @@ def main():
     if not results:
         print(f"\nNo results found in '{results_dir}'.")
         print("Run a benchmark first:")
-        print("  uv run deepobs benchmark examples/benchmark_config_adamw_small.yaml")
+        print("  uv run deepobs benchmark examples/benchmark_config.yaml")
         print("\nOr generate an interactive HTML report with:")
         print("  uv run deepobs analyze")
         return

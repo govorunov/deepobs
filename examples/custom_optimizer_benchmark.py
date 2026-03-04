@@ -142,5 +142,5 @@ if __name__ == "__main__":
     runner_benchmark()
 
     print("\nFor full multi-problem benchmarking use the CLI:")
-    print("  uv run deepobs benchmark examples/benchmark_config_adamw_small.yaml")
+    print("  uv run deepobs benchmark examples/benchmark_config.yaml")
     print("  uv run deepobs analyze")

@@ -5,7 +5,7 @@ Shows how to create a test problem, attach an optimizer, and run a
 training loop using the low-level API.
 
 The recommended workflow for benchmarking is YAML-based:
-    uv run deepobs benchmark examples/benchmark_config_adamw_small.yaml
+    uv run deepobs benchmark examples/benchmark_config.yaml
     uv run deepobs analyze
 
 Use this API when you need custom training logic not supported by the CLI.
