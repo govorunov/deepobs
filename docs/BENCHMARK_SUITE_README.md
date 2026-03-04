@@ -6,7 +6,7 @@ A flexible, configuration-based system for running comprehensive optimizer bench
 
 - **YAML Configuration**: Define benchmarks using simple YAML files
 - **Multiple Optimizers**: Compare SGD, Adam, AdamW, RMSprop, and more
-- **Multiple Problems**: Run across all 26 DeepOBS test problems
+- **Multiple Problems**: Run across all 28 DeepOBS test problems
 - **Problem-Specific Overrides**: Fine-tune learning rates and hyperparameters per problem
 - **Learning Rate Schedules**: Support for step-based LR decay
 - **Compatible Output**: Results work seamlessly with `result_analysis.py`

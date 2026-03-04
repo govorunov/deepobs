@@ -43,6 +43,7 @@ from .cifar100_wrn404 import cifar100_wrn404
 # Food-101 test problems
 from .food101_vgg16 import food101_vgg16
 from .food101_vgg19 import food101_vgg19
+from .food101_vit_micro import food101_vit_micro
 
 # CIFAR-10 VGG test problems
 from .cifar10_vgg16 import cifar10_vgg16
@@ -99,6 +100,7 @@ __all__ = [
     # Food-101
     "food101_vgg16",
     "food101_vgg19",
+    "food101_vit_micro",
     # SVHN
     "svhn_3c3d",
     "svhn_wrn164",

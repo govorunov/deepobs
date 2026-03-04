@@ -187,10 +187,13 @@ def get_available_test_problems():
     # Text generation problems (auto-download PTB)
     text_problems = ['ptb_lstm', 'ptb_gpt_micro']
 
+    # Food-101 problems (auto-download via torchvision)
+    food101_problems = ['food101_vit_micro']
+
     # Problems that should work with downloaded data
     available = (mnist_problems + fmnist_problems + cifar10_problems +
                 cifar100_problems + svhn_problems + synthetic_problems +
-                text_problems)
+                text_problems + food101_problems)
 
     # Problems requiring manual setup
     manual = imagenet_problems

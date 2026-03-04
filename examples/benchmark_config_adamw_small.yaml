@@ -24,7 +24,7 @@ global:
   # Data directory (where datasets are stored)
   data_dir: null  # null = use default
 
-# Test problems to benchmark (21 problems)
+# Test problems to benchmark (22 problems)
 test_problems:
   # ========================================
   # MNIST problems (4 problems, 7.8K-3M params)
@@ -91,9 +91,13 @@ test_problems:
     batch_size: 128
 
   # ========================================
-  # Food-101 problems (2 problems, 15M-20M params)
-  # Better conditioned than CIFAR-100 VGG due to proper image resolution
+  # Food-101 problems (3 problems, 2.8M-139M params)
   # ========================================
+  - name: food101_vit_micro
+    num_epochs: 50
+    batch_size: 128
+
+  # VGG variants excluded from small config (>100M params)
   # - name: food101_vgg16
   #   num_epochs: 50
   #   batch_size: 128
@@ -189,6 +193,12 @@ overrides:
     AdamW:
       learning_rate: 0.0003
       weight_decay: 0.001
+
+  # ViT-Micro benefits from the recommended lr=3e-4 and lower weight decay
+  food101_vit_micro:
+    AdamW:
+      learning_rate: 0.0003
+      weight_decay: 0.0001
 
   # Food-101 VGG problems need lower weight decay to prevent instability
   # food101_vgg16:

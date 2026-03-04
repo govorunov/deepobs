@@ -41,19 +41,19 @@ class Food101(DataSet):
     Test set: 25,250 images
 
     This implementation uses torchvision.datasets.Food101 for automatic downloading
-    and loading. Images are RGB with varying sizes, resized to 224x224 for VGG input.
-    Images are returned in NCHW format (batch, channels, height, width).
+    and loading. Images are RGB with varying sizes, resized to ``target_size`` for
+    model input. Images are returned in NCHW format (batch, channels, height, width).
     Labels are returned as class indices (not one-hot encoded).
 
     Data augmentation (applied to training data only when enabled):
-    - Resize shorter side to 256 pixels (preserving aspect ratio)
-    - Random crop to 224x224
+    - Resize shorter side to ``int(target_size * 256 / 224)`` pixels (preserving aspect ratio)
+    - Random crop to ``target_size × target_size``
     - Random horizontal flip
     - Per-image standardization (zero mean, unit variance)
 
     Test data preprocessing:
-    - Resize shorter side to 256 pixels
-    - Center crop to 224x224
+    - Resize shorter side proportionally
+    - Center crop to ``target_size × target_size``
     - Per-image standardization
 
     Args:
@@ -65,6 +65,8 @@ class Food101(DataSet):
         train_eval_size (int, optional): Number of training examples to use for
             evaluation during training. Defaults to 25,250 (size of test set).
         num_workers (int): Number of subprocesses for data loading. Defaults to 4.
+        target_size (int): Target image side length after cropping. Defaults to
+            224 (suitable for VGG-style networks). Use 96 for ViT-Micro.
 
     Attributes:
         train_loader (DataLoader): DataLoader for training data (shuffled).
@@ -83,7 +85,8 @@ class Food101(DataSet):
         batch_size: int,
         data_augmentation: bool = True,
         train_eval_size: int = 25250,
-        num_workers: int = 4
+        num_workers: int = 4,
+        target_size: int = 224,
     ):
         """Creates a new Food-101 dataset instance.
 
@@ -92,8 +95,10 @@ class Food101(DataSet):
             data_augmentation (bool): Whether to apply data augmentation to training data.
             train_eval_size (int): Size of training evaluation set. Defaults to 25,250.
             num_workers (int): Number of worker processes for data loading.
+            target_size (int): Target image side length (square crop). Defaults to 224.
         """
         self._data_augmentation = data_augmentation
+        self._target_size = target_size
         super().__init__(batch_size, train_eval_size, num_workers)
 
     def _make_train_dataset(self) -> TorchDataset:
@@ -103,12 +108,14 @@ class Food101(DataSet):
             torch.utils.data.Dataset: A PyTorch dataset yielding training data.
         """
         data_dir = config.get_data_dir()
+        # Scale resize proportionally to the target crop size (same ratio as 256→224)
+        resize_size = int(self._target_size * 256 / 224)
 
         if self._data_augmentation:
             # Training transform with data augmentation (ImageNet-style)
             transform = transforms.Compose([
-                transforms.Resize(256),  # Resize shorter side to 256
-                transforms.RandomCrop(224),  # Random crop to 224x224
+                transforms.Resize(resize_size),
+                transforms.RandomCrop(self._target_size),
                 transforms.RandomHorizontalFlip(),
                 transforms.ToTensor(),  # Convert to tensor, scales to [0, 1]
                 PerImageStandardization()  # Per-image normalization
@@ -116,8 +123,8 @@ class Food101(DataSet):
         else:
             # Training without augmentation
             transform = transforms.Compose([
-                transforms.Resize(256),
-                transforms.CenterCrop(224),
+                transforms.Resize(resize_size),
+                transforms.CenterCrop(self._target_size),
                 transforms.ToTensor(),
                 PerImageStandardization()
             ])
@@ -138,11 +145,13 @@ class Food101(DataSet):
             torch.utils.data.Dataset: A PyTorch dataset yielding test data.
         """
         data_dir = config.get_data_dir()
+        # Scale resize proportionally to the target crop size (same ratio as 256→224)
+        resize_size = int(self._target_size * 256 / 224)
 
         # Test transform (no augmentation, center crop)
         transform = transforms.Compose([
-            transforms.Resize(256),  # Resize shorter side to 256
-            transforms.CenterCrop(224),  # Center crop to 224x224
+            transforms.Resize(resize_size),
+            transforms.CenterCrop(self._target_size),
             transforms.ToTensor(),
             PerImageStandardization()
         ])

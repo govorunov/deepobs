@@ -528,6 +528,22 @@ VGG-19 on Food-101.
 
 ---
 
+#### `food101_vit_micro(batch_size, weight_decay=1e-4, device=None)`
+
+ViT-Micro Vision Transformer on Food-101.
+
+**Model**: ViT-Micro-192 – 6-layer transformer encoder, embed_dim=192, 3 attention heads, MLP ratio 4
+**Parameters**: ~2,844,005
+**Default Batch Size**: 128
+**Suggested LR**: 3e-4 (AdamW)
+**Input**: Resized and cropped to 96×96
+**Patch size**: 16×16 → 36 patches
+**Classes**: 101
+**Regularization**: Use `weight_decay=1e-4`
+**Note**: First ViT (attention-based) test problem in DeepOBS.
+
+---
+
 ### Text Generation Test Problems
 
 #### `ptb_lstm(batch_size, weight_decay=None, device=None)`

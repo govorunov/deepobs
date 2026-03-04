@@ -153,7 +153,7 @@ That's it! DeepOBS will run your benchmarks and generate an interactive HTML rep
 
 ## Available Test Problems
 
-All **27 test problems** are currently implemented and available:
+All **28 test problems** are currently implemented and available:
 
 ### MNIST (4 problems)
 | Problem | Architecture | Parameters | Description |
@@ -202,16 +202,18 @@ All **27 test problems** are currently implemented and available:
 
 **Note**: ImageNet problems require manual dataset download due to licensing restrictions.
 
-### Food-101 (2 problems)
+### Food-101 (3 problems)
 | Problem | Architecture | Parameters | Description |
 |---------|-------------|------------|-------------|
 | `food101_vgg16` | VGG-16 | ~134,000,000 | VGG-16 on Food-101 (101 classes) |
 | `food101_vgg19` | VGG-19 | ~139,000,000 | VGG-19 on Food-101 (101 classes) |
+| `food101_vit_micro` | ViT-Micro-192 | ~2,844,005 | Vision Transformer on Food-101 (101 classes, 96×96) |
 
-### Text Generation (1 problem)
+### Text Generation (2 problems)
 | Problem | Architecture | Parameters | Description |
 |---------|-------------|------------|-------------|
-| `ptb_lstm` | 2-Layer LSTM | ~500,000 | Penn Treebank |
+| `ptb_lstm` | 2-Layer LSTM | ~500,000 | Penn Treebank character-level LM |
+| `ptb_gpt_micro` | GPT-Micro (decoder transformer) | ~1,220,000 | Penn Treebank character-level LM |
 
 ### Synthetic Optimization (4 problems)
 | Problem | Parameters | Description |
@@ -223,9 +225,9 @@ All **27 test problems** are currently implemented and available:
 
 ### Problem Categories
 
-- **Classification**: mnist_*, fmnist_*, cifar10_*, cifar100_*, svhn_*, imagenet_*
+- **Classification**: mnist_*, fmnist_*, cifar10_*, cifar100_*, svhn_*, imagenet_*, food101_*
 - **Generative Models**: mnist_vae, fmnist_vae
-- **Sequential Models**: ptb_lstm
+- **Sequential Models**: ptb_lstm, ptb_gpt_micro
 - **Optimization Benchmarks**: quadratic_deep, two_d_*
 
 ---
@@ -253,8 +255,8 @@ All **9 datasets** are currently implemented:
 
 ## Features
 
-- **25 Test Problems**: Realistic deep learning benchmarks across multiple domains
-- **9 Architectures**: MLPs, CNNs, ResNets, VGG, Inception, VAE, RNN
+- **28 Test Problems**: Realistic deep learning benchmarks across multiple domains
+- **10 Architectures**: MLPs, CNNs, ResNets, VGG, Inception, VAE, RNN, Vision Transformer (ViT)
 - **9 Datasets**: MNIST, Fashion-MNIST, CIFAR-10/100, SVHN, ImageNet, Penn Treebank, and synthetic datasets
 - **PyTorch Implementation**: Modern PyTorch-based framework
 - **Automated Benchmarking**: Run experiments with minimal code

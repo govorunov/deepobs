@@ -10,6 +10,7 @@ from deepobs.pytorch.testproblems import (
 )
 from deepobs.pytorch.testproblems.cifar100_allcnnc import AllCNNC
 from deepobs.pytorch.testproblems._gpt_micro import GPTMicro
+from deepobs.pytorch.testproblems._vit_micro import ViTMicro
 from test_utils import (
     set_seed, assert_shape, count_parameters,
     check_gpu_available, get_dummy_batch, get_dummy_sequence_batch
@@ -423,6 +424,72 @@ def test_architecture_gpu(model_fn, input_shape, output_size):
 
     output = model(x)
     assert output.device.type == 'cuda'
+
+
+class TestViTMicro:
+    """Tests for ViT-Micro (Vision Transformer) architecture."""
+
+    def test_model_creation(self):
+        """Test model can be created with default hyperparameters."""
+        model = ViTMicro(num_classes=101)
+        assert model is not None
+        assert isinstance(model, nn.Module)
+
+    def test_forward_pass_default(self):
+        """Test forward pass with default 96×96 input."""
+        set_seed(42)
+        model = ViTMicro(image_size=96, patch_size=16, num_classes=101)
+        x = torch.randn(4, 3, 96, 96)
+        out = model(x)
+        assert_shape(out, (4, 101), "ViTMicro output")
+
+    def test_forward_pass_custom(self):
+        """Test forward pass with custom image size and patch size."""
+        set_seed(42)
+        model = ViTMicro(image_size=64, patch_size=8, num_classes=10,
+                         embed_dim=96, depth=2, num_heads=3)
+        x = torch.randn(2, 3, 64, 64)
+        out = model(x)
+        assert_shape(out, (2, 10), "ViTMicro custom output")
+
+    def test_parameter_count(self):
+        """Test parameter count is in the 1–3M range."""
+        model = ViTMicro(
+            image_size=96, patch_size=16, num_classes=101,
+            embed_dim=192, depth=6, num_heads=3, mlp_ratio=4.0,
+        )
+        n_params = count_parameters(model)
+        # Expect ~2.84M parameters
+        assert 2_500_000 < n_params < 3_200_000, (
+            f"Parameter count {n_params:,} is outside the expected 2.5M–3.2M range"
+        )
+
+    def test_gradient_flow(self):
+        """Test gradients flow through the full model."""
+        set_seed(42)
+        model = ViTMicro(image_size=96, patch_size=16, num_classes=101)
+        x = torch.randn(2, 3, 96, 96)
+        y = torch.randint(0, 101, (2,))
+
+        out = model(x)
+        loss = nn.functional.cross_entropy(out, y)
+        loss.backward()
+
+        for name, param in model.named_parameters():
+            if param.requires_grad:
+                assert param.grad is not None, f"No gradient for {name}"
+
+    def test_patch_assertion(self):
+        """Test that image_size not divisible by patch_size raises AssertionError."""
+        with pytest.raises(AssertionError):
+            ViTMicro(image_size=95, patch_size=16, num_classes=10)
+
+    def test_batch_size_one(self):
+        """Test forward pass with batch size 1 (edge case)."""
+        model = ViTMicro(image_size=96, patch_size=16, num_classes=101)
+        x = torch.randn(1, 3, 96, 96)
+        out = model(x)
+        assert_shape(out, (1, 101), "ViTMicro batch=1 output")
 
 
 if __name__ == "__main__":
